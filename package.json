@@ -1,0 +1,23 @@
+{
+  "name": "smw_toolchain",
+  "private": true,
+  "version": "1.5.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-preact": "^0.316.0",
+    "preact": "^10.19.3",
+    "react-device-detect": "^2.2.3",
+    "vite-plugin-singlefile": "^0.13.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.7.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}
