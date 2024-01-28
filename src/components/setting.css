@@ -1,0 +1,18 @@
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  font-variant: small-caps;
+}
+
+.setting-input {
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+}

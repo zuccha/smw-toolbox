@@ -1,0 +1,6 @@
+.table-editor-export {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 2em;
+  row-gap: 1em;
+}

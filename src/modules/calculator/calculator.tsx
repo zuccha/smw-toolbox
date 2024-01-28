@@ -13,6 +13,7 @@ import Keyboard, { KeyboardAction } from "../../components/keyboard";
 import RadioGroup, { Option } from "../../components/radio-group";
 import SectionCollapsible from "../../components/section-collapsible";
 import SectionStatic from "../../components/section-static";
+import Setting from "../../components/setting";
 import useMaskedValue from "../../hooks/use-masked-value";
 import useSetting from "../../hooks/use-setting";
 import { Boundaries } from "../../hooks/use-value";
@@ -37,7 +38,6 @@ import {
 import { doNothing, mod, toggle } from "../../utils";
 import AppEditors, { CalculatorEditorsRef } from "./calculator-editors";
 import CalculatorInstructions from "./calculator-instructions";
-import CalculatorSetting from "./calculator-setting";
 import "./calculator.css";
 
 //==============================================================================
@@ -93,7 +93,7 @@ const OperationLabel = {
 };
 
 //==============================================================================
-// App
+// Calculator
 //==============================================================================
 
 export default function Calculator() {
@@ -562,107 +562,107 @@ export default function Calculator() {
         onChange={setSettingsVisible}
       >
         <div class="calculator-settings">
-          <CalculatorSetting hotkey="K" label="Hotkeys">
+          <Setting hotkey="K" label="Hotkeys">
             <RadioGroup
               onChange={setHotkeysEnabled}
               options={binaryOptions}
               value={hotkeysEnabled}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="Q" label="Calculator">
+          <Setting hotkey="Q" label="Calculator">
             <RadioGroup
               onChange={setCalculatorEnabled}
               options={binaryOptions}
               value={calculatorEnabled}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="Y/W" label="Unit">
+          <Setting hotkey="Y/W" label="Unit">
             <RadioGroup onChange={setUnit} options={unitOptions} value={unit} />
-          </CalculatorSetting>
+          </Setting>
 
           {!isMobile && (
-            <CalculatorSetting label="Keyboard">
+            <Setting label="Keyboard">
               <RadioGroup
                 onChange={setKeyboardMode}
                 options={keyboardModeOptions}
                 value={keyboardMode}
               />
-            </CalculatorSetting>
+            </Setting>
           )}
 
-          <CalculatorSetting hotkey="I/O" label="Typing Mode">
+          <Setting hotkey="I/O" label="Typing Mode">
             <RadioGroup
               onChange={setTypingMode}
               options={typingModeOptions}
               value={typingMode}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="L/R" label="Typing Direction">
+          <Setting hotkey="L/R" label="Typing Direction">
             <RadioGroup
               onChange={setTypingDirection}
               options={typingDirectionOptions}
               value={typingDirection}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="M" label="Move Cursor">
+          <Setting hotkey="M" label="Move Cursor">
             <RadioGroup
               onChange={setMoveAfterTypingEnabled}
               options={binaryOptions}
               value={shouldMoveAfterTyping}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="T" label="Flip Bit">
+          <Setting hotkey="T" label="Flip Bit">
             <RadioGroup
               onChange={setShouldFlipBitOnClick}
               options={binaryOptions}
               value={shouldFlipBitOnClick}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting label="Signed Binary">
+          <Setting label="Signed Binary">
             <RadioGroup
               onChange={setSignedBinEnabled}
               options={binaryOptions}
               value={signedBinEnabled}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting hotkey="N" label="Signed Decimal">
+          <Setting hotkey="N" label="Signed Decimal">
             <RadioGroup
               onChange={setSignedDecEnabled}
               options={binaryOptions}
               value={signedDecEnabled}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting label="Signed Hexadecimal">
+          <Setting label="Signed Hexadecimal">
             <RadioGroup
               onChange={setSignedHexEnabled}
               options={binaryOptions}
               value={signedHexEnabled}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting label="Caret">
+          <Setting label="Caret">
             <RadioGroup
               onChange={setCaret}
               options={caretOptions}
               value={caret}
             />
-          </CalculatorSetting>
+          </Setting>
 
-          <CalculatorSetting label="Space Frequency">
+          <Setting label="Space Frequency">
             <RadioGroup
               onChange={setSpaceFrequency}
               options={spaceFrequencyOptions}
               value={spaceFrequency}
             />
-          </CalculatorSetting>
+          </Setting>
         </div>
       </SectionCollapsible>
 

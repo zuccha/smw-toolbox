@@ -9,8 +9,9 @@ import { z } from "zod";
 import IconButton from "./components/icon-button";
 import useSetting from "./hooks/use-setting";
 import Calculator from "./modules/calculator/calculator";
-import "./app.css";
+import TableEditor from "./modules/table-editor/table-editor";
 import { classNames } from "./utils";
+import "./app.css";
 
 const Wip = () => {
   return <div class="app-wip">WIP</div>;
@@ -30,7 +31,7 @@ const modules: {
     name: "Calculator",
   },
   {
-    Content: Wip,
+    Content: TableEditor,
     Icon: TableIcon,
     id: "table-editor",
     name: "Table Editor",

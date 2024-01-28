@@ -84,25 +84,6 @@
   row-gap: 1em;
 }
 
-.calculator-setting {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3em;
-}
-
-.calculator-setting-label {
-  display: flex;
-  align-items: center;
-  font-size: 1em;
-  font-variant: small-caps;
-}
-
-.calculator-setting-input {
-  display: flex;
-  align-items: center;
-  font-size: 1.2em;
-}
-
 .calculator-instructions {
   align-self: flex-start;
   min-width: 100%;
