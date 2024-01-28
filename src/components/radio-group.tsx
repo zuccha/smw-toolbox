@@ -1,11 +1,11 @@
 import Button from "./button";
 import "./radio-group.css";
 
-export type Option<T> = { label: string; value: T };
+export type RadioGroupOption<T> = { label: string; value: T };
 
 export type RadioGroupProps<T> = {
   onChange: (value: T) => void;
-  options: Option<T>[];
+  options: RadioGroupOption<T>[];
   value: T;
 };
 

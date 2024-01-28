@@ -10,7 +10,7 @@ import { z } from "zod";
 import Caption from "../../components/caption";
 import CheckGroup from "../../components/check-group";
 import Keyboard, { KeyboardAction } from "../../components/keyboard";
-import RadioGroup, { Option } from "../../components/radio-group";
+import RadioGroup, { RadioGroupOption } from "../../components/radio-group";
 import SectionCollapsible from "../../components/section-collapsible";
 import SectionStatic from "../../components/section-static";
 import Setting from "../../components/setting";
@@ -44,40 +44,40 @@ import "./calculator.css";
 // Settings Options
 //==============================================================================
 
-const binaryOptions: Option<boolean>[] = [
+const binaryOptions: RadioGroupOption<boolean>[] = [
   { label: "On", value: true },
   { label: "Off", value: false },
 ] as const;
 
-const caretOptions: Option<Caret>[] = [
+const caretOptions: RadioGroupOption<Caret>[] = [
   { label: "Bar", value: Caret.Bar },
   { label: "Box", value: Caret.Box },
   { label: "Underline", value: Caret.Underline },
 ] as const;
 
-const keyboardModeOptions: Option<KeyboardMode>[] = [
+const keyboardModeOptions: RadioGroupOption<KeyboardMode>[] = [
   { label: "None", value: KeyboardMode.None },
   { label: "Compact", value: KeyboardMode.Compact },
   { label: "Full", value: KeyboardMode.Full },
 ] as const;
 
-const spaceFrequencyOptions: Option<SpaceFrequency>[] = [
+const spaceFrequencyOptions: RadioGroupOption<SpaceFrequency>[] = [
   { label: "None", value: SpaceFrequency.None },
   { label: "8 Digits", value: SpaceFrequency.Digits8 },
   { label: "4 Digits", value: SpaceFrequency.Digits4 },
 ] as const;
 
-const typingDirectionOptions: Option<TypingDirection>[] = [
+const typingDirectionOptions: RadioGroupOption<TypingDirection>[] = [
   { label: "Left", value: TypingDirection.Left },
   { label: "Right", value: TypingDirection.Right },
 ] as const;
 
-const typingModeOptions: Option<TypingMode>[] = [
+const typingModeOptions: RadioGroupOption<TypingMode>[] = [
   { label: "Insert", value: TypingMode.Insert },
   { label: "Overwrite", value: TypingMode.Overwrite },
 ] as const;
 
-const unitOptions: Option<Unit>[] = [
+const unitOptions: RadioGroupOption<Unit>[] = [
   { label: "Byte", value: Unit.Byte },
   { label: "Word", value: Unit.Word },
 ] as const;
@@ -431,7 +431,7 @@ export default function Calculator() {
   //----------------------------------------------------------------------------
 
   return (
-    <div class="calculator">
+    <div class="calculator _module">
       <SectionStatic label="Calculator">
         <div class="calculator-main">
           <div class="calculator-editors">
@@ -561,7 +561,7 @@ export default function Calculator() {
         label="Settings"
         onChange={setSettingsVisible}
       >
-        <div class="calculator-settings">
+        <div class="_section-row">
           <Setting hotkey="K" label="Hotkeys">
             <RadioGroup
               onChange={setHotkeysEnabled}

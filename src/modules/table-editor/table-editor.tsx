@@ -1,5 +1,5 @@
 import { z } from "zod";
-import RadioGroup, { Option } from "../../components/radio-group";
+import RadioGroup, { RadioGroupOption } from "../../components/radio-group";
 import SectionCollapsible from "../../components/section-collapsible";
 import SectionStatic from "../../components/section-static";
 import Setting from "../../components/setting";
@@ -8,13 +8,13 @@ import { Encoding, EncodingSchema, Unit, UnitSchema } from "../../types";
 import "./table-editor.css";
 import TableEditorExport from "./table-editor-export";
 
-const encodingOptions: Option<Encoding>[] = [
+const encodingOptions: RadioGroupOption<Encoding>[] = [
   { label: "Bin", value: Encoding.Bin },
   { label: "Dec", value: Encoding.Dec },
   { label: "Hex", value: Encoding.Hex },
 ] as const;
 
-const unitOptions: Option<Unit>[] = [
+const unitOptions: RadioGroupOption<Unit>[] = [
   { label: "Byte", value: Unit.Byte },
   { label: "Word", value: Unit.Word },
 ] as const;
@@ -65,7 +65,7 @@ export default function TableEditor() {
   //----------------------------------------------------------------------------
 
   return (
-    <div class="table-editor">
+    <div class="table-editor _module">
       <SectionStatic label="Table Editor">Table</SectionStatic>
 
       <SectionCollapsible
@@ -73,7 +73,7 @@ export default function TableEditor() {
         label="Settings"
         onChange={setSettingsVisible}
       >
-        <div class="table-editor-settings">
+        <div class="_section-row">
           <Setting label="Encoding">
             <RadioGroup
               onChange={setEncoding}
