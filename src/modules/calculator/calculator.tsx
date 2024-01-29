@@ -93,6 +93,13 @@ const OperationLabel = {
 };
 
 //==============================================================================
+// Parsers
+//==============================================================================
+
+const parseBoolean = z.boolean().parse;
+const parseBooleanTuple3 = z.array(z.boolean()).length(3).parse;
+
+//==============================================================================
 // Calculator
 //==============================================================================
 
@@ -104,7 +111,7 @@ export default function Calculator() {
   const [calculatorEnabled, setCalculatorEnabled] = useSetting(
     "calculator-enabled",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [caret, setCaret] = useSetting("caret", Caret.Box, CaretSchema.parse);
@@ -112,37 +119,37 @@ export default function Calculator() {
   const [hotkeysEnabled, setHotkeysEnabled] = useSetting(
     "calculator-hotkeys-enabled",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [instructionsVisible, setInstructionsVisible] = useSetting(
     "calculator-instructions-visible",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [operand1Visibility, setOperand1Visibility] = useSetting(
     "calculator-operand-1-visibility",
     [true, true, true],
-    z.array(z.boolean()).length(3).parse
+    parseBooleanTuple3
   );
 
   const [operand2Visibility, setOperand2Visibility] = useSetting(
     "calculator-operand-2-visibility",
     [true, true, true],
-    z.array(z.boolean()).length(3).parse
+    parseBooleanTuple3
   );
 
   const [resultVisibility, setResultVisibility] = useSetting(
     "calculator-result-visibility",
     [true, true, true],
-    z.array(z.boolean()).length(3).parse
+    parseBooleanTuple3
   );
 
   const [settingsVisible, setSettingsVisible] = useSetting(
     "calculator-settings-visible",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [keyboardMode, setKeyboardMode] = useSetting(
@@ -154,31 +161,31 @@ export default function Calculator() {
   const [shouldFlipBitOnClick, setShouldFlipBitOnClick] = useSetting(
     "calculator-flip-bit-enabled",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [shouldMoveAfterTyping, setMoveAfterTypingEnabled] = useSetting(
     "calculator-move-after-typing-enabled",
     true,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [signedBinEnabled, setSignedBinEnabled] = useSetting(
     "calculator-signed-bin",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [signedDecEnabled, setSignedDecEnabled] = useSetting(
     "calculator-signed-dec",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [signedHexEnabled, setSignedHexEnabled] = useSetting(
     "calculator-signed-hex",
     false,
-    z.boolean().parse
+    parseBoolean
   );
 
   const [spaceFrequency, setSpaceFrequency] = useSetting(

@@ -10,10 +10,10 @@
 
 .radio-group .button:hover,
 .radio-group .button:hover + * {
-  border-left-color: var(--color-primary-2);
+  border-left-color: var(--color-primary-1);
 }
 
 .radio-group .button.selected,
 .radio-group .button.selected + * {
-  border-left-color: var(--color-primary-3);
+  border-left-color: var(--color-primary-2);
 }

@@ -1,18 +1,14 @@
 :root {
-  --color-primary-1: #f0e1d6;
-  --color-primary-2: #dca87d;
-  --color-primary-3: #de8f4e;
-  --color-primary-4: #cb5601;
-  --color-primary-5: #8a3900;
-  --color-primary-6: #572400;
+  --color-primary-1: #dca87d;
+  --color-primary-2: #de8f4e;
+  --color-primary-3: #572400;
 
   --color-neutral-1: rgba(255, 255, 255, 0.87);
-  --color-neutral-2: rgba(255, 255, 255, 0.6);
-  --color-neutral-3: rgba(255, 255, 255, 0.4);
+  --color-neutral-2: rgba(255, 255, 255, 0.4);
 
-  --color-background-0: #3b3b3b;
-  --color-background-1: #242424;
-  --color-background-2: #141414;
+  --color-background-1: #3b3b3b;
+  --color-background-2: #242424;
+  --color-background-3: #141414;
 
   --caret-height: 1.2em;
   --caret-width: 0.75em;
@@ -26,7 +22,7 @@
 
   color-scheme: light dark;
   color: var(--color-neutral-1);
-  background-color: var(--color-background-1);
+  background-color: var(--color-background-2);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -45,7 +41,7 @@ body {
 
 a,
 a:visited {
-  color: var(--color-primary-3);
+  color: var(--color-primary-2);
   text-decoration: none;
   cursor: pointer;
 }
@@ -55,7 +51,7 @@ a:hover {
 }
 
 code {
-  background-color: var(--color-background-2);
+  background-color: var(--color-background-3);
   padding: 0.2em 0.4em;
   border-radius: 0.2em;
 }

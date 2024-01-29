@@ -4,16 +4,21 @@
 
 .select > select {
   background-color: transparent;
-  border: 1px solid var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-2);
   border-radius: 0;
   padding: 0.5em 2em 0.5em 0.75em;
   font-size: 0.8em;
+  color: var(--color-neutral-1);
   appearance: none;
+}
+
+.select > select::placeholder {
+  color: var(--color-neutral-2);
 }
 
 .select > select:focus {
   outline: none;
-  border-color: var(--color-primary-3);
+  border-color: var(--color-primary-2);
 }
 
 .select-icon {
@@ -24,9 +29,9 @@
   display: flex;
   align-items: center;
   pointer-events: none;
-  color: var(--color-neutral-3);
+  color: var(--color-neutral-2);
 }
 
 .select > select:focus + .select-icon {
-  color: var(--color-primary-3);
+  color: var(--color-primary-2);
 }

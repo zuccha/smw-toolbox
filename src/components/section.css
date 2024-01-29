@@ -1,7 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-2);
   min-width: min-content;
 }
 
@@ -20,12 +20,12 @@
 }
 
 .section.collapsible .section-header:hover {
-  background-color: var(--color-background-0);
+  background-color: var(--color-background-1);
   cursor: pointer;
 }
 
 .section.collapsible .section-header:focus {
-  outline-color: var(--color-primary-2);
+  outline-color: var(--color-primary-1);
 }
 
 .section.collapsible .section-header > span {

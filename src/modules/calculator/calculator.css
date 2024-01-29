@@ -25,7 +25,7 @@
 .calculator-divider-line {
   grid-column: span 2;
   height: 1px;
-  background-color: var(--color-neutral-3);
+  background-color: var(--color-neutral-2);
 }
 
 .calculator-divider-editors-visibility {
@@ -81,7 +81,7 @@
 
 .calculator-instructions td,
 .calculator-instructions th {
-  border: 1px solid var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-2);
   padding: 0.2em 0.5em;
 }
 

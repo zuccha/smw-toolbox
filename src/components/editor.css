@@ -40,7 +40,7 @@
 }
 
 .editor:focus .editor-caret {
-  background-color: var(--color-primary-3);
+  background-color: var(--color-primary-2);
 }
 
 .editor:focus {
@@ -48,15 +48,15 @@
 }
 
 .editor:not(.disabled):focus .editor-char.solid {
-  color: var(--color-primary-3);
-}
-
-.editor:not(.disabled):focus .editor-char.empty {
   color: var(--color-primary-2);
 }
 
+.editor:not(.disabled):focus .editor-char.empty {
+  color: var(--color-primary-1);
+}
+
 .editor:not(.disabled).caret-box:focus .editor-char.selected {
-  color: var(--color-background-1);
+  color: var(--color-background-2);
 }
 
 .editor.disabled .editor-char {
@@ -64,5 +64,5 @@
 }
 
 .editor.disabled:focus .editor-char {
-  color: var(--color-primary-2);
+  color: var(--color-primary-1);
 }

@@ -7,7 +7,9 @@ import {
 import { useMemo } from "preact/hooks";
 import { z } from "zod";
 import IconButton from "./components/icon-button";
+import useColorScheme from "./hooks/use-color-scheme";
 import useSetting from "./hooks/use-setting";
+import AppSettings from "./modules/app-settings/app-settings";
 import Calculator from "./modules/calculator/calculator";
 import TableEditor from "./modules/table-editor/table-editor";
 import { classNames } from "./utils";
@@ -38,7 +40,7 @@ const modules: {
     isWide: true,
   },
   {
-    Content: Wip,
+    Content: AppSettings,
     Icon: SettingsIcon,
     id: "settings",
     name: "Settings",
@@ -52,6 +54,8 @@ const modules: {
 ] as const;
 
 export default function App() {
+  useColorScheme();
+
   const [selectedModuleId, setSelectedModuleId] = useSetting(
     "app-selected-module",
     "calculator",

@@ -14,7 +14,7 @@
   white-space: nowrap;
   z-index: 1;
   position: absolute;
-  background-color: var(--color-background-0);
+  background-color: var(--color-background-1);
   color: var(--color-neutral-1);
   padding: 0.4em;
   border-radius: 0.2em;

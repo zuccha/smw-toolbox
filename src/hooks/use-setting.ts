@@ -1,4 +1,7 @@
-import { StateUpdater, useEffect, useState } from "preact/hooks";
+import { StateUpdater, useCallback, useEffect, useState } from "preact/hooks";
+
+type Callback = () => void;
+const listeners = new Map<string, Set<Callback>>();
 
 const Storage = {
   load: <T>(id: string, defaultValue: T, parse: (maybeT: unknown) => T): T => {
@@ -18,6 +21,12 @@ const Storage = {
   },
 };
 
+const isSettingUpdater = <T>(
+  maybeSettingUpdater: unknown
+): maybeSettingUpdater is (prevSetting: T) => void => {
+  return typeof maybeSettingUpdater === "function";
+};
+
 export default function useSetting<T>(
   id: string,
   initialState: T,
@@ -28,8 +37,26 @@ export default function useSetting<T>(
   );
 
   useEffect(() => {
-    Storage.save(id, setting);
-  }, [setting]);
+    if (!listeners.has(id)) listeners.set(id, new Set());
+    const callback = () => setSetting(Storage.load(id, initialState, parse));
+    listeners.get(id)!.add(callback);
+    return () => {
+      listeners.get(id)?.delete(callback);
+      if (listeners.get(id)?.size === 0) listeners.delete(id);
+    };
+  }, [id, initialState, parse]);
 
-  return [setting, setSetting];
+  const saveSettingAndNotify = useCallback(
+    (nextSettingOrUpdateSetting: T | ((prevSetting: T) => void)) => {
+      const nextSetting = isSettingUpdater(nextSettingOrUpdateSetting)
+        ? nextSettingOrUpdateSetting(Storage.load(id, initialState, parse))
+        : nextSettingOrUpdateSetting;
+
+      Storage.save(id, nextSetting);
+      listeners.get(id)?.forEach((callback) => callback());
+    },
+    [id]
+  );
+
+  return [setting, saveSettingAndNotify];
 }

@@ -1,12 +1,17 @@
 .input {
   background-color: transparent;
-  border: 1px solid var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-2);
   border-radius: 0;
   padding: 0.5em 0.75em;
   font-size: 0.8em;
+  color: var(--color-neutral-1);
+}
+
+.input::placeholder {
+  color: var(--color-neutral-2);
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary-3);
+  border-color: var(--color-primary-2);
 }
