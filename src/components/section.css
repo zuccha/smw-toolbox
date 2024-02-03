@@ -1,11 +1,10 @@
-.section {
+.Section {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-neutral-2);
-  min-width: min-content;
 }
 
-.section-header {
+.Section_Header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,24 +13,24 @@
   font-variant: small-caps;
 }
 
-.section-children {
+.Section_Children {
   padding: 2em;
   padding-top: 1em;
 }
 
-.section.collapsible .section-header:hover {
+.Section.collapsible .Section_Header:hover {
   background-color: var(--color-background-1);
   cursor: pointer;
 }
 
-.section.collapsible .section-header:focus {
+.Section.collapsible .Section_Header:focus {
   outline-color: var(--color-primary-1);
 }
 
-.section.collapsible .section-header > span {
+.Section.collapsible .Section_Header > span {
   font-variant: small-caps;
 }
 
-.section.collapsible.collapsed .section-children {
+.Section.collapsible.collapsed .Section_Children {
   display: none;
 }

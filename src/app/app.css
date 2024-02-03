@@ -1,0 +1,121 @@
+.App {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+.App_Menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
+  border-right: 1px solid var(--color-neutral-2);
+}
+
+.App_Menu_Item .Button {
+  aspect-ratio: 1;
+  border-radius: 100%;
+}
+
+.App_Content {
+  flex: 1;
+  overflow: auto;
+}
+
+.App_Wip {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  font-family: monospace;
+}
+
+@media (max-width: 43em) {
+  .App {
+    flex-direction: column;
+  }
+
+  .App_Menu {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--color-neutral-2);
+  }
+
+  .App_Menu_Item.wide {
+    margin-bottom: none;
+    margin-right: auto;
+  }
+
+  .App_Menu_Item .icon-button.right::before {
+    top: calc(100% + 0.3em);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.App_Row {
+  display: flex;
+  align-items: center;
+}
+
+.App_Center {
+  display: flex;
+  justify-content: center;
+  column-gap: 0.5em;
+}
+
+.App_Module {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1em;
+  margin: 0 auto;
+  gap: 1em;
+}
+
+.App_ModuleBlock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 50em;
+  gap: 1em;
+}
+
+.App_SectionCol {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+}
+
+.App_SectionRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 2em;
+  row-gap: 1em;
+}
+
+.App_SectionFullRow {
+  display: flex;
+  column-gap: 2em;
+  row-gap: 1em;
+}
+
+.App_SectionFullRow > * {
+  flex: 1;
+  overflow: hidden;
+}
+
+.App_SectionCluster {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.App_ErrorMessage {
+  color: red;
+  font-size: 0.8em;
+}

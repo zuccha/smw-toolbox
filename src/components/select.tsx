@@ -22,27 +22,23 @@ export default function Select<T extends number>({
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       onChange(Number.parseInt(e.currentTarget.value) as T);
     },
-    [onChange]
+    [onChange],
   );
 
   return (
-    <div class="select">
-      <select
-        class="hidden"
-        onChange={handleChange}
-        placeholder={placeholder}
-        value={value}
-      >
+    <div class="Select">
+      <select onChange={handleChange} placeholder={placeholder} value={value}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
-      <div class="select-labels">
+
+      <div class="Select_Labels">
         {options.map((option) => {
           const className = classNames([
-            ["select-label", true],
+            ["Select_Label", true],
             ["hidden", option.value !== value],
           ]);
           return (
@@ -54,12 +50,12 @@ export default function Select<T extends number>({
       </div>
 
       {options.some((option) => option.value === value) ? (
-        <div class="select-value">{"\u200B"}</div>
+        <div class="Select_Placeholder">{"\u200B"}</div>
       ) : (
-        <div class="select-placeholder">{placeholder}</div>
+        <div class="Select_Placeholder">{placeholder}</div>
       )}
 
-      <div class="select-icon">
+      <div class="Select_Icon">
         <ChevronDown size="1em" />
       </div>
     </div>

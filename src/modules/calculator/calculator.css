@@ -1,15 +1,15 @@
-.calculator-main {
+.Calculator_Main {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3em;
 }
 
-.calculator-spacer {
+.Calculator_Spacer {
   line-height: 0;
 }
 
-.calculator-editors {
+.Calculator_Editors {
   display: grid;
   grid-template-columns: max-content max-content max-content;
   column-gap: 1em;
@@ -18,92 +18,53 @@
   font-family: monospace;
 }
 
-.calculator-editors .empty {
+.Calculator_EditorsEmpty {
   grid-column: span 3;
 }
 
-.calculator-divider-line {
+.Calculator_DividerLine {
   grid-column: span 2;
   height: 1px;
   background-color: var(--color-neutral-2);
 }
 
-.calculator-divider-editors-visibility {
+.Calculator_EditorsVisibility {
   display: flex;
   font-size: 0.7em;
   margin: 0.2em 0;
 }
 
-.calculator-divider-editors-visibility .button {
+.Calculator_EditorsVisibility .Button {
   aspect-ratio: 1;
   line-height: 0;
 }
 
-.calculator-spacer,
-.calculator-editor-label {
+.Calculator_Spacer,
+.Calculator_Editor_Label {
   display: flex;
   justify-content: flex-end;
   font-size: 2em;
   margin-right: 1em;
 }
 
-.calculator-editor-input {
+.Calculator_Editor_Input {
   display: flex;
   justify-content: flex-end;
   font-size: 2em;
 }
 
-.calculator-editor-button {
+.Calculator_Editor_Button {
   display: flex;
   justify-content: flex-end;
 }
 
-.calculator-editor-actions {
+.Calculator_Editor_Actions {
   display: flex;
+  font-size: 1.5em;
 }
 
-.calculator-keyboard {
+.Calculator_Keyboard {
   display: flex;
   flex-direction: column;
   gap: 1em;
-}
-
-.calculator-instructions {
-  align-self: flex-start;
-  min-width: 100%;
-  max-width: min-content;
-}
-
-.calculator-instructions table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.calculator-instructions td,
-.calculator-instructions th {
-  border: 1px solid var(--color-neutral-2);
-  padding: 0.2em 0.5em;
-}
-
-.calculator-instructions-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5em;
-}
-
-.calculator-instructions-section-label {
-  font-weight: bold;
-  margin-bottom: 1em;
-}
-
-.calculator-instructions-sections
-  div:not(.calculator-instructions-section-label)
-  + table {
-  margin-top: 1em;
-}
-
-.calculator-footer {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 0.8em;
 }

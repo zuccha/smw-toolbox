@@ -1,14 +1,19 @@
 import { useMemo } from "preact/hooks";
-import { Length } from "../hooks/use-value";
-import { Encoding, SpaceFrequency, Unit } from "../types";
-import { classNames, digitToHex, range } from "../utils";
+import {
+  IntegerEncoding,
+  IntegerLength,
+  IntegerUnit,
+  digitToHex,
+} from "../models/integer";
+import { classNames, range } from "../utils";
 import "./caption.css";
+import { IntegerEditorSpaceFrequency } from "./integer-editor";
 
 export type CaptionProps = {
-  encoding: Encoding | undefined;
+  encoding: IntegerEncoding | undefined;
   isSigned: boolean;
-  spaceFrequency: SpaceFrequency;
-  unit: Unit;
+  spaceFrequency: IntegerEditorSpaceFrequency;
+  unit: IntegerUnit;
 };
 
 export default function Caption({
@@ -18,25 +23,25 @@ export default function Caption({
   unit,
 }: CaptionProps) {
   const digits = useMemo(() => {
-    const length = encoding !== undefined ? Length[unit][encoding] : 0;
+    const length = encoding !== undefined ? IntegerLength[unit][encoding] : 0;
     return range(length).reverse();
   }, [encoding, unit]);
 
   const className = classNames([
-    ["caption", true],
-    ["space-4", spaceFrequency === SpaceFrequency.Digits4],
-    ["space-8", spaceFrequency === SpaceFrequency.Digits8],
+    ["Caption", true],
+    ["space-4", spaceFrequency === IntegerEditorSpaceFrequency.Digits4],
+    ["space-8", spaceFrequency === IntegerEditorSpaceFrequency.Digits8],
   ]);
 
   return (
     <div class={className}>
       {isSigned && (
-        <div class="caption-char">
+        <div class="Caption_Char">
           <span>±</span>
         </div>
       )}
       {digits.map((digit) => (
-        <div class="caption-char" key={digit}>
+        <div class="Caption_Char" key={digit}>
           {<span>{digitToHex(digit)}</span>}
         </div>
       ))}

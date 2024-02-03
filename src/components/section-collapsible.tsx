@@ -19,7 +19,7 @@ export default function SectionCollapsible({
   const toggle = useCallback(() => onChange(!isVisible), [isVisible]);
 
   const className = classNames([
-    ["section", true],
+    ["Section", true],
     ["collapsible", true],
     ["collapsed", !isVisible],
   ]);
@@ -29,7 +29,7 @@ export default function SectionCollapsible({
       e.preventDefault();
       toggle();
     },
-    [toggle]
+    [toggle],
   );
 
   const handleKeyDown = useCallback(
@@ -39,7 +39,7 @@ export default function SectionCollapsible({
         toggle();
       }
     },
-    [toggle]
+    [toggle],
   );
 
   return (
@@ -47,7 +47,7 @@ export default function SectionCollapsible({
       className={className}
       header={
         <div
-          class="section-header"
+          class="Section_Header"
           onKeyDown={handleKeyDown}
           onMouseDown={handleMouseDown}
           tabIndex={0}

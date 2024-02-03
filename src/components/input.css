@@ -1,16 +1,23 @@
-.input {
+.Input {
   background-color: transparent;
   border: 1px solid var(--color-neutral-2);
   border-radius: 0;
   padding: 0.5em 0.75em;
   font-size: 0.8em;
   color: var(--color-neutral-1);
+
+  font-size: var(--input-font-size);
+  min-height: var(--input-height);
 }
 
-.input::placeholder {
+.Input::placeholder {
   color: var(--color-neutral-2);
 }
 
-.input:focus {
+.Input:hover {
+  border-color: var(--color-primary-1);
+}
+
+.Input:focus {
   outline-color: var(--color-primary-1);
 }

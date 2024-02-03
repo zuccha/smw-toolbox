@@ -6,31 +6,32 @@ import {
   useMemo,
   useRef,
 } from "preact/hooks";
-import Editor, { EditorRef } from "../../components/editor";
+import IntegerEditor, {
+  IntegerEditorCaret,
+  IntegerEditorRef,
+  IntegerEditorSpaceFrequency,
+} from "../../components/integer-editor";
+import { Integer, IntegerEncoding, IntegerUnit } from "../../models/integer";
 import {
-  Caret,
-  Direction,
-  Encoding,
-  Focusable,
-  SpaceFrequency,
-  TypingDirection,
-  TypingMode,
-  Unit,
-} from "../../types";
-import Calculator from "./calculator-editor";
+  IntegerStringTypingDirection,
+  IntegerStringTypingMode,
+} from "../../models/integer-string";
+import { Direction, Focusable } from "../../types";
+import CalculatorEditor from "./calculator-editor";
 
-export type CalculatorProps = {
+export type CalculatorEditorsProps = {
   autoFocus?: boolean;
-  caret: Caret;
-  integer: number;
+  caret: IntegerEditorCaret;
+  integer: Integer;
   isDisabled?: boolean;
+  isPasteIconHidden?: boolean;
   isSignedBin?: boolean;
   isSignedDec?: boolean;
   isSignedHex?: boolean;
   isVisibleBin?: boolean;
   isVisibleDec?: boolean;
   isVisibleHex?: boolean;
-  onChange: (integer: number) => void;
+  onChangeValue: (integerValue: number) => Integer;
   prefixBin?: string;
   prefixDec?: string;
   prefixHex?: string;
@@ -38,18 +39,18 @@ export type CalculatorProps = {
   refPrev?: Ref<CalculatorEditorsRef>;
   shouldFlipBitOnClick: boolean;
   shouldMoveAfterTyping: boolean;
-  spaceFrequency: SpaceFrequency;
-  typingDirection: TypingDirection;
-  typingMode: TypingMode;
-  unit: Unit;
+  spaceFrequency: IntegerEditorSpaceFrequency;
+  typingDirection: IntegerStringTypingDirection;
+  typingMode: IntegerStringTypingMode;
+  unit: IntegerUnit;
 };
 
 export type CalculatorEditorsRef = Focusable;
 
 const useEditor = (
-  ref: Ref<EditorRef>,
+  ref: Ref<IntegerEditorRef>,
   prevs: (Ref<Focusable> | undefined)[],
-  nexts: (Ref<Focusable> | undefined)[]
+  nexts: (Ref<Focusable> | undefined)[],
 ) => {
   const refNext = useMemo(() => nexts.find(Boolean), nexts);
   const refPrev = useMemo(() => prevs.find(Boolean), prevs);
@@ -58,20 +59,21 @@ const useEditor = (
   return { copy, paste, ref, refNext, refPrev };
 };
 
-export default forwardRef<CalculatorEditorsRef, CalculatorProps>(
+export default forwardRef<CalculatorEditorsRef, CalculatorEditorsProps>(
   function CalculatorEditors(
     {
       autoFocus,
       caret,
       integer,
       isDisabled = false,
+      isPasteIconHidden = false,
       isSignedBin = false,
       isSignedDec = false,
       isSignedHex = false,
       isVisibleBin = false,
       isVisibleDec = false,
       isVisibleHex = false,
-      onChange,
+      onChangeValue,
       prefixBin = "",
       prefixDec = "",
       prefixHex = "",
@@ -84,13 +86,13 @@ export default forwardRef<CalculatorEditorsRef, CalculatorProps>(
       typingMode,
       unit,
     },
-    ref
+    ref,
   ) {
     const props = {
       caret,
       integer,
       isDisabled,
-      onChange,
+      onChangeValue,
       shouldFlipBitOnClick,
       shouldMoveAfterTyping,
       spaceFrequency,
@@ -99,9 +101,9 @@ export default forwardRef<CalculatorEditorsRef, CalculatorProps>(
       unit,
     };
 
-    const binRef = useRef<EditorRef>(null);
-    const decRef = useRef<EditorRef>(null);
-    const hexRef = useRef<EditorRef>(null);
+    const binRef = useRef<IntegerEditorRef>(null);
+    const decRef = useRef<IntegerEditorRef>(null);
+    const hexRef = useRef<IntegerEditorRef>(null);
 
     const bin = isVisibleBin ? binRef : undefined;
     const dec = isVisibleDec ? decRef : undefined;
@@ -119,7 +121,7 @@ export default forwardRef<CalculatorEditorsRef, CalculatorProps>(
             case Direction.Down:
               const nexts = [bin, dec, hex, refNext];
               return Boolean(
-                nexts.find(Boolean)?.current?.focus(Direction.Down)
+                nexts.find(Boolean)?.current?.focus(Direction.Down),
               );
             case Direction.Up:
               const prevs = [hex, dec, bin, refPrev];
@@ -128,57 +130,60 @@ export default forwardRef<CalculatorEditorsRef, CalculatorProps>(
           return false;
         },
       }),
-      [bin, dec, hex, refNext, refPrev]
+      [bin, dec, hex, refNext, refPrev],
     );
 
     return (
       <>
         {isVisibleBin && (
-          <Calculator
+          <CalculatorEditor
+            isPasteIconHidden={isPasteIconHidden}
             label={prefixBin}
             onCopy={binProps.copy}
             onPaste={binProps.paste}
           >
-            <Editor
+            <IntegerEditor
               {...props}
               {...binProps}
               autoFocus={autoFocus}
-              encoding={Encoding.Bin}
+              encoding={IntegerEncoding.Bin}
               isSigned={isSignedBin}
             />
-          </Calculator>
+          </CalculatorEditor>
         )}
 
         {isVisibleDec && (
-          <Calculator
+          <CalculatorEditor
+            isPasteIconHidden={isPasteIconHidden}
             label={prefixDec}
             onCopy={decProps.copy}
             onPaste={decProps.paste}
           >
-            <Editor
+            <IntegerEditor
               {...props}
               {...decProps}
-              encoding={Encoding.Dec}
+              encoding={IntegerEncoding.Dec}
               isSigned={isSignedDec}
             />
-          </Calculator>
+          </CalculatorEditor>
         )}
 
         {isVisibleHex && (
-          <Calculator
+          <CalculatorEditor
+            isPasteIconHidden={isPasteIconHidden}
             label={prefixHex}
             onCopy={hexProps.copy}
             onPaste={hexProps.paste}
           >
-            <Editor
+            <IntegerEditor
               {...props}
               {...hexProps}
-              encoding={Encoding.Hex}
+              encoding={IntegerEncoding.Hex}
               isSigned={isSignedHex}
             />
-          </Calculator>
+          </CalculatorEditor>
         )}
       </>
     );
-  }
+  },
 );

@@ -4,9 +4,10 @@ import "./input.css";
 export type InputProps = {
   max?: number;
   min?: number;
-  onChange: (value: string) => void;
+  onChange: (value: string) => string | void;
   pattern?: RegExp;
   placeholder: string;
+  size?: number;
   type: "number" | "text";
   value: string;
 };
@@ -17,43 +18,56 @@ export default function Input({
   onChange,
   pattern,
   placeholder,
+  size,
   type,
   value,
 }: InputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<string>(value);
 
+  const restoreValue = useCallback(() => {
+    if (!inputRef.current) return;
+
+    const selectionStart = inputRef.current.selectionStart;
+    const selectionEnd = inputRef.current.selectionEnd;
+    inputRef.current.value = valueRef.current;
+    if (type === "text") {
+      inputRef.current.selectionStart = selectionStart
+        ? selectionStart - 1
+        : selectionStart;
+      inputRef.current.selectionEnd = selectionEnd
+        ? selectionEnd - 1
+        : selectionEnd;
+    }
+  }, [type]);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const nextValue = e.currentTarget.value;
       if (!pattern || pattern.test(nextValue)) {
-        onChange(nextValue);
-        valueRef.current = nextValue;
-      } else if (inputRef.current) {
-        const selectionStart = inputRef.current.selectionStart;
-        const selectionEnd = inputRef.current.selectionEnd;
-        inputRef.current.value = valueRef.current;
-        if (type === "text") {
-          inputRef.current.selectionStart = selectionStart
-            ? selectionStart - 1
-            : selectionStart;
-          inputRef.current.selectionEnd = selectionEnd
-            ? selectionEnd - 1
-            : selectionEnd;
+        const otherNextValue = onChange(nextValue);
+        if (otherNextValue === undefined) {
+          valueRef.current = nextValue;
+        } else {
+          if (otherNextValue !== nextValue) restoreValue();
+          valueRef.current = otherNextValue;
         }
+      } else if (inputRef.current) {
+        restoreValue();
       }
     },
-    [onChange, pattern, type]
+    [onChange, pattern, restoreValue],
   );
 
   return (
     <input
-      class="input"
+      class="Input"
       max={max}
       min={min}
       onChange={handleChange}
       placeholder={placeholder}
       ref={inputRef}
+      size={size}
       type={type}
       value={value}
     />

@@ -3,8 +3,8 @@
   --color-primary-2: #de8f4e;
   --color-primary-3: #572400;
 
-  --color-neutral-1: rgba(255, 255, 255, 0.87);
-  --color-neutral-2: rgba(255, 255, 255, 0.4);
+  --color-neutral-1: #f4f4f4;
+  --color-neutral-2: #a1a1a1;
 
   --color-background-1: #3b3b3b;
   --color-background-2: #242424;
@@ -14,7 +14,8 @@
   --caret-width: 0.75em;
   --digits-space: 0.4em;
 
-  --width-threshold: 42em;
+  --input-font-size: 0.8em;
+  --input-height: 2.35em;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -62,28 +63,30 @@ code {
   }
 }
 
-/*******************************************************************************
-* Utilities
-*******************************************************************************/
-
-._module {
-  display: flex;
-  flex-direction: column;
-  max-width: 50em;
-  padding: 1em;
-  margin: 0 auto;
-  gap: 1em;
+.flex_1 {
+  flex: 1;
 }
 
-._section-col {
-  display: flex;
-  flex-direction: column;
-  row-gap: 1em;
-}
-
-._section-row {
-  display: flex;
+.flex-wrap_wrap {
   flex-wrap: wrap;
-  column-gap: 2em;
-  row-gap: 1em;
+}
+
+.font-family_monospace {
+  font-family: monospace;
+}
+
+.font-size_s {
+  font-size: 0.8em;
+}
+
+.font-size_m {
+  font-size: 1em;
+}
+
+.font-size_l {
+  font-size: 1.2em;
+}
+
+.overflow_hidden {
+  overflow: hidden;
 }

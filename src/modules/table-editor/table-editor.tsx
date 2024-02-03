@@ -1,116 +1,80 @@
-import { z } from "zod";
-import RadioGroup, { RadioGroupOption } from "../../components/radio-group";
+import { useMemo } from "preact/hooks";
+import { useAppHotkeysIsEnabled } from "../../app/store";
 import SectionCollapsible from "../../components/section-collapsible";
 import SectionStatic from "../../components/section-static";
-import Setting from "../../components/setting";
-import useSetting from "../../hooks/use-setting";
-import { Encoding, EncodingSchema, Unit, UnitSchema } from "../../types";
-import "./table-editor.css";
-import TableEditorExport from "./table-editor-export";
-
-const encodingOptions: RadioGroupOption<Encoding>[] = [
-  { label: "Bin", value: Encoding.Bin },
-  { label: "Dec", value: Encoding.Dec },
-  { label: "Hex", value: Encoding.Hex },
-] as const;
-
-const unitOptions: RadioGroupOption<Unit>[] = [
-  { label: "Byte", value: Unit.Byte },
-  { label: "Word", value: Unit.Word },
-] as const;
+import useHotkeys, { Hotkey } from "../../hooks/use-hotkeys";
+import { toggle } from "../../utils";
+import {
+  useTableEditorTabAppearanceIsVisible,
+  useTableEditorTabSettingsIsVisible,
+  useTableEditorTabTutorialIsVisible,
+} from "./store";
+import TableEditorAppearance from "./table-editor-appearance";
+import TableEditorGrid from "./table-editor-grid";
+import TableEditorSettings from "./table-editor-settings";
+import TableEditorTutorial from "./table-editor-tutorial";
 
 export default function TableEditor() {
-  //----------------------------------------------------------------------------
-  // Settings
-  //----------------------------------------------------------------------------
+  const [isTabAppearanceVisible, setIsTabAppearanceVisible] =
+    useTableEditorTabAppearanceIsVisible();
 
-  const [exportVisible, setExportVisible] = useSetting(
-    "table-editor-export-visible",
-    false,
-    z.boolean().parse
-  );
+  const [isTabSettingsVisible, setIsTabSettingsVisible] =
+    useTableEditorTabSettingsIsVisible();
 
-  const [importVisible, setImportVisible] = useSetting(
-    "table-editor-import-visible",
-    false,
-    z.boolean().parse
-  );
+  const [isTabTutorialVisible, setIsTabTutorialVisible] =
+    useTableEditorTabTutorialIsVisible();
 
-  const [newVisible, setNewVisible] = useSetting(
-    "table-editor-new-visible",
-    false,
-    z.boolean().parse
-  );
+  const [isHotkeysEnabled] = useAppHotkeysIsEnabled();
 
-  const [settingsVisible, setSettingsVisible] = useSetting(
-    "table-editor-settings-visible",
-    false,
-    z.boolean().parse
-  );
+  const hotkeys = useMemo(() => {
+    const hotkeys: Hotkey[] = [];
 
-  const [encoding, setEncoding] = useSetting(
-    "table-editor-encoding",
-    Encoding.Hex,
-    EncodingSchema.parse
-  );
+    // prettier-ignore
+    if (isHotkeysEnabled) {
+      hotkeys.push({ key: "h", onPress: () => setIsTabTutorialVisible(toggle) });
+      hotkeys.push({ key: "s", onPress: () => setIsTabSettingsVisible(toggle) });
+      hotkeys.push({ key: "t", onPress: () => setIsTabAppearanceVisible(toggle) });
+    }
 
-  const [unit, setUnit] = useSetting(
-    "table-editor-unit",
-    Unit.Byte,
-    UnitSchema.parse
-  );
+    return hotkeys;
+  }, [
+    setIsTabAppearanceVisible,
+    setIsTabSettingsVisible,
+    setIsTabTutorialVisible,
+  ]);
 
-  //----------------------------------------------------------------------------
-  // Render
-  //----------------------------------------------------------------------------
+  useHotkeys(hotkeys);
 
   return (
-    <div class="table-editor _module">
-      <SectionStatic label="Table Editor">Table</SectionStatic>
+    <div class="App_Module">
+      <div class="App_ModuleBlock">
+        <SectionStatic label="Table Editor">
+          <TableEditorGrid />
+        </SectionStatic>
+      </div>
 
-      <SectionCollapsible
-        isVisible={settingsVisible}
-        label="Settings"
-        onChange={setSettingsVisible}
-      >
-        <div class="_section-row">
-          <Setting label="Encoding">
-            <RadioGroup
-              onChange={setEncoding}
-              options={encodingOptions}
-              value={encoding}
-            />
-          </Setting>
+      <div class="App_ModuleBlock">
+        <SectionCollapsible
+          isVisible={isTabSettingsVisible}
+          label="Settings"
+          onChange={setIsTabSettingsVisible}
+        >
+          <TableEditorSettings />
+        </SectionCollapsible>
 
-          <Setting label="Unit">
-            <RadioGroup onChange={setUnit} options={unitOptions} value={unit} />
-          </Setting>
-        </div>
-      </SectionCollapsible>
+        <SectionCollapsible
+          isVisible={isTabAppearanceVisible}
+          label="Appearance"
+          onChange={setIsTabAppearanceVisible}
+        >
+          <TableEditorAppearance />
+        </SectionCollapsible>
 
-      <SectionCollapsible
-        isVisible={exportVisible}
-        label="Export"
-        onChange={setExportVisible}
-      >
-        <TableEditorExport />
-      </SectionCollapsible>
-
-      <SectionCollapsible
-        isVisible={importVisible}
-        label="Import"
-        onChange={setImportVisible}
-      >
-        WIP
-      </SectionCollapsible>
-
-      <SectionCollapsible
-        isVisible={newVisible}
-        label="New"
-        onChange={setNewVisible}
-      >
-        WIP
-      </SectionCollapsible>
+        <TableEditorTutorial
+          isVisible={isTabTutorialVisible}
+          onChangeVisibility={setIsTabTutorialVisible}
+        />
+      </div>
     </div>
   );
 }

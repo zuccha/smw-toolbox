@@ -1,0 +1,89 @@
+.IntegerGridEditor {
+  font-family: monospace;
+  user-select: none;
+  cursor: pointer;
+}
+
+.IntegerGridEditor_Grid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.IntegerGridEditor_Grid:focus {
+  outline: none;
+}
+
+.IntegerGridEditor_Background {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -2;
+}
+
+.IntegerGridEditor_Row {
+  display: flex;
+  width: 100%;
+}
+
+.IntegerGridEditor_Cell {
+  position: relative;
+  flex: 1;
+  padding: 0.2em;
+  word-break: break-all;
+  border-bottom: 1px solid var(--color-neutral-2);
+  border-right: 1px solid var(--color-neutral-2);
+  color: var(--color-neutral-2);
+  line-height: normal;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* This is `min-height: width` basically. */
+.IntegerGridEditor_Cell:before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+  float: left;
+}
+
+@media (max-width: 40em) {
+  .IntegerGridEditor_Cell {
+    font-size: 0.8em;
+  }
+}
+
+.IntegerGridEditor_Row:first-child .IntegerGridEditor_Cell {
+  border-top: 1px solid var(--color-neutral-2);
+}
+
+.IntegerGridEditor_Cell:first-child {
+  border-left: 1px solid var(--color-neutral-2);
+}
+
+.IntegerGridEditor_Cell > div > span:first-child {
+  line-height: normal;
+  text-align: center;
+  color: var(--color-neutral-1);
+}
+
+.IntegerGridEditor_Cell_Background {
+  z-index: -1;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.IntegerGridEditor_Cell.selected .IntegerGridEditor_Cell_Background {
+  background-color: var(--color-background-3);
+}

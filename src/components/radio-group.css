@@ -1,19 +1,19 @@
-.radio-group {
+.RadioGroup {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.radio-group .button:not(:last-child) {
+.RadioGroup .Button:not(:last-child) {
   border-right-width: 0;
 }
 
-.radio-group .button:hover,
-.radio-group .button:hover + * {
+.RadioGroup .Button:hover,
+.RadioGroup .Button:hover + * {
   border-left-color: var(--color-primary-1);
 }
 
-.radio-group .button.selected,
-.radio-group .button.selected + * {
+.RadioGroup .Button.selected,
+.RadioGroup .Button.selected + * {
   border-left-color: var(--color-primary-2);
 }

@@ -1,29 +1,34 @@
-import { ReactNode } from "preact/compat";
-import Button from "./button";
+import { FunctionalComponent } from "preact";
+import Button, { ButtonProps } from "./button";
 import "./icon-button.css";
 
-type IconButtonProps = {
+export type Icon = FunctionalComponent<{ size: number | string }>;
+
+export type IconButtonProps = {
+  Icon: Icon;
+  isGhost?: boolean;
   isSelected?: boolean;
-  label: ReactNode;
   onClick: () => void;
   tooltip: string;
-  tooltipPosition?: "bottom" | "left" | "right" | "top";
+  tooltipPosition?: ButtonProps["tooltipPosition"];
 };
 
 export default function IconButton({
+  Icon,
   isSelected = false,
-  label,
   onClick,
   tooltip,
-  tooltipPosition = "bottom",
+  tooltipPosition,
 }: IconButtonProps) {
   return (
-    <div class={`icon-button ${tooltipPosition}`} data-tooltip={tooltip}>
+    <div class="IconButton">
       <Button
         isBorderless
         isSelected={isSelected}
-        label={label}
+        label={<Icon size="1em" />}
         onClick={onClick}
+        tooltip={tooltip}
+        tooltipPosition={tooltipPosition}
       />
     </div>
   );

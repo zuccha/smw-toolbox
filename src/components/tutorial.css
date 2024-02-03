@@ -1,0 +1,51 @@
+.Tutorial {
+  align-self: flex-start;
+  min-width: 100%;
+  max-width: min-content;
+}
+
+.Tutorial table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.Tutorial td,
+.Tutorial th {
+  border: 1px solid var(--color-neutral-2);
+  padding: 0.2em 0.5em;
+}
+
+.Tutorial_Setting_Name,
+.Tutorial_Action_Name {
+  min-width: 10em;
+
+  @media (min-width: max-content) {
+    min-width: max-content;
+  }
+}
+
+.Tutorial_Setting_Description,
+.Tutorial_Action_Description {
+  width: 100%;
+}
+
+.Tutorial_Sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.Tutorial_Section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.Tutorial_Section_Title {
+  font-weight: bold;
+  margin-bottom: 0.3em;
+}
+
+.Tutorial_Section table {
+  margin-top: 0.25em;
+}

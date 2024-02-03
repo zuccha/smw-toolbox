@@ -1,5 +1,7 @@
-.select {
+.Select {
   position: relative;
+  font-size: var(--input-font-size);
+  min-height: var(--input-height);
 
   display: flex;
   align-items: center;
@@ -9,47 +11,50 @@
   font-size: 0.8em;
   line-height: normal;
   padding: 0.5em 0.75em;
-
-  cursor: pointer;
 }
 
-.select:focus-within {
+.Select:hover {
+  border-color: var(--color-primary-1);
+}
+
+.Select:focus-within {
   outline-color: var(--color-primary-1);
   outline-style: auto;
 }
 
-.select-labels {
+.Select_Labels {
   pointer-events: none;
   width: max-content;
 }
 
-.select-label {
+.Select_Label {
   line-height: 0;
 }
 
-.select-label.hidden {
+.Select_Label.hidden {
   visibility: hidden;
 }
 
-.select-placeholder {
+.Select_Placeholder {
   color: var(--color-neutral-2);
 }
 
-.select-icon {
+.Select_Icon {
   display: flex;
   align-items: center;
   color: var(--color-neutral-2);
 }
 
-.select > select {
+.Select > select {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   top: 0;
   opacity: 0;
+  cursor: pointer;
 }
 
-.select > select:focus {
+.Select > select:focus {
   outline: none;
 }

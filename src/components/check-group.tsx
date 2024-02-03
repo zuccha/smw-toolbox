@@ -14,7 +14,7 @@ export default function CheckGroup({
   values,
 }: CheckGroupProps) {
   return (
-    <div class="check-group">
+    <div class="CheckGroup">
       {labels.map((label, i) => {
         const value = values[i];
         if (value === undefined) return null;

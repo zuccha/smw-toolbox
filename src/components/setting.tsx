@@ -9,11 +9,11 @@ type Setting = {
 
 export default function Setting({ children, hotkey, label }: Setting) {
   return (
-    <div class="setting">
-      <span class="setting-label">
+    <div class="Setting">
+      <span class="Setting_Label">
         {hotkey ? `${label} (${hotkey})` : label}
       </span>
-      <div class="setting-input">{children}</div>
+      <div class="Setting_Input">{children}</div>
     </div>
   );
 }

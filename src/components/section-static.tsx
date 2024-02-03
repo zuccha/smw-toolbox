@@ -9,7 +9,7 @@ export type SectionStaticProps = {
 
 export default function SectionStatic({ children, label }: SectionStaticProps) {
   return (
-    <Section header={<div class="section-header">{label}</div>}>
+    <Section header={<div class="Section_Header">{label}</div>}>
       {children}
     </Section>
   );

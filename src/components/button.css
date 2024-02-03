@@ -1,7 +1,8 @@
-.button {
+.Button {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 
   padding: 0.5em 0.75em;
 
@@ -10,41 +11,87 @@
 
   color: var(--color-neutral-1);
   line-height: normal;
-  font-size: 0.8em;
 
   user-select: none;
   cursor: pointer;
   white-space: nowrap;
+
+  font-size: var(--input-font-size);
+  min-height: var(--input-height);
 }
 
-.button.borderless {
+.Button.borderless {
   border-color: transparent;
 }
 
-.button:hover {
+.Button:hover {
   background-color: var(--color-background-1);
 }
 
-.button:active {
+.Button:active {
   background-color: var(--color-primary-3);
 }
 
-.button.selected,
-.button.selected:hover {
+.Button.selected,
+.Button.selected:hover {
   color: var(--color-primary-2);
 }
 
-.button.selected:not(.borderless),
-.button.selected:not(.borderless):hover {
+.Button.selected:not(.borderless),
+.Button.selected:not(.borderless):hover {
   border-color: var(--color-primary-2);
 }
 
-.button:focus:not(.borderless),
-.button:hover:not(.borderless) {
+.Button:hover:not(.borderless) {
   border-color: var(--color-primary-1);
 }
 
-.button:focus,
-.button:hover {
+.Button:hover {
   color: var(--color-primary-1);
+}
+
+.Button::before {
+  content: attr(data-tooltip);
+  white-space: nowrap;
+  z-index: 1;
+  position: absolute;
+  background-color: var(--color-background-1);
+  color: var(--color-neutral-1);
+  padding: 0.4em;
+  border-radius: 0.2em;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 0.8rem;
+}
+
+.Button.bottom:hover::before,
+.Button.left:hover::before,
+.Button.right:hover::before,
+.Button.top:hover::before {
+  transition: opacity cubic-bezier(1, 0, 1, 0) 0.5s;
+  opacity: 1;
+}
+
+.Button.bottom::before {
+  top: calc(100% + 0.3em);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.Button.left::before {
+  right: calc(100% + 0.3em);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.Button.right::before {
+  left: calc(100% + 0.3em);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.Button.top::before {
+  bottom: calc(100% + 0.3em);
+  left: 50%;
+  transform: translateX(-50%);
 }

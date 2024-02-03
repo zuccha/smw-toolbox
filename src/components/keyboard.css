@@ -1,38 +1,39 @@
-.keyboard {
+.Keyboard {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  /* grid-template-columns: repeat(X, 1fr); -> Defined in component via styles */
   font-family: monospace;
   font-size: 2em;
   gap: 0.3em;
 }
 
-.keyboard-key {
+.Keyboard_Key {
   height: 1.5em;
   width: 1.5em;
 }
 
-.keyboard-key > .button > div {
+.Keyboard_Key > .Button > div {
   display: flex;
 }
 
-.keyboard-key .button {
+.Keyboard_Key .Button {
   height: 100%;
   width: 100%;
   text-align: center;
+  min-height: unset;
 }
 
-.keyboard-key .xxs {
+.Keyboard_Key_xxs {
   font-size: 0.4em;
 }
 
-.keyboard-key .xs {
+.Keyboard_Key_xs {
   font-size: 0.5em;
 }
 
-.keyboard-key .s {
+.Keyboard_Key_s {
   font-size: 0.7em;
 }
 
-.keyboard-key .l {
+.Keyboard_Key_l {
   font-size: 1.2em;
 }

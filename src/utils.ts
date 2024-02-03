@@ -1,5 +1,3 @@
-import { HexDigit, HexDigits } from "./types";
-
 export function doNothing() {}
 
 export function clamp(n: number, min: number, max: number): number {
@@ -15,7 +13,7 @@ export function classNames(options: [string, boolean][]): string {
 
 export function firstIndexOf<T>(
   items: T[],
-  predicate: (item: T, index: number) => boolean
+  predicate: (item: T, index: number) => boolean,
 ): number {
   for (let i = 0; i < items.length; ++i) if (predicate(items[i]!, i)) return i;
   return items.length;
@@ -23,7 +21,7 @@ export function firstIndexOf<T>(
 
 export function lastIndexOf<T>(
   items: T[],
-  predicate: (item: T, index: number) => boolean
+  predicate: (item: T, index: number) => boolean,
 ): number {
   for (let i = items.length - 1; i >= 0; --i)
     if (predicate(items[i]!, i)) return i;
@@ -59,12 +57,18 @@ export function range(length: number): number[] {
   return Array.from(Array(length).keys());
 }
 
-export function digitToHex(digit: number): HexDigit {
-  return HexDigits[digit] ?? "0";
+export function isInRange(n: number, min: number, max: number): boolean {
+  return min <= n && n <= max;
 }
 
-export function hexToDigit(hex: string): number {
-  return Number.parseInt(hex ?? "0", 16) ?? 0;
+export function sum(numbers: number[]) {
+  return numbers.reduce((partialSum, n) => partialSum + n, 0);
+}
+
+export function center(str: string, length: number, c: string = " "): string {
+  const prefix = c.repeat(Math.ceil(Math.max((length - str.length) / 2, 0)));
+  const suffix = c.repeat(Math.floor(Math.max((length - str.length) / 2, 0)));
+  return `${prefix}${str}${suffix}`;
 }
 
 export function padL(text: string, length: number, fill: string): string {
@@ -82,3 +86,21 @@ export function ok(_: unknown): true {
 export function ko(_: unknown): false {
   return false;
 }
+
+export function toDec(n: number): string {
+  return n.toString(10);
+}
+
+export function toHex(n: number, minLength?: number): string {
+  const hex = n.toString(16).toUpperCase();
+  return minLength !== undefined ? padL(hex, minLength, "0") : hex;
+}
+
+export function isNothingFocused(): boolean {
+  return (document.activeElement ?? document.body) === document.body;
+}
+
+export const labelPattern = /^\.*[a-zA-Z0-9_]*$/;
+export const labelColumnPattern = /^\.*[a-zA-Z0-9_]*:$/;
+
+export const colorHexPattern = /^#[a-zA-Z0-9]{6}$/;

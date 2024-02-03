@@ -1,12 +1,13 @@
 import { useCallback } from "preact/hooks";
 import Input, { InputProps } from "./input";
+import { clamp } from "../utils";
 
 export type InputNumberProps = Omit<
   InputProps,
   "onChange" | "pattern" | "type" | "value"
 > & {
   isInteger?: boolean;
-  onChange: (value: number) => void;
+  onChange: (value: number) => number | void;
   value: number;
 };
 
@@ -20,9 +21,15 @@ export default function InputNumber({
 }: InputNumberProps) {
   const handleChange = useCallback(
     (textValue: string) => {
-      onChange(Number.parseInt(textValue));
+      const clampedValue = clamp(
+        Number.parseInt(textValue),
+        props.min ?? -Infinity,
+        props.max ?? Infinity,
+      );
+      const nextValue = onChange(clampedValue) ?? clampedValue;
+      return Number.isNaN(nextValue) ? "" : `${nextValue}`;
     },
-    [isInteger, onChange]
+    [isInteger, onChange],
   );
 
   return (

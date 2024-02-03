@@ -15,7 +15,7 @@ export default function RadioGroup<T>({
   value,
 }: RadioGroupProps<T>) {
   return (
-    <div class="radio-group">
+    <div class="RadioGroup">
       {options.map((option) => {
         const onClick = () => onChange(option.value);
 

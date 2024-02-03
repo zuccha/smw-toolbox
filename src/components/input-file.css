@@ -1,0 +1,43 @@
+.InputFile {
+  font-size: var(--input-font-size);
+  min-height: var(--input-height);
+
+  border: 1px dashed var(--color-neutral-2);
+  padding: 0.5em 0.75em;
+  font-size: 0.8em;
+  cursor: pointer;
+
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 0.5em;
+  overflow: hidden;
+  line-height: normal;
+}
+
+.InputFile:focus,
+.InputFile:hover {
+  border-color: var(--color-primary-1);
+}
+
+.InputFile:focus {
+  outline-color: var(--color-primary-1);
+}
+
+.InputFile_Label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.InputFile .Button {
+  font-size: 1em;
+  padding: 0;
+  min-height: unset;
+}
+
+.InputFile input[type="file"] {
+  display: none;
+}

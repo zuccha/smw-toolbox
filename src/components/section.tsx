@@ -14,14 +14,14 @@ export default function Section({
   header,
 }: SectionProps) {
   const _className = classNames([
-    ["section", true],
+    ["Section", true],
     [className, Boolean(className)],
   ]);
 
   return (
     <div class={_className}>
       {header}
-      <div class="section-children">{children}</div>
+      <div class="Section_Children">{children}</div>
     </div>
   );
 }

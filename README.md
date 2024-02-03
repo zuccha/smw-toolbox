@@ -1,4 +1,4 @@
-# SMW Toolchain
+# SMW Toolbox
 
 A collection of tools for hacking SMW more easily.
 

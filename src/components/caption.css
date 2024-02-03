@@ -1,10 +1,10 @@
-.caption {
+.Caption {
   display: flex;
   flex-direction: row;
   user-select: none;
 }
 
-.caption-char {
+.Caption_Char {
   flex: 1;
   display: flex;
   align-items: center;
@@ -13,14 +13,14 @@
   width: var(--caret-width);
 }
 
-.caption-char > span {
+.Caption_Char > span {
   font-size: small;
 }
 
-.caption.space-4 .caption-char:nth-last-child(4n + 4):not(:first-child) {
+.Caption.space-4 .Caption_Char:nth-last-child(4n + 4):not(:first-child) {
   margin-left: var(--digits-space);
 }
 
-.caption.space-8 .caption-char:nth-last-child(8n + 8):not(:first-child) {
+.Caption.space-8 .Caption_Char:nth-last-child(8n + 8):not(:first-child) {
   margin-left: var(--digits-space);
 }
