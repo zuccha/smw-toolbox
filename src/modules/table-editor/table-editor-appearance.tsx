@@ -64,6 +64,8 @@ export default function TableEditorAppearance() {
             <Button
               label={<EyeToggle isVisible={isBackgroundImageVisible} />}
               onClick={toggleIsBackgroundImageVisible}
+              tooltip={isBackgroundImageVisible ? "Hide" : "Show"}
+              tooltipPosition="right"
             />
 
             <InputFile

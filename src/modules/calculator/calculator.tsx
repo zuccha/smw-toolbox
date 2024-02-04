@@ -3,18 +3,11 @@ import { isMobile } from "react-device-detect";
 import { useAppHotkeysIsEnabled } from "../../app/store";
 import Caption from "../../components/caption";
 import CheckGroup from "../../components/check-group";
-import {
-  IntegerEditorCaret,
-  IntegerEditorSpaceFrequency,
-} from "../../components/integer-editor";
 import Keyboard, {
   KeyboardAction,
   KeyboardMode,
 } from "../../components/keyboard";
-import RadioGroup, { RadioGroupOption } from "../../components/radio-group";
-import SectionCollapsible from "../../components/section-collapsible";
 import SectionStatic from "../../components/section-static";
-import Setting from "../../components/setting";
 import { useIntegerStore } from "../../hooks/use-integer";
 import {
   IntegerBoundsUnsigned,
@@ -54,49 +47,11 @@ import {
 } from "./store";
 import "./calculator.css";
 import useHotkeys, { Hotkey } from "../../hooks/use-hotkeys";
+import CalculatorSettings from "./calculator-settings";
 
 //==============================================================================
 // Settings Options
 //==============================================================================
-
-const binaryOptions: RadioGroupOption<boolean>[] = [
-  { label: "On", value: true },
-  { label: "Off", value: false },
-] as const;
-
-const caretOptions: RadioGroupOption<IntegerEditorCaret>[] = [
-  { label: "Bar", value: IntegerEditorCaret.Bar },
-  { label: "Box", value: IntegerEditorCaret.Box },
-  { label: "Underline", value: IntegerEditorCaret.Underline },
-] as const;
-
-const keyboardModeOptions: RadioGroupOption<KeyboardMode>[] = [
-  { label: "None", value: KeyboardMode.None },
-  { label: "Compact", value: KeyboardMode.Compact },
-  { label: "Full", value: KeyboardMode.Full },
-] as const;
-
-const spaceFrequencyOptions: RadioGroupOption<IntegerEditorSpaceFrequency>[] = [
-  { label: "None", value: IntegerEditorSpaceFrequency.None },
-  { label: "8 Digits", value: IntegerEditorSpaceFrequency.Digits8 },
-  { label: "4 Digits", value: IntegerEditorSpaceFrequency.Digits4 },
-] as const;
-
-const typingDirectionOptions: RadioGroupOption<IntegerStringTypingDirection>[] =
-  [
-    { label: "Left", value: IntegerStringTypingDirection.Left },
-    { label: "Right", value: IntegerStringTypingDirection.Right },
-  ] as const;
-
-const typingModeOptions: RadioGroupOption<IntegerStringTypingMode>[] = [
-  { label: "Insert", value: IntegerStringTypingMode.Insert },
-  { label: "Overwrite", value: IntegerStringTypingMode.Overwrite },
-] as const;
-
-const unitOptions: RadioGroupOption<IntegerUnit>[] = [
-  { label: "Byte", value: IntegerUnit.Byte },
-  { label: "Word", value: IntegerUnit.Word },
-] as const;
 
 const groupVisibilityLabels = ["B", "D", "H"];
 
@@ -117,24 +72,23 @@ export default function Calculator() {
   // Store
   //----------------------------------------------------------------------------
 
-  const [isBinSigned, setIsBinSigned] = useCalculatorEditorBinIsSigned();
+  const [isBinSigned] = useCalculatorEditorBinIsSigned();
   const [isDecSigned, setIsDecSigned] = useCalculatorEditorDecIsSigned();
-  const [isHexSigned, setIsHexSigned] = useCalculatorEditorHexIsSigned();
+  const [isHexSigned] = useCalculatorEditorHexIsSigned();
 
-  const [caret, setCaret] = useCalculatorEditorsCaret();
+  const [caret] = useCalculatorEditorsCaret();
   const [shouldFlipBitOnClick, setShouldFlipBitOnClick] =
     useCalculatorEditorsShouldFlipBitOnClick();
   const [shouldMoveAfterTyping, setShouldMoveAfterTyping] =
     useCalculatorEditorsShouldMoveAfterTyping();
-  const [spaceFrequency, setSpaceFrequency] =
-    useCalculatorEditorsSpaceFrequency();
+  const [spaceFrequency] = useCalculatorEditorsSpaceFrequency();
   const [typingDirection, setTypingDirection] =
     useCalculatorEditorsTypingDirection();
   const [typingMode, setTypingMode] = useCalculatorEditorsTypingMode();
 
   const [isAdvanced, setIsAdvanced] = useCalculatorIsAdvanced();
 
-  const [keyboardMode, setKeyboardMode] = useCalculatorKeyboardMode();
+  const [keyboardMode] = useCalculatorKeyboardMode();
 
   const [operand1Visibility, setOperand1Visibility] =
     useCalculatorOperand1Visibility();
@@ -530,111 +484,10 @@ export default function Calculator() {
       </div>
 
       <div class="Calculator App_ModuleBlock">
-        <SectionCollapsible
+        <CalculatorSettings
           isVisible={isTabSettingsVisible}
-          label="Settings"
-          onChange={setIsTabSettingsVisible}
-        >
-          <div class="App_SectionRow">
-            <Setting hotkey="Q" label="Advanced">
-              <RadioGroup
-                onChange={setIsAdvanced}
-                options={binaryOptions}
-                value={isAdvanced}
-              />
-            </Setting>
-
-            <Setting hotkey="Y/W" label="Unit">
-              <RadioGroup
-                onChange={setUnit}
-                options={unitOptions}
-                value={unit}
-              />
-            </Setting>
-
-            {!isMobile && (
-              <Setting label="Keyboard">
-                <RadioGroup
-                  onChange={setKeyboardMode}
-                  options={keyboardModeOptions}
-                  value={keyboardMode}
-                />
-              </Setting>
-            )}
-
-            <Setting hotkey="I/O" label="Typing Mode">
-              <RadioGroup
-                onChange={setTypingMode}
-                options={typingModeOptions}
-                value={typingMode}
-              />
-            </Setting>
-
-            <Setting hotkey="L/R" label="Typing Direction">
-              <RadioGroup
-                onChange={setTypingDirection}
-                options={typingDirectionOptions}
-                value={typingDirection}
-              />
-            </Setting>
-
-            <Setting hotkey="M" label="Move Cursor">
-              <RadioGroup
-                onChange={setShouldMoveAfterTyping}
-                options={binaryOptions}
-                value={shouldMoveAfterTyping}
-              />
-            </Setting>
-
-            <Setting hotkey="T" label="Flip Bit">
-              <RadioGroup
-                onChange={setShouldFlipBitOnClick}
-                options={binaryOptions}
-                value={shouldFlipBitOnClick}
-              />
-            </Setting>
-
-            <Setting label="Signed Binary">
-              <RadioGroup
-                onChange={setIsBinSigned}
-                options={binaryOptions}
-                value={isBinSigned}
-              />
-            </Setting>
-
-            <Setting hotkey="N" label="Signed Decimal">
-              <RadioGroup
-                onChange={setIsDecSigned}
-                options={binaryOptions}
-                value={isDecSigned}
-              />
-            </Setting>
-
-            <Setting label="Signed Hexadecimal">
-              <RadioGroup
-                onChange={setIsHexSigned}
-                options={binaryOptions}
-                value={isHexSigned}
-              />
-            </Setting>
-
-            <Setting label="Caret">
-              <RadioGroup
-                onChange={setCaret}
-                options={caretOptions}
-                value={caret}
-              />
-            </Setting>
-
-            <Setting label="Space Frequency">
-              <RadioGroup
-                onChange={setSpaceFrequency}
-                options={spaceFrequencyOptions}
-                value={spaceFrequency}
-              />
-            </Setting>
-          </div>
-        </SectionCollapsible>
+          onChangeVisibility={setIsTabSettingsVisible}
+        />
 
         <CalculatorTutorial
           isVisible={isTabTutorialVisible}

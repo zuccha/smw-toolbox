@@ -4,7 +4,10 @@ import {
   SettingsIcon,
   InfoIcon,
 } from "lucide-preact";
+import AppInfo from "./app-info/app-info";
+import { appInfoId } from "./app-info/store";
 import AppSettings from "./app-settings/app-settings";
+import { appSettingsId } from "./app-settings/store";
 import Calculator from "./calculator/calculator";
 import { calculatorId } from "./calculator/store";
 import TableEditor from "./table-editor/table-editor";
@@ -36,13 +39,13 @@ export const metaModules: Module[] = [
   {
     Content: AppSettings,
     Icon: SettingsIcon,
-    id: "settings",
+    id: appSettingsId,
     name: "Settings",
   },
   {
-    Content: () => null,
+    Content: AppInfo,
     Icon: InfoIcon,
-    id: "about",
-    name: "About",
+    id: appInfoId,
+    name: "Info",
   },
 ] as const;

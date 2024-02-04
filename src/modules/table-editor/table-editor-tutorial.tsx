@@ -8,13 +8,13 @@ const actions: TutorialAction[] = [
     name: "Copy",
     description:
       "Copy the table to the clipboard via the copy icon button on the top right of the grid. The table will be formatted according to its settings.",
-    keybindings: ["CTRL+C", "CMD+C"],
+    keybindings: ["Ctrl+C", "Cmd+C"],
   },
   {
     name: "Paste",
     description:
       'Paste an ASM table from the clipboard into the tool via the paste icon button on the top right of the grid. Every row of the table has to start either with "db" or "dw", no mixed values are admitted. Every row must have the same number of elements. One label is admitted and, if present, will be used as table name. No other ASM code is allowed. Comments will be removed. Any error will cause the operation to fail and display a message below the icon buttons.',
-    keybindings: ["CTRL+V", "CMD+V"],
+    keybindings: ["Ctrl+V", "Cmd+V"],
   },
   {
     name: "Clear",
@@ -25,7 +25,7 @@ const actions: TutorialAction[] = [
   {
     name: "Type",
     description: "Type a valid digit to edit selected cells.",
-    keybindings: ["<digits>"],
+    keybindings: ["Digit"],
   },
   {
     name: "Backspace (⌫)",
@@ -42,12 +42,12 @@ const actions: TutorialAction[] = [
   {
     name: "Movement",
     description: "Select the next cell in the corresponding direction.",
-    keybindings: ["<arrows>"],
+    keybindings: ["Arrow"],
   },
   {
     name: "Multi-Selection",
     description: "Select multiple groups of cells at once.",
-    keybindings: ["SHIFT", "CTRL", "CMD"],
+    keybindings: ["Shift", "Ctrl", "Cmd"],
   },
 ];
 
@@ -90,7 +90,7 @@ const settings: TutorialSetting[] = [
     name: "Width",
     values: [
       {
-        type: "<number>",
+        type: "#Number",
         description:
           "Number of columns of the table. If you shrink then expand the table again, the previous column values will be restored.",
       },
@@ -101,7 +101,7 @@ const settings: TutorialSetting[] = [
     name: "Height",
     values: [
       {
-        type: "<number>",
+        type: "#Number",
         description:
           "Number of rows of the table. If you shrink then expand the table again, the previous row values will be restored.",
       },
@@ -112,7 +112,7 @@ const settings: TutorialSetting[] = [
     name: "Table Name",
     values: [
       {
-        type: "<text>",
+        type: "#Text",
         description:
           "Name (label) of the table. The table name can only contain letters, digits, and underscores, it cannot start with a digit, and it can start with any number of periods.",
       },
@@ -173,7 +173,7 @@ const settings: TutorialSetting[] = [
     name: "Indentation",
     values: [
       {
-        type: "<number>",
+        type: "#Number",
         description:
           "Number of spaces to prepend to each row while copying it.",
       },
@@ -203,7 +203,7 @@ const appearance: TutorialSetting[] = [
     name: "Background Image",
     values: [
       {
-        type: "<file>",
+        type: "#File",
         description:
           "An image to display as background for the table. You can toggle the image visibility with the icon button.",
       },
@@ -214,7 +214,7 @@ const appearance: TutorialSetting[] = [
     name: "Background Image Opacity",
     values: [
       {
-        type: "<number>",
+        type: "#Number",
         description: "Opacity for the background image.",
       },
     ],
@@ -224,7 +224,7 @@ const appearance: TutorialSetting[] = [
     name: "Decimal Value Color",
     values: [
       {
-        type: "<number> + <color>",
+        type: "#Number+Color",
         description:
           "Background color for cells with the specified value. Every value has a corresponding color that's useful to distinguish blocks of values. Selecting a cell in the table will set its value in this editor. Use the reset button to restore the default color for the value.",
       },
@@ -235,12 +235,30 @@ const appearance: TutorialSetting[] = [
     name: "Color Opacity",
     values: [
       {
-        type: "<number>",
+        type: "#Number",
         description:
           "Opacity for the background background colors of the cells.",
       },
     ],
     keybindings: [],
+  },
+];
+
+const visibility: TutorialAction[] = [
+  {
+    name: "Settings",
+    description: "Toggle settings tab visibility.",
+    keybindings: ["S"],
+  },
+  {
+    name: "Appearance",
+    description: "Toggle appearance tab visibility.",
+    keybindings: ["T"],
+  },
+  {
+    name: "Instructions",
+    description: "Toggle instructions tab visibility.",
+    keybindings: ["H"],
   },
 ];
 
@@ -279,6 +297,11 @@ export default function TableEditorTutorial({
       <Tutorial.Section title="Appearance">
         <div>Settings used for visualization only.</div>
         <Tutorial.Settings settings={appearance} />
+      </Tutorial.Section>
+
+      <Tutorial.Section title="Visibility">
+        <div>Shortcuts to toggle sections' visibility.</div>
+        <Tutorial.Actions actions={visibility} />
       </Tutorial.Section>
     </Tutorial>
   );

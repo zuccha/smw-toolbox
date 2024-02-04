@@ -51,8 +51,8 @@ a:hover {
   text-decoration: underline;
 }
 
-code {
-  background-color: var(--color-background-3);
+kbd {
+  background-color: var(--color-background-1);
   padding: 0.2em 0.4em;
   border-radius: 0.2em;
 }

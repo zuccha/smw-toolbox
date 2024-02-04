@@ -13,18 +13,18 @@ const baseActions: TutorialAction[] = [
     name: "Type",
     description:
       "Type a valid digit in the editor. The digit will either be inserted to the right of the cursor, or replace the selected digit depending on which typing mode is selected. Afterwards, the cursor moves to the right.",
-    keybindings: ["<digits>"],
+    keybindings: ["Digit"],
   },
   {
     name: "Delete (DEL)",
     description: "Delete the digit on the right of the cursor.",
-    keybindings: ["DELETE"],
+    keybindings: ["Delete"],
   },
   {
     name: "Backspace (⌫)",
     description:
       "Delete the digit on the left of the cursor, then move the cursor to the left. If the cursors is already all the way to the left, then it will behave like Delete.",
-    keybindings: ["BACKSPACE"],
+    keybindings: ["Backspace"],
   },
   {
     name: "Negate (NEG)",
@@ -59,39 +59,39 @@ const baseActions: TutorialAction[] = [
   {
     name: "Clear (Cl)",
     description: "Set the value of the selected editor to zero.",
-    keybindings: ["SHIFT+BACKSPACE", "SHIFT+DELETE"],
+    keybindings: ["Shift+Backspace", "Shift+Delete"],
   },
   {
     name: "Increase (INC)",
     description:
       "Increase the selected digit by one. It wraps around if it exceeds the maximum. In binary, this is the equivalent of a bit flip.",
-    keybindings: ["SPACE"],
+    keybindings: ["Space"],
   },
   {
     name: "Decrease (DEC)",
     description:
       "Decrease the selected digit by one. It wraps around if it goes below zero. In binary, this is the equivalent of a bit flip.",
-    keybindings: ["SHIFT+SPACE"],
+    keybindings: ["Shift+Space"],
   },
   {
     name: "Movement",
     description: "Move across editors.",
-    keybindings: ["<arrows>"],
+    keybindings: ["Arrow"],
   },
   {
     name: "Navigate",
-    keybindings: ["TAB", "SHIFT+TAB"],
+    keybindings: ["TAB", "Shift+Tab"],
     description: "Navigate to the next/previous focusable element.",
   },
   {
     name: "Copy",
-    keybindings: ["CTRL+C", "CMD+C"],
+    keybindings: ["Ctrl+C", "Cmd+C"],
     description:
       "Copy the value of the focused editor in the clipboard. You can also use the button on the right of the editor.",
   },
   {
     name: "Paste",
-    keybindings: ["CTRL+V", "CMD+V"],
+    keybindings: ["Ctrl+V", "Cmd+V"],
     description:
       "Paste a value from the clipboard in the focused editor. You can also use the button on the right of the editor. It won't do anything if the clipboard doesn't contain a valid value.",
   },
@@ -131,7 +131,7 @@ const advancedActions: TutorialAction[] = [
   {
     name: "Clear All (CA)",
     description: "Clear all values (set them to 0).",
-    keybindings: ["CTRL+BACKSPACE", "CTRL+DELETE"],
+    keybindings: ["Ctrl+Backspace", "Ctrl+Delete"],
   },
   {
     name: "Swap Operands (SWAP)",
@@ -333,25 +333,18 @@ const settings: TutorialSetting[] = [
     ],
     keybindings: [],
   },
+];
+
+const visibility: TutorialAction[] = [
   {
     name: "Settings",
-    values: [
-      {
-        type: "-",
-        description: "Toggle settings visibility.",
-        keybindings: ["S"],
-      },
-    ],
+    description: "Toggle settings tab visibility.",
+    keybindings: ["S"],
   },
   {
     name: "Instructions",
-    values: [
-      {
-        type: "-",
-        description: "Toggle instructions visibility.",
-        keybindings: ["H"],
-      },
-    ],
+    description: "Toggle instructions tab visibility.",
+    keybindings: ["H"],
   },
 ];
 
@@ -400,6 +393,11 @@ export default function CalculatorTutorial({
           Settings to customize the appearance and behavior of the calculator.
         </div>
         <Tutorial.Settings settings={settings} />
+      </Tutorial.Section>
+
+      <Tutorial.Section title="Visibility">
+        <div>Shortcuts to toggle sections' visibility.</div>
+        <Tutorial.Actions actions={visibility} />
       </Tutorial.Section>
     </Tutorial>
   );

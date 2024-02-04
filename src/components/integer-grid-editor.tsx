@@ -430,8 +430,8 @@ const IntegerGridEditor = forwardRef<
     }, [handleKeyDown, handleKeyUp, handleMouseUp]);
 
     const handleFocus = useCallback(() => {
-      if (!$gridSelection.hasSelection()) $gridSelection.select(0, 0);
-    }, [$gridSelection.hasSelection, $gridSelection.select]);
+      if (!$gridSelection.hasSelection()) handleCellMouseDown(0, 0, true);
+    }, [$gridSelection.hasSelection, handleCellMouseDown]);
 
     const handleBlur = useCallback(() => {
       $integerString.clear();

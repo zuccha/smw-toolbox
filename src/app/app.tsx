@@ -1,19 +1,22 @@
 import { useMemo } from "preact/hooks";
 import Button from "../components/button";
+import useHotkeys from "../hooks/use-hotkeys";
 import { Module, coreModules, metaModules } from "../modules/modules";
 import { useAppModuleSelected } from "../modules/store";
+import { ok } from "../utils";
 import { useAppThemeUpdate } from "./store";
-import "../app/app.css";
+import "./app.css";
 
 export const modules = [...coreModules, ...metaModules] as const;
 
 type AppMenuItemProps = {
+  index: number;
   isSelected: boolean;
   module: Module;
   onClick: () => void;
 };
 
-function AppMenuItem({ isSelected, module, onClick }: AppMenuItemProps) {
+function AppMenuItem({ index, isSelected, module, onClick }: AppMenuItemProps) {
   return (
     <div class="App_Menu_Item">
       <Button
@@ -21,7 +24,7 @@ function AppMenuItem({ isSelected, module, onClick }: AppMenuItemProps) {
         isSelected={isSelected}
         label={<module.Icon size="2em" />}
         onClick={onClick}
-        tooltip={module.name}
+        tooltip={`${module.name} (Ctrl+${index})`}
         tooltipPosition="right"
       />
     </div>
@@ -40,11 +43,31 @@ export default function App() {
     [selectedModuleId],
   );
 
+  const hotkeys = useMemo(
+    () =>
+      modules.flatMap((module, i) => [
+        {
+          key: `${i + 1}`,
+          ctrl: true,
+          onPress: () => ok(setSelectedModuleId(module.id)),
+        },
+        {
+          key: `${i + 1}`,
+          cmd: true,
+          onPress: () => ok(setSelectedModuleId(module.id)),
+        },
+      ]),
+    [setSelectedModuleId],
+  );
+
+  useHotkeys(hotkeys);
+
   return (
     <div class="App">
       <div class="App_Menu">
-        {coreModules.map((module) => (
+        {coreModules.map((module, i) => (
           <AppMenuItem
+            index={i + 1}
             isSelected={module.id === selectedModuleId}
             key={module.id}
             module={module}
@@ -54,9 +77,10 @@ export default function App() {
 
         <div class="flex_1" />
 
-        {metaModules.map((module) => (
+        {metaModules.map((module, i) => (
           <div class="App_Menu_Item" key={module.id}>
             <AppMenuItem
+              index={coreModules.length + i + 1}
               isSelected={module.id === selectedModuleId}
               key={module.id}
               module={module}

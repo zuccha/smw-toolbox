@@ -23,7 +23,7 @@ function TutorialKeybindings({
       {keybindings.length > 0
         ? keybindings.map((keybinding, index) => (
             <Fragment key={`${id}-${keybinding}`}>
-              <code>{keybinding}</code>
+              <kbd>{keybinding}</kbd>
               {index < keybindings.length - 1 && ", "}
             </Fragment>
           ))
@@ -117,6 +117,9 @@ function TutorialSettings({ settings }: TutorialSettingsProps) {
       : setting.values.some((value) => value.keybindings.length > 0),
   );
 
+  const formatType = (type: string) =>
+    type.startsWith("#") ? <i>{type.substring(1)}</i> : type;
+
   return (
     <table>
       <thead>
@@ -140,7 +143,7 @@ function TutorialSettings({ settings }: TutorialSettingsProps) {
                       {setting.name}
                     </td>
                   )}
-                  <td>{value.type}</td>
+                  <td>{formatType(value.type)}</td>
                   <td class="Tutorial_Setting_Description">
                     {value.description}
                   </td>
@@ -163,7 +166,7 @@ function TutorialSettings({ settings }: TutorialSettingsProps) {
                       {setting.name}
                     </td>
                   )}
-                  <td>{value.type}</td>
+                  <td>{formatType(value.type)}</td>
                   <td class="Tutorial_Setting_Description">
                     {value.description}
                   </td>
