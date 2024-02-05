@@ -1,7 +1,7 @@
 import { Pipette } from "lucide-preact";
 import { ChangeEvent } from "preact/compat";
 import { useCallback } from "preact/hooks";
-import { Theme, ThemeMode } from "../hooks/use-theme";
+import { Theme, ThemeMode } from "../models/theme";
 import "./color-input.css";
 
 export type ColorInputProps = {

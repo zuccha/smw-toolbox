@@ -9,18 +9,19 @@
 }
 
 .Changelog_Release_Title {
-  margin: 0;
+  font-weight: bold;
   padding-bottom: 0.3em;
   border-bottom: 1px solid var(--color-neutral-2);
 }
 
-.Changelog_Release h4 {
-  margin: 0;
+.Changelog_Release_Section > div {
+  font-weight: bold;
   margin-top: 1em;
 }
 
 .Changelog_Release ul {
   margin: 0;
+  padding-left: 1em;
   list-style-type: disc;
 }
 

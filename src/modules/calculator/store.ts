@@ -18,6 +18,7 @@ import {
 export const calculatorId = "Calculator";
 
 const parseBooleanTuple3 = z.array(z.boolean()).length(3).parse;
+const defaultVisibility = [true, true, true];
 
 export const useCalculatorEditorBinIsSigned = () =>
   useStoreBoolean(`${calculatorId}.editor.bin.isSigned`, false);
@@ -75,21 +76,21 @@ export const useCalculatorKeyboardMode = () =>
 export const useCalculatorOperand1Visibility = () =>
   useStore(
     `${calculatorId}.operand1.visibility`,
-    [true, true, true],
+    defaultVisibility,
     parseBooleanTuple3,
   );
 
 export const useCalculatorOperand2Visibility = () =>
   useStore(
     `${calculatorId}.operand2.visibility`,
-    [true, true, true],
+    defaultVisibility,
     parseBooleanTuple3,
   );
 
 export const useCalculatorResultVisibility = () =>
   useStore(
     `${calculatorId}.result.visibility`,
-    [true, true, true],
+    defaultVisibility,
     parseBooleanTuple3,
   );
 

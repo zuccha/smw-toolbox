@@ -35,6 +35,7 @@
 .Button.selected,
 .Button.selected:hover {
   color: var(--color-primary-2);
+  font-weight: bold;
 }
 
 .Button.selected:not(.borderless),

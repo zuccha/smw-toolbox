@@ -53,7 +53,7 @@ export default function App() {
         },
         {
           key: `${i + 1}`,
-          cmd: true,
+          meta: true,
           onPress: () => ok(setSelectedModuleId(module.id)),
         },
       ]),

@@ -22,7 +22,7 @@ function ChangelogReleaseSection({
 
   return (
     <div class="Changelog_Release_Section">
-      <h4>{`${title}:`}</h4>
+      <div>{`${title}:`}</div>
       <ul>
         {items.map((item) => (
           <li dangerouslySetInnerHTML={{ __html: item }} />
@@ -41,11 +41,11 @@ export default function Changelog({ changelog }: ChangelogProps) {
     <div class="Changelog">
       {changelog.map((release) => (
         <div class="Changelog_Release" key={release.version}>
-          <h3 class="Changelog_Release_Title">
+          <div class="Changelog_Release_Title">
             {release.date
               ? `[${release.version}] — ${release.date}`
               : `[${release.version}]`}
-          </h3>
+          </div>
           <ChangelogReleaseSection items={release.added} title="Added" />
           <ChangelogReleaseSection items={release.changed} title="Changed" />
           <ChangelogReleaseSection items={release.removed} title="Removed" />

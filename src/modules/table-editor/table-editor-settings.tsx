@@ -87,7 +87,7 @@ export default function TableEditorSettings() {
           />
         </Setting>
 
-        <Setting label="Unit">
+        <Setting label="Unit (Y/W)">
           <RadioGroup onChange={setUnit} options={unitOptions} value={unit} />
         </Setting>
 

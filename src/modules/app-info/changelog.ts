@@ -58,6 +58,7 @@ const changelog: ChangelogRelease[] = [
       "<b>App Settings</b> tab defining settings that affect all widgets.",
       "<b>App Settings:</b> Setting to enable/disable (most) hotkeys.",
       "<b>App Settings:</b> Setting to select between system, dark, or light mode.",
+      "<b>App Settings:</b> Setting to select color palette for accents, including the disco palette.",
       "<b>App Info</b> tab containing generic information about the application.",
       "<b>App Info:</b> Info section with app name, version, date, and author, and link to source code.",
       "<b>App Info:</b> Changelog.",

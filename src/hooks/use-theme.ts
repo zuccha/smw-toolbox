@@ -1,52 +1,32 @@
-import { useEffect, useLayoutEffect, useState } from "preact/hooks";
-import { z } from "zod";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
+import {
+  ThemeMode,
+  ThemeModeSchema,
+  Theme,
+  ThemeColor,
+  ThemeColorSchema,
+  discoFrequency,
+} from "../models/theme";
 import useStore from "./use-store";
-
-export enum ThemeMode {
-  System,
-  Dark,
-  Light,
-}
-
-export const ThemeModeSchema = z.nativeEnum(ThemeMode);
-
-export const Theme = {
-  [ThemeMode.Dark]: {
-    background1: "#3b3b3b",
-    background2: "#242424",
-    background3: "#141414",
-    background4: "#0a0a0a",
-    neutral1: "#f4f4f4",
-    neutral2: "#a1a1a1",
-    primary1: "#dca87d",
-    primary2: "#de8f4e",
-    primary3: "#572400",
-  },
-  [ThemeMode.Light]: {
-    background1: "#e4e4e4",
-    background2: "#f9f9f9",
-    background3: "#dddddd",
-    background4: "#bbbbbb",
-    neutral1: "#222222",
-    neutral2: "#777777",
-    primary1: "#d18d55",
-    primary2: "#b8590b",
-    primary3: "#ddbca1",
-  },
-} as const;
 
 const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 const getSystemMode = (isDark: boolean): ThemeMode.Dark | ThemeMode.Light =>
   isDark ? ThemeMode.Dark : ThemeMode.Light;
 
+export function useThemeColor(
+  id: string,
+): [ThemeColor, (themeColor: ThemeColor) => void] {
+  return useStore(`${id}.color`, ThemeColor.Orange, ThemeColorSchema.parse);
+}
+
 export function useThemeMode(
   id: string,
-): [ThemeMode, (colorSchemeMode: ThemeMode) => void] {
+): [ThemeMode, (themeMode: ThemeMode) => void] {
   return useStore(`${id}.mode`, ThemeMode.System, ThemeModeSchema.parse);
 }
 
 export default function useTheme(id: string) {
-  const [mode] = useThemeMode(id);
+  const [userMode] = useThemeMode(id);
 
   const [systemMode, setSystemMode] = useState(
     getSystemMode(darkModeMediaQuery.matches),
@@ -59,22 +39,44 @@ export default function useTheme(id: string) {
     return () => darkModeMediaQuery.removeEventListener("change", callback);
   }, []);
 
-  return mode === ThemeMode.System ? Theme[systemMode] : Theme[mode];
+  return userMode === ThemeMode.System ? Theme[systemMode] : Theme[userMode];
 }
 
 export function useThemeUpdate(id: string) {
-  const colorScheme = useTheme(id);
+  const rotateColorsIdRef = useRef(0);
+
+  const [color] = useThemeColor(id);
+  const theme = useTheme(id);
 
   useLayoutEffect(() => {
     const style = document.documentElement.style;
-    style.setProperty("--color-background-1", colorScheme.background1);
-    style.setProperty("--color-background-2", colorScheme.background2);
-    style.setProperty("--color-background-3", colorScheme.background3);
-    style.setProperty("--color-background-4", colorScheme.background4);
-    style.setProperty("--color-neutral-1", colorScheme.neutral1);
-    style.setProperty("--color-neutral-2", colorScheme.neutral2);
-    style.setProperty("--color-primary-1", colorScheme.primary1);
-    style.setProperty("--color-primary-2", colorScheme.primary2);
-    style.setProperty("--color-primary-3", colorScheme.primary3);
-  }, [colorScheme]);
+    style.setProperty("--color-background-1", theme.background1);
+    style.setProperty("--color-background-2", theme.background2);
+    style.setProperty("--color-background-3", theme.background3);
+    style.setProperty("--color-background-4", theme.background4);
+    style.setProperty("--color-neutral-1", theme.neutral1);
+    style.setProperty("--color-neutral-2", theme.neutral2);
+    if (color === ThemeColor.Disco) {
+      const colors = Object.values(theme.color);
+      const primary1Colors: string[] = colors.map(({ primary1 }) => primary1);
+      const primary2Colors: string[] = colors.map(({ primary2 }) => primary2);
+      const primary3Colors: string[] = colors.map(({ primary3 }) => primary3);
+      let colorIndex = 0;
+
+      const rotateColors = () => {
+        style.setProperty("--color-primary-1", primary1Colors[colorIndex]!);
+        style.setProperty("--color-primary-2", primary2Colors[colorIndex]!);
+        style.setProperty("--color-primary-3", primary3Colors[colorIndex]!);
+        colorIndex = (colorIndex + 1) % colors.length;
+      };
+
+      clearInterval(rotateColorsIdRef.current);
+      rotateColorsIdRef.current = setInterval(rotateColors, discoFrequency);
+      return () => clearInterval(rotateColorsIdRef.current);
+    } else {
+      style.setProperty("--color-primary-1", theme.color[color].primary1);
+      style.setProperty("--color-primary-2", theme.color[color].primary2);
+      style.setProperty("--color-primary-3", theme.color[color].primary3);
+    }
+  }, [color, theme]);
 }

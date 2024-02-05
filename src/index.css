@@ -1,7 +1,7 @@
 :root {
-  --color-primary-1: #dca87d;
-  --color-primary-2: #de8f4e;
-  --color-primary-3: #572400;
+  --color-primary-1: #f6ad55;
+  --color-primary-2: #ed8936;
+  --color-primary-3: #652b19;
 
   --color-neutral-1: #f4f4f4;
   --color-neutral-2: #a1a1a1;
@@ -43,6 +43,7 @@ body {
 a,
 a:visited {
   color: var(--color-primary-2);
+  outline-color: var(--color-primary-1);
   text-decoration: none;
   cursor: pointer;
 }
@@ -58,8 +59,9 @@ kbd {
 }
 
 @media (max-width: 40em) {
-  body {
+  :root {
     font-size: 2.1vw;
+    overflow: hidden;
   }
 }
 
