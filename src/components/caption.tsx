@@ -7,12 +7,12 @@ import {
 } from "../models/integer";
 import { classNames, range } from "../utils";
 import "./caption.css";
-import { IntegerEditorSpaceFrequency } from "./integer-editor";
+import { IntegerStringInputSpaceFrequency } from "./integer-string-input";
 
 export type CaptionProps = {
   encoding: IntegerEncoding | undefined;
   isSigned: boolean;
-  spaceFrequency: IntegerEditorSpaceFrequency;
+  spaceFrequency: IntegerStringInputSpaceFrequency;
   unit: IntegerUnit;
 };
 
@@ -29,8 +29,8 @@ export default function Caption({
 
   const className = classNames([
     ["Caption", true],
-    ["space-4", spaceFrequency === IntegerEditorSpaceFrequency.Digits4],
-    ["space-8", spaceFrequency === IntegerEditorSpaceFrequency.Digits8],
+    ["space-4", spaceFrequency === IntegerStringInputSpaceFrequency.Digits4],
+    ["space-8", spaceFrequency === IntegerStringInputSpaceFrequency.Digits8],
   ]);
 
   return (

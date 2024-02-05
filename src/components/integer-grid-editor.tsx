@@ -36,7 +36,7 @@ import {
   defaultInteger,
   isValidIntegerDigit,
 } from "../models/integer";
-import Store from "../store/store";
+import Storage from "../store/storage";
 import { Either } from "../types";
 import { classNames, doNothing, ok, range } from "../utils";
 import "./integer-grid-editor.css";
@@ -106,7 +106,7 @@ const Cell = forwardRef<CellRef, CellProps>(
     const digitsNotTyped = digits.slice(index);
 
     const [backgroundColor] = useStoreString(
-      `${id}.backgroundColor.value[${value}]`,
+      `${id}.color.value[${value}]`,
       Colors[value % Colors.length]!,
     );
 
@@ -317,7 +317,7 @@ const IntegerGridEditor = forwardRef<
 
         for (let y = 0; y < table.grid.length; ++y)
           for (let x = 0; x < table.grid[0]!.length; ++x)
-            Store.save(cellId(id, x, y), table.grid[y]![x]!);
+            Storage.save(cellId(id, x, y), table.grid[y]![x]!);
 
         onPaste([table, undefined]);
       });

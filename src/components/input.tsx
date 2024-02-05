@@ -43,6 +43,7 @@ export default function Input({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.stopPropagation();
       const nextValue = e.currentTarget.value;
       if (!pattern || pattern.test(nextValue)) {
         const otherNextValue = onChange(nextValue);
@@ -59,12 +60,18 @@ export default function Input({
     [onChange, pattern, restoreValue],
   );
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Prevent hotkeys from triggering,
+    e.stopPropagation();
+  }, []);
+
   return (
     <input
       class="Input"
       max={max}
       min={min}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       placeholder={placeholder}
       ref={inputRef}
       size={size}

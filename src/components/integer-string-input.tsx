@@ -1,11 +1,11 @@
 import { forwardRef } from "preact/compat";
 import {
-  Ref,
   useCallback,
   useImperativeHandle,
   useMemo,
   useRef,
 } from "preact/hooks";
+import { z } from "zod";
 import { useIntegerAsString } from "../hooks/use-integer-as-string";
 import {
   Integer,
@@ -20,49 +20,49 @@ import {
   IntegerStringTypingMode,
   isIntegerStringSign,
 } from "../models/integer-string";
-import { Direction, Focusable } from "../types";
 import {
   classNames,
   isPositiveDigit,
   firstIndexOf,
   lastIndexOf,
 } from "../utils";
-import "./integer-editor.css";
-import { z } from "zod";
+import "./integer-string-input.css";
 
 //==============================================================================
 // Caret
 //==============================================================================
 
-export enum IntegerEditorCaret {
+export enum IntegerStringInputCaret {
   Bar,
   Box,
   Underline,
 }
 
-export const IntegerEditorCaretSchema = z.nativeEnum(IntegerEditorCaret);
-
-//==============================================================================
-// Space Frequency
-//==============================================================================
-
-export enum IntegerEditorSpaceFrequency {
-  Digits4,
-  Digits8,
-  None,
-}
-
-export const IntegerEditorSpaceFrequencySchema = z.nativeEnum(
-  IntegerEditorSpaceFrequency,
+export const IntegerStringInputCaretSchema = z.nativeEnum(
+  IntegerStringInputCaret,
 );
 
 //==============================================================================
 // Space Frequency
 //==============================================================================
 
-export type IntegerEditorProps = {
+export enum IntegerStringInputSpaceFrequency {
+  Digits4,
+  Digits8,
+  None,
+}
+
+export const IntegerStringInputSpaceFrequencySchema = z.nativeEnum(
+  IntegerStringInputSpaceFrequency,
+);
+
+//==============================================================================
+// Integer String Input
+//==============================================================================
+
+export type IntegerStringInputProps = {
   autoFocus?: boolean;
-  caret?: IntegerEditorCaret;
+  caret?: IntegerStringInputCaret;
   encoding: IntegerEncoding;
   integer: Integer;
   isDisabled?: boolean;
@@ -70,24 +70,24 @@ export type IntegerEditorProps = {
   shouldFlipBitOnClick?: boolean;
   shouldMoveAfterTyping: boolean;
   onChangeValue: (integer: number) => Integer;
-  refNext?: Ref<Focusable>;
-  refPrev?: Ref<Focusable>;
-  spaceFrequency: IntegerEditorSpaceFrequency;
+  spaceFrequency: IntegerStringInputSpaceFrequency;
   typingDirection: IntegerStringTypingDirection;
   typingMode: IntegerStringTypingMode;
   unit: IntegerUnit;
 };
 
-export type IntegerEditorRef = Focusable & {
+export type IntegerStringInputRef = {
   copy: () => void;
+  focus: () => void;
+  hasFocus: () => boolean;
   paste: () => void;
 };
 
-export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
-  function IntegerEditor(
+export default forwardRef<IntegerStringInputRef, IntegerStringInputProps>(
+  function IntegerStringInput(
     {
       autoFocus = false,
-      caret = IntegerEditorCaret.Box,
+      caret = IntegerStringInputCaret.Box,
       encoding,
       integer,
       isDisabled = false,
@@ -95,8 +95,6 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
       shouldFlipBitOnClick = false,
       shouldMoveAfterTyping,
       onChangeValue,
-      refNext,
-      refPrev,
       spaceFrequency,
       typingDirection,
       typingMode,
@@ -182,22 +180,22 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
     );
 
     const className = classNames([
-      ["IntegerEditor", true],
+      ["IntegerStringInput", true],
       [
         {
-          [IntegerEditorCaret.Bar]: "caret-bar",
-          [IntegerEditorCaret.Box]: "caret-box",
-          [IntegerEditorCaret.Underline]: "caret-underline",
+          [IntegerStringInputCaret.Bar]: "caret-bar",
+          [IntegerStringInputCaret.Box]: "caret-box",
+          [IntegerStringInputCaret.Underline]: "caret-underline",
         }[caret],
         true,
       ],
       ["disabled", isDisabled],
-      ["space-4", spaceFrequency === IntegerEditorSpaceFrequency.Digits4],
-      ["space-8", spaceFrequency === IntegerEditorSpaceFrequency.Digits8],
+      ["space-4", spaceFrequency === IntegerStringInputSpaceFrequency.Digits4],
+      ["space-8", spaceFrequency === IntegerStringInputSpaceFrequency.Digits8],
     ]);
 
     const signClassName = classNames([
-      ["IntegerEditor_Char", true],
+      ["IntegerStringInput_Char", true],
       ["solid", typingDirection === IntegerStringTypingDirection.Right],
       ["empty", typingDirection === IntegerStringTypingDirection.Left],
     ]);
@@ -216,10 +214,6 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
 
           if (e.ctrlKey || e.metaKey) return false;
 
-          if (e.key === "ArrowDown")
-            return Boolean(refNext?.current?.focus(Direction.Down));
-          if (e.key === "ArrowUp")
-            return Boolean(refPrev?.current?.focus(Direction.Up));
           if (e.key === "ArrowLeft") return ok(moveLeft());
           if (e.key === "ArrowRight") return ok(moveRight());
 
@@ -266,8 +260,6 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
         moveRight,
         negate,
         onChangeValue,
-        refNext,
-        refPrev,
         removeDigit,
         replaceDigit,
         shiftLeft,
@@ -286,9 +278,14 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
       return true;
     }, []);
 
-    useImperativeHandle(ref, () => ({ copy, focus, paste }), [
+    const hasFocus = useCallback(() => {
+      return document.activeElement === containerRef.current;
+    }, []);
+
+    useImperativeHandle(ref, () => ({ copy, focus, hasFocus, paste }), [
       copy,
       focus,
+      hasFocus,
       paste,
     ]);
 
@@ -312,7 +309,7 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
 
         {digits.map((digit, i) => {
           const className = classNames([
-            ["IntegerEditor_Char", true],
+            ["IntegerStringInput_Char", true],
             ["selected", i === index],
             ["solid", isSolid(i)],
             ["empty", isEmpty(i)],
@@ -333,7 +330,7 @@ export default forwardRef<IntegerEditorRef, IntegerEditorProps>(
             >
               {digit}
               {!isDisabled && i === index && (
-                <div class="IntegerEditor_Caret" />
+                <div class="IntegerStringInput_Caret" />
               )}
             </div>
           );

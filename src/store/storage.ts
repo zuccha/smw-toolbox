@@ -2,7 +2,7 @@ type Callback<T> = (value: T) => void;
 
 const listeners = new Map<string, Set<Callback<any>>>();
 
-const Store = {
+const Storage = {
   load: <T>(id: string, defaultValue: T, parse: (maybeT: unknown) => T): T => {
     try {
       const stringOrNull = localStorage.getItem(id);
@@ -31,4 +31,4 @@ const Store = {
   },
 };
 
-export default Store;
+export default Storage;

@@ -1,6 +1,6 @@
 import { StateUpdater, useCallback, useEffect, useState } from "preact/hooks";
 import { z } from "zod";
-import Store from "../store/store";
+import Storage from "../store/storage";
 
 const isUpdater = <T>(
   maybeSettingUpdater: unknown,
@@ -13,20 +13,22 @@ export default function useStore<T>(
   initialValue: T,
   parse: (maybeT: unknown) => T,
 ): [T, StateUpdater<T>] {
-  const [value, setValue] = useState(() => Store.load(id, initialValue, parse));
+  const [value, setValue] = useState(() =>
+    Storage.load(id, initialValue, parse),
+  );
 
   useEffect(() => {
-    setValue(Store.load(id, initialValue, parse));
+    setValue(Storage.load(id, initialValue, parse));
     const callback = (nextValue: T) => setValue(nextValue);
-    return Store.subscribe(id, callback);
+    return Storage.subscribe(id, callback);
   }, [id, initialValue, parse]);
 
   const saveValue = useCallback(
     (nextValueOrUpdateValue: T | ((prevSetting: T) => void)) => {
-      Store.save(
+      Storage.save(
         id,
         isUpdater(nextValueOrUpdateValue)
-          ? nextValueOrUpdateValue(Store.load(id, initialValue, parse))
+          ? nextValueOrUpdateValue(Storage.load(id, initialValue, parse))
           : nextValueOrUpdateValue,
       );
     },

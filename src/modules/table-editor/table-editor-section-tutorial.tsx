@@ -2,6 +2,7 @@ import Tutorial, {
   TutorialAction,
   TutorialSetting,
 } from "../../components/tutorial";
+import { useTableEditorTabTutorialIsVisible } from "./store";
 
 const actions: TutorialAction[] = [
   {
@@ -262,17 +263,15 @@ const visibility: TutorialAction[] = [
   },
 ];
 
-export type TableEditorTutorialProps = {
-  isVisible: boolean;
-  onChangeVisibility: (value: boolean) => void;
-};
+export default function TableEditorTutorial() {
+  const [isTabTutorialVisible, setIsTabTutorialVisible] =
+    useTableEditorTabTutorialIsVisible();
 
-export default function TableEditorTutorial({
-  isVisible,
-  onChangeVisibility,
-}: TableEditorTutorialProps) {
   return (
-    <Tutorial isVisible={isVisible} onChangeVisibility={onChangeVisibility}>
+    <Tutorial
+      isVisible={isTabTutorialVisible}
+      onChangeVisibility={setIsTabTutorialVisible}
+    >
       <Tutorial.Section title="General">
         <div>
           Click on the table to select cells and type to modify them. You can

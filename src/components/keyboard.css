@@ -1,6 +1,6 @@
 .Keyboard {
   display: grid;
-  /* grid-template-columns: repeat(X, 1fr); -> Defined in component via styles */
+  /* grid-template-columns: repeat(X, max-content); -> Defined in component via styles */
   font-family: monospace;
   font-size: 2em;
   gap: 0.3em;

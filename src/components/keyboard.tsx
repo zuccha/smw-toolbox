@@ -34,7 +34,7 @@ export default function Keyboard({ actions, rowSize = 8 }: KeyboardProps) {
   );
 
   const style = useMemo(
-    () => ({ gridTemplateColumns: `repeat(${rowSize}, 1fr)` }),
+    () => ({ gridTemplateColumns: `repeat(${rowSize}, max-content)` }),
     [rowSize],
   );
 

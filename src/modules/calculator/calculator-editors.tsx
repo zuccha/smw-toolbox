@@ -7,10 +7,10 @@ import {
   useRef,
 } from "preact/hooks";
 import IntegerEditor, {
-  IntegerEditorCaret,
-  IntegerEditorRef,
-  IntegerEditorSpaceFrequency,
-} from "../../components/integer-editor";
+  IntegerStringInputCaret,
+  IntegerStringInputRef,
+  IntegerStringInputSpaceFrequency,
+} from "../../components/integer-string-input";
 import { Integer, IntegerEncoding, IntegerUnit } from "../../models/integer";
 import {
   IntegerStringTypingDirection,
@@ -21,7 +21,7 @@ import CalculatorEditor from "./calculator-editor";
 
 export type CalculatorEditorsProps = {
   autoFocus?: boolean;
-  caret: IntegerEditorCaret;
+  caret: IntegerStringInputCaret;
   integer: Integer;
   isDisabled?: boolean;
   isPasteIconHidden?: boolean;
@@ -39,7 +39,7 @@ export type CalculatorEditorsProps = {
   refPrev?: Ref<CalculatorEditorsRef>;
   shouldFlipBitOnClick: boolean;
   shouldMoveAfterTyping: boolean;
-  spaceFrequency: IntegerEditorSpaceFrequency;
+  spaceFrequency: IntegerStringInputSpaceFrequency;
   typingDirection: IntegerStringTypingDirection;
   typingMode: IntegerStringTypingMode;
   unit: IntegerUnit;
@@ -48,7 +48,7 @@ export type CalculatorEditorsProps = {
 export type CalculatorEditorsRef = Focusable;
 
 const useEditor = (
-  ref: Ref<IntegerEditorRef>,
+  ref: Ref<IntegerStringInputRef>,
   prevs: (Ref<Focusable> | undefined)[],
   nexts: (Ref<Focusable> | undefined)[],
 ) => {
@@ -101,9 +101,9 @@ export default forwardRef<CalculatorEditorsRef, CalculatorEditorsProps>(
       unit,
     };
 
-    const binRef = useRef<IntegerEditorRef>(null);
-    const decRef = useRef<IntegerEditorRef>(null);
-    const hexRef = useRef<IntegerEditorRef>(null);
+    const binRef = useRef<IntegerStringInputRef>(null);
+    const decRef = useRef<IntegerStringInputRef>(null);
+    const hexRef = useRef<IntegerStringInputRef>(null);
 
     const bin = isVisibleBin ? binRef : undefined;
     const dec = isVisibleDec ? decRef : undefined;

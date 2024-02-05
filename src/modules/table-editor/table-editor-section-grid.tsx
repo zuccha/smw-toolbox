@@ -1,56 +1,39 @@
-import { Check, ClipboardPaste, Copy, X } from "lucide-preact";
-import { useCallback, useMemo, useRef, useState } from "preact/hooks";
-import { isMobile } from "react-device-detect";
+import { Copy, Check, ClipboardPaste, X } from "lucide-preact";
+import { useRef, useState, useCallback, useMemo } from "preact/hooks";
 import IconButton from "../../components/icon-button";
 import IntegerGridEditor, {
   IntegerGridEditorRef,
 } from "../../components/integer-grid-editor";
-import Keyboard, { KeyboardAction } from "../../components/keyboard";
+import SectionStatic from "../../components/section-static";
 import useComponentsWithCooldown from "../../hooks/use-alternate-with-cooldown";
+import useHotkeys, { Hotkey } from "../../hooks/use-hotkeys";
 import {
   IntegerTable,
   IntegerTableFromStringError,
 } from "../../models/integer-table";
-import { IntegerHexDigits } from "../../models/integer";
+import { Either } from "../../types";
+import { isNothingFocused, ok } from "../../utils";
 import {
-  tableEditorId,
-  useTableEditorBackgroundImageFileName,
-  useTableEditorBackgroundImageImage,
-  useTableEditorBackgroundImageIsVisible,
-  useTableEditorBackgroundImageOpacity,
-  useTableEditorColorOpacity,
-  useTableEditorColumnCommentType,
   useTableEditorEncoding,
-  useTableEditorIndentation,
-  useTableEditorName,
-  useTableEditorRowCommentType,
-  useTableEditorSelectedValue,
-  useTableEditorShouldSpaceValues,
+  useTableEditorUnit,
   useTableEditorSizeHeight,
   useTableEditorSizeWidth,
-  useTableEditorUnit,
+  useTableEditorName,
+  useTableEditorIndentation,
+  useTableEditorColumnCommentType,
+  useTableEditorRowCommentType,
+  useTableEditorShouldSpaceValues,
+  useTableEditorColorOpacity,
+  useTableEditorBackgroundImageFileName,
+  useTableEditorBackgroundImageImage,
+  useTableEditorBackgroundImageOpacity,
+  useTableEditorBackgroundImageIsVisible,
+  useTableEditorSelectedValue,
+  tableEditorId,
 } from "./store";
-import useHotkeys, { Hotkey } from "../../hooks/use-hotkeys";
-import { isNothingFocused, ok } from "../../utils";
-import { Either } from "../../types";
+import TableEditorKeyboard from "./table-editor-keyboard";
 
-const type = (key: string) => () => {
-  if (document.activeElement)
-    document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key }));
-};
-
-const keyboardActions: KeyboardAction[] = isMobile
-  ? [
-      ...IntegerHexDigits.map((digit) => ({
-        label: digit,
-        onClick: type(digit),
-      })),
-      { label: "DEL", onClick: type("Delete"), size: "xs" },
-      { label: "⌫", onClick: type("Backspace") },
-    ]
-  : [];
-
-export default function TableEditorGrid() {
+export default function TableEditorSectionGrid() {
   const integerGridEditorRef = useRef<IntegerGridEditorRef>(null);
 
   const [encoding] = useTableEditorEncoding();
@@ -131,57 +114,57 @@ export default function TableEditorGrid() {
   useHotkeys(hotkeys);
 
   return (
-    <div class="App_SectionCol">
-      <div class="App_SectionRow font-size_l">
-        <span class="font-family_monospace">{name ? `${name}:` : ""}</span>
+    <SectionStatic label="Table Editor">
+      <div class="App_SectionCol">
+        <div class="App_SectionRow font-size_l">
+          <span class="font-family_monospace">{name ? `${name}:` : ""}</span>
 
-        <div class="flex_1" />
-
-        <div class="App_SectionCluster">
-          <IconButton
-            Icon={ClipboardPaste}
-            onClick={pasteTable}
-            tooltip="Paste"
-          />
-          <IconButton Icon={CopyOrCheck} onClick={copyTable} tooltip="Copy" />
-          <IconButton Icon={X} onClick={clearGrid} tooltip="Clear" />
-        </div>
-      </div>
-
-      {importError && (
-        <div class="App_SectionCluster">
           <div class="flex_1" />
-          <div class="App_ErrorMessage">{`Import failed: ${importError}`}</div>
-          <IconButton Icon={X} onClick={clearImportError} tooltip="Clear" />
-        </div>
-      )}
 
-      <IntegerGridEditor
-        columnCommentType={columnCommentType}
-        backgroundImage={isBackgroundImageVisible ? backgroundImage : undefined}
-        backgroundImageOpacity={backgroundImageOpacity}
-        colorOpacity={colorOpacity}
-        encoding={encoding}
-        height={height}
-        indentation={indentation}
-        id={tableEditorId}
-        name={name}
-        onBackgroundImageError={clearBackgroundImage}
-        onCopy={startCopyCooldown}
-        onPaste={updateSettings}
-        onSelect={setValueOrNaN}
-        ref={integerGridEditorRef}
-        rowCommentType={rowCommentType}
-        shouldSpaceValues={shouldSpaceValues}
-        unit={unit}
-        width={width}
-      />
-
-      {keyboardActions.length > 0 && (
-        <div class="App_Center">
-          <Keyboard actions={keyboardActions} rowSize={9} />
+          <div class="App_SectionCluster">
+            <IconButton
+              Icon={ClipboardPaste}
+              onClick={pasteTable}
+              tooltip="Paste"
+            />
+            <IconButton Icon={CopyOrCheck} onClick={copyTable} tooltip="Copy" />
+            <IconButton Icon={X} onClick={clearGrid} tooltip="Clear" />
+          </div>
         </div>
-      )}
-    </div>
+
+        {importError && (
+          <div class="App_SectionCluster">
+            <div class="flex_1" />
+            <div class="App_ErrorMessage">{`Import failed: ${importError}`}</div>
+            <IconButton Icon={X} onClick={clearImportError} tooltip="Clear" />
+          </div>
+        )}
+
+        <IntegerGridEditor
+          columnCommentType={columnCommentType}
+          backgroundImage={
+            isBackgroundImageVisible ? backgroundImage : undefined
+          }
+          backgroundImageOpacity={backgroundImageOpacity}
+          colorOpacity={colorOpacity}
+          encoding={encoding}
+          height={height}
+          indentation={indentation}
+          id={tableEditorId}
+          name={name}
+          onBackgroundImageError={clearBackgroundImage}
+          onCopy={startCopyCooldown}
+          onPaste={updateSettings}
+          onSelect={setValueOrNaN}
+          ref={integerGridEditorRef}
+          rowCommentType={rowCommentType}
+          shouldSpaceValues={shouldSpaceValues}
+          unit={unit}
+          width={width}
+        />
+
+        <TableEditorKeyboard />
+      </div>
+    </SectionStatic>
   );
 }

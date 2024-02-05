@@ -1,0 +1,71 @@
+.IntegerStringInput {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  user-select: none;
+}
+
+.IntegerStringInput_Char {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: var(--caret-width);
+}
+
+.IntegerStringInput.space-4
+  .IntegerStringInput_Char:nth-last-child(4n + 4):not(:first-child) {
+  margin-left: var(--digits-space);
+}
+
+.IntegerStringInput.space-8
+  .IntegerStringInput_Char:nth-last-child(8n + 8):not(:first-child) {
+  margin-left: var(--digits-space);
+}
+
+.IntegerStringInput_Caret {
+  position: absolute;
+  width: var(--caret-width);
+  height: var(--caret-height);
+  bottom: 0.2em;
+  z-index: -1;
+}
+
+.IntegerStringInput.caret-bar .IntegerStringInput_Caret {
+  width: 0.075em;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.IntegerStringInput.caret-underline .IntegerStringInput_Caret {
+  height: 0.075em;
+}
+
+.IntegerStringInput:focus .IntegerStringInput_Caret {
+  background-color: var(--color-primary-2);
+}
+
+.IntegerStringInput:focus {
+  outline: none;
+}
+
+.IntegerStringInput:not(.disabled):focus .IntegerStringInput_Char.solid {
+  color: var(--color-primary-2);
+}
+
+.IntegerStringInput:not(.disabled):focus .IntegerStringInput_Char.empty {
+  color: var(--color-primary-1);
+}
+
+.IntegerStringInput:not(.disabled).caret-box:focus
+  .IntegerStringInput_Char.selected {
+  color: var(--color-background-2);
+}
+
+.IntegerStringInput.disabled .IntegerStringInput_Char {
+  color: var(--color-neutral-2);
+}
+
+.IntegerStringInput.disabled:focus .IntegerStringInput_Char {
+  color: var(--color-primary-1);
+}

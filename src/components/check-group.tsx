@@ -2,17 +2,17 @@ import { replace } from "../utils";
 import Button from "./button";
 import "./check-group.css";
 
-export type CheckGroupProps = {
+export type CheckGroupProps<T extends boolean[]> = {
   labels: string[];
-  onChange: (values: boolean[]) => void;
-  values: boolean[];
+  onChange: (values: T) => void;
+  values: T;
 };
 
-export default function CheckGroup({
+export default function CheckGroup<T extends boolean[]>({
   labels,
   onChange,
   values,
-}: CheckGroupProps) {
+}: CheckGroupProps<T>) {
   return (
     <div class="CheckGroup">
       {labels.map((label, i) => {
@@ -20,7 +20,7 @@ export default function CheckGroup({
         if (value === undefined) return null;
 
         const onClick = () => {
-          const nextValues = replace(values, i, !value);
+          const nextValues = replace(values, i, !value) as T;
           onChange(nextValues);
         };
         return (

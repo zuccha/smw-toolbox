@@ -2,11 +2,7 @@ import Tutorial, {
   TutorialAction,
   TutorialSetting,
 } from "../../components/tutorial";
-
-type CalculatorTutorialProps = {
-  isVisible: boolean;
-  onChangeVisibility: (isVisible: boolean) => void;
-};
+import { useCalculatorTabTutorialIsVisible } from "./store";
 
 const baseActions: TutorialAction[] = [
   {
@@ -348,12 +344,15 @@ const visibility: TutorialAction[] = [
   },
 ];
 
-export default function CalculatorTutorial({
-  isVisible,
-  onChangeVisibility,
-}: CalculatorTutorialProps) {
+export default function CalculatorSectionTutorial() {
+  const [isTabTutorialVisible, setIsTabTutorialVisible] =
+    useCalculatorTabTutorialIsVisible();
+
   return (
-    <Tutorial isVisible={isVisible} onChangeVisibility={onChangeVisibility}>
+    <Tutorial
+      isVisible={isTabTutorialVisible}
+      onChangeVisibility={setIsTabTutorialVisible}
+    >
       <Tutorial.Section title="General">
         <div>
           Click on a number to edit it. In a group (bin/dec/hex), the numbers
