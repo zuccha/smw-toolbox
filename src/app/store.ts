@@ -1,4 +1,4 @@
-import { useStoreBoolean } from "../hooks/use-store";
+import { useStoreBoolean, useStoreString } from "../hooks/use-store";
 import useTheme, {
   useThemeColor,
   useThemeMode,
@@ -17,3 +17,6 @@ export const useAppThemeColor = () => useThemeColor(`${appId}.theme`);
 export const useAppThemeMode = () => useThemeMode(`${appId}.theme`);
 
 export const useAppThemeUpdate = () => useThemeUpdate(`${appId}.theme`);
+
+export const useAppSelectedModuleId = () =>
+  useStoreString(`${appId}.selectedModule.id`, "");

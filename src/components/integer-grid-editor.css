@@ -69,12 +69,6 @@
   border-left: 1px solid var(--color-neutral-2);
 }
 
-.IntegerGridEditor_Cell > div > span:first-child {
-  line-height: normal;
-  text-align: center;
-  color: var(--color-neutral-1);
-}
-
 .IntegerGridEditor_Cell_Background {
   z-index: -1;
   position: absolute;
@@ -85,5 +79,9 @@
 }
 
 .IntegerGridEditor_Cell.selected .IntegerGridEditor_Cell_Background {
-  background-color: var(--color-background-3);
+  background-color: var(--color-primary-3);
+}
+
+.IntegerGridEditor_Cell.selected > div > span:nth-child(2) {
+  color: var(--color-neutral-1);
 }

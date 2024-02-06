@@ -102,10 +102,17 @@ export function IntegerStringFromInteger(
       ? IntegerStringSign.Negative
       : IntegerStringSign.Positive
     : undefined;
-  return { sign, digits, index: 0 };
+  const index =
+    context.typingDirection === IntegerStringTypingDirection.Right
+      ? 0
+      : digits.length - 1;
+  return { sign, digits, index };
 }
 
-IntegerStringFromInteger.deps = deps([], ["encoding", "isSigned", "unit"]);
+IntegerStringFromInteger.deps = deps(
+  [],
+  ["encoding", "isSigned", "typingDirection", "unit"],
+);
 
 export function IntegerStringToInteger(
   obj: IntegerString,
@@ -162,7 +169,10 @@ function clear(
   return {
     sign: isSigned ? IntegerStringSign.Positive : undefined,
     digits: "0".repeat(IntegerLength[unit][encoding]).split(""),
-    index: 0,
+    index:
+      context.typingDirection === IntegerStringTypingDirection.Right
+        ? 0
+        : IntegerLength[unit][encoding] - 1,
   };
 }
 

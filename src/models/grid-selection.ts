@@ -86,7 +86,7 @@ GridSelectionFromDimension.deps = deps();
 //==============================================================================
 
 function clear(_obj: GridSelection, context: GridSelectionContext) {
-  return GridSelectionFromDimension(context.width, context.width);
+  return GridSelectionFromDimension(context.width, context.height);
 }
 
 clear.deps = deps([], [], [GridSelectionFromDimension]);

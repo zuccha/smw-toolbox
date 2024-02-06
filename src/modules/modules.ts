@@ -5,13 +5,9 @@ import {
   InfoIcon,
 } from "lucide-preact";
 import AppInfo from "./app-info/app-info";
-import { appInfoId } from "./app-info/store";
 import AppSettings from "./app-settings/app-settings";
-import { appSettingsId } from "./app-settings/store";
 import Calculator from "./calculator/calculator";
-import { calculatorId } from "./calculator/store";
 import TableEditor from "./table-editor/table-editor";
-import { tableEditorId } from "./table-editor/store";
 
 export type Module = {
   Content: React.FunctionComponent;
@@ -20,32 +16,34 @@ export type Module = {
   name: string;
 };
 
-export const coreModules: Module[] = [
+export const widgetModules = [
   {
     Content: Calculator,
     Icon: CalculatorIcon,
-    id: calculatorId,
+    id: "/w/calculator",
     name: "Calculator",
   },
   {
     Content: TableEditor,
     Icon: TableIcon,
-    id: tableEditorId,
+    id: "/w/table-editor",
     name: "Table Editor",
   },
 ] as const;
 
-export const metaModules: Module[] = [
+export const metaModules = [
   {
     Content: AppSettings,
     Icon: SettingsIcon,
-    id: appSettingsId,
+    id: "/settings",
     name: "Settings",
   },
   {
     Content: AppInfo,
     Icon: InfoIcon,
-    id: appInfoId,
+    id: "/info",
     name: "Info",
   },
 ] as const;
+
+export const modules = [...widgetModules, ...metaModules] as const;

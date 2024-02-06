@@ -33,6 +33,14 @@ export function insert<T>(items: T[], index: number, item: T): T[] {
   return [...items.slice(0, index), item, ...items.slice(index, end)];
 }
 
+export function pushBack<T>(items: T[], item: T): T[] {
+  return [...items.slice(1, items.length), item];
+}
+
+export function pushFront<T>(items: T[], item: T): T[] {
+  return [item, ...items.slice(0, items.length - 1)];
+}
+
 export function replace<T>(items: T[], index: number, item: T): T[] {
   return [...items.slice(0, index), item, ...items.slice(index + 1)];
 }

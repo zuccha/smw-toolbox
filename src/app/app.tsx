@@ -1,13 +1,16 @@
 import { useMemo } from "preact/hooks";
 import Button from "../components/button";
 import useHotkeys from "../hooks/use-hotkeys";
-import { Module, coreModules, metaModules } from "../modules/modules";
-import { useAppModuleSelected } from "../modules/store";
+import {
+  Module,
+  metaModules,
+  modules,
+  widgetModules,
+} from "../modules/modules";
 import { ok } from "../utils";
 import { useAppThemeUpdate } from "./store";
+import useNavigation from "./use-navigation";
 import "./app.css";
-
-export const modules = [...coreModules, ...metaModules] as const;
 
 type AppMenuItemProps = {
   index: number;
@@ -34,7 +37,7 @@ function AppMenuItem({ index, isSelected, module, onClick }: AppMenuItemProps) {
 export default function App() {
   useAppThemeUpdate();
 
-  const [selectedModuleId, setSelectedModuleId] = useAppModuleSelected();
+  const [selectedModuleId, setSelectedModuleId] = useNavigation();
 
   const Content = useMemo(
     () =>
@@ -65,7 +68,7 @@ export default function App() {
   return (
     <div class="App">
       <div class="App_Menu">
-        {coreModules.map((module, i) => (
+        {widgetModules.map((module, i) => (
           <AppMenuItem
             index={i + 1}
             isSelected={module.id === selectedModuleId}
@@ -80,7 +83,7 @@ export default function App() {
         {metaModules.map((module, i) => (
           <div class="App_Menu_Item" key={module.id}>
             <AppMenuItem
-              index={coreModules.length + i + 1}
+              index={widgetModules.length + i + 1}
               isSelected={module.id === selectedModuleId}
               key={module.id}
               module={module}

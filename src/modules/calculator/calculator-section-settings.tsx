@@ -23,19 +23,30 @@ export default function CalculatorSectionSettings() {
       label="Settings"
       onChange={setIsTabSettingsVisible}
     >
-      <div class="App_SectionRow">
-        <CalculatorSettingAdvanced />
-        <CalculatorSettingUnit />
-        <CalculatorSettingKeyboard />
-        <CalculatorSettingTypingMode />
-        <CalculatorSettingTypingDirection />
-        <CalculatorSettingMoveCursor />
-        <CalculatorSettingFlipBit />
-        <CalculatorSettingSignedBin />
-        <CalculatorSettingSignedDec />
-        <CalculatorSettingSignedHex />
-        <CalculatorSettingCaret />
-        <CalculatorSettingSpaceFrequency />
+      <div class="App_SectionCol">
+        <div class="App_SectionRow">
+          <CalculatorSettingAdvanced />
+          <CalculatorSettingUnit />
+          <CalculatorSettingKeyboard />
+          <CalculatorSettingFlipBit />
+        </div>
+
+        <div class="App_SectionRow">
+          <CalculatorSettingTypingMode />
+          <CalculatorSettingTypingDirection />
+          <CalculatorSettingMoveCursor />
+        </div>
+
+        <div class="App_SectionRow">
+          <CalculatorSettingSignedBin />
+          <CalculatorSettingSignedDec />
+          <CalculatorSettingSignedHex />
+        </div>
+
+        <div class="App_SectionRow">
+          <CalculatorSettingCaret />
+          <CalculatorSettingSpaceFrequency />
+        </div>
       </div>
     </SectionCollapsible>
   );

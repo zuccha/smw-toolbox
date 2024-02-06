@@ -1,5 +1,10 @@
-import { useCallback, useMemo, useRef } from "preact/hooks";
-import { Integer, IntegerEncoding, IntegerUnit } from "../models/integer";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "preact/hooks";
+import {
+  Integer,
+  IntegerEncoding,
+  IntegerLength,
+  IntegerUnit,
+} from "../models/integer";
 import {
   $IntegerString,
   IntegerString,
@@ -20,6 +25,16 @@ export const defaultIntegerStringContext = {
   unit: IntegerUnit.Byte,
 };
 
+function getInitialIndex(
+  encoding: IntegerEncoding,
+  unit: IntegerUnit,
+  typingDirection: IntegerStringTypingDirection,
+): number {
+  return typingDirection === IntegerStringTypingDirection.Right
+    ? 0
+    : IntegerLength[unit][encoding] - 1;
+}
+
 export function useIntegerAsString(
   integer: Integer,
   onChange: (integer: Integer) => void,
@@ -29,7 +44,8 @@ export function useIntegerAsString(
   Methods<IntegerString, IntegerStringContext, typeof $IntegerString>,
 ] {
   const context = { ...defaultIntegerStringContext, ...partialContext };
-  const indexRef = useRef(0);
+  const { encoding, unit, typingDirection } = context;
+  const indexRef = useRef(getInitialIndex(encoding, unit, typingDirection));
 
   const obj = useMemo(() => {
     return {
@@ -62,6 +78,11 @@ export function useIntegerAsString(
   const shiftDigit = useSetter($IntegerString.shiftDigit, methodContext);
   const shiftLeft = useSetter($IntegerString.shiftLeft, methodContext);
   const shiftRight = useSetter($IntegerString.shiftRight, methodContext);
+
+  useLayoutEffect(() => {
+    indexRef.current = getInitialIndex(encoding, unit, typingDirection);
+    jumpTo(indexRef.current);
+  }, [encoding, typingDirection, unit]); // Don't add `jumpTo` to deps.
 
   return [
     obj,

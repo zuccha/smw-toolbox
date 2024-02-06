@@ -50,6 +50,7 @@ type CellProps = {
   encoding: IntegerEncoding;
   id: string;
   isBackgroundImageVisible: boolean;
+  isEditing: boolean;
   isSelected: boolean;
   onDoubleClick: (value: number, x: number, y: number) => void;
   onMouseDown: (x: number, y: number) => void;
@@ -60,7 +61,6 @@ type CellProps = {
 };
 
 type CellRef = {
-  edit: (value: number, index: number) => void;
   get: () => Integer;
   getValue: () => number;
   setValue: (value: number) => void;
@@ -69,6 +69,13 @@ type CellRef = {
 const cellId = (id: string, x: number, y: number): string =>
   `${id}.grid[${y}][${x}]`;
 
+const integerStringContext = {
+  ...defaultIntegerStringContext,
+  isSigned: false,
+  shouldMoveAfterTyping: false,
+  typingDirection: IntegerStringTypingDirection.Left,
+};
+
 const Cell = forwardRef<CellRef, CellProps>(
   (
     {
@@ -76,6 +83,7 @@ const Cell = forwardRef<CellRef, CellProps>(
       encoding,
       isBackgroundImageVisible,
       id,
+      isEditing,
       isSelected,
       onDoubleClick,
       onMouseDown,
@@ -86,7 +94,6 @@ const Cell = forwardRef<CellRef, CellProps>(
     },
     ref,
   ) => {
-    const [index, setIndex] = useState(0);
     const [integer, { setValue }] = useIntegerStore(
       cellId(id, x, y),
       defaultInteger,
@@ -95,15 +102,19 @@ const Cell = forwardRef<CellRef, CellProps>(
     const value = integer.value;
 
     const [{ digits }] = useIntegerAsString(integer, doNothing, {
+      ...integerStringContext,
       encoding,
-      isSigned: false,
-      shouldMoveAfterTyping: true,
-      typingDirection: IntegerStringTypingDirection.Left,
       unit,
     });
 
-    const digitsTyped = digits.slice(0, index);
-    const digitsNotTyped = digits.slice(index);
+    const index = useMemo(() => {
+      if (!isEditing) return digits.length;
+      const index = digits.findIndex((digit) => digit !== "0");
+      return index === -1 ? digits.length : index;
+    }, [digits, isEditing]);
+
+    const digitsNotTyped = digits.slice(0, index);
+    const digitsTyped = digits.slice(index);
 
     const [backgroundColor] = useStoreString(
       `${id}.color.value[${value}]`,
@@ -127,27 +138,14 @@ const Cell = forwardRef<CellRef, CellProps>(
       ["selected", isSelected],
     ]);
 
-    const edit = useCallback(
-      (nextValue: number, nextIndex: number) => {
-        setValue(nextValue);
-        setIndex(nextIndex);
-      },
-      [setValue],
-    );
-
     const get = useCallback(() => integer, [integer]);
     const getValue = useCallback(() => value, [value]);
 
-    useImperativeHandle(ref, () => ({ edit, get, getValue, setValue }), [
-      edit,
+    useImperativeHandle(ref, () => ({ get, getValue, setValue }), [
       get,
       getValue,
       setValue,
     ]);
-
-    useLayoutEffect(() => {
-      if (!isSelected) setIndex(0);
-    }, [isSelected]);
 
     const backgroundStyle = useMemo(() => {
       return isSelected
@@ -173,8 +171,8 @@ const Cell = forwardRef<CellRef, CellProps>(
           style={backgroundStyle}
         />
         <div>
-          <span>{digitsTyped.join("")}</span>
           <span>{digitsNotTyped.join("")}</span>
+          <span>{digitsTyped.join("")}</span>
         </div>
       </div>
     );
@@ -246,7 +244,7 @@ const IntegerGridEditor = forwardRef<
     const cellRefs = useRef<Record<string, CellRef>>({});
     const multipleSelection = useRef(false);
 
-    const [_gridSelection, $gridSelection] = useGridSelection(width, height);
+    const [gridSelection, $gridSelection] = useGridSelection(width, height);
     const [integer, $integer] = useIntegerState(defaultInteger, { unit });
     const [_integerString, $integerString] = useIntegerAsString(
       integer,
@@ -254,24 +252,31 @@ const IntegerGridEditor = forwardRef<
         (nextInteger: Integer) => $integer.setValue(nextInteger.value),
         [$integer.setValue],
       ),
-      { encoding, shouldAllowOutOfBoundsCursor: true, unit },
+      { ...integerStringContext, encoding, unit },
     );
 
+    const [isEditing, setIsEditing] = useState(false);
+
+    useLayoutEffect(() => {
+      setIsEditing(false);
+      $integer.setValue(0);
+    }, [gridSelection]); // This depends only on changes on the selection
+
     const editValues = useCallback(
-      (value: number, index: number) => {
+      (value: number) => {
         for (let y = 0; y < height; ++y)
           for (let x = 0; x < width; ++x)
-            cellRefs.current[cellId(id, x, y)]?.edit(value, index);
+            cellRefs.current[cellId(id, x, y)]?.setValue(value);
       },
       [height, id, width],
     );
 
     const editSelectedValues = useCallback(
-      (value: number, index: number) => {
+      (value: number) => {
         for (let y = 0; y < height; ++y)
           for (let x = 0; x < width; ++x)
             if ($gridSelection.isSelected(x, y))
-              cellRefs.current[cellId(id, x, y)]?.edit(value, index);
+              cellRefs.current[cellId(id, x, y)]?.setValue(value);
       },
       [$gridSelection.isSelected, height, id, width],
     );
@@ -359,15 +364,13 @@ const IntegerGridEditor = forwardRef<
       (e: KeyboardEvent) => {
         const processKeys = () => {
           const type = (nextIntegerString: IntegerString) => {
+            setIsEditing(true);
             const nextInteger = IntegerStringToInteger(nextIntegerString, {
-              ...defaultIntegerStringContext,
+              ...integerStringContext,
               encoding,
               unit,
             });
-            editSelectedValues(
-              nextInteger ? nextInteger.value : 0,
-              nextInteger ? nextIntegerString.index : 0,
-            );
+            editSelectedValues(nextInteger ? nextInteger.value : 0);
             return true;
           };
 
@@ -377,19 +380,19 @@ const IntegerGridEditor = forwardRef<
           if (e.ctrlKey || e.metaKey || e.shiftKey)
             multipleSelection.current = true;
 
-          if (e.key === "Delete") return type($integerString.deleteDigit());
+          if (e.key === "Delete") return type($integerString.clear());
           if (e.key === "Backspace") return type($integerString.removeDigit());
           if (isValidIntegerDigit(e.key, encoding))
             return type($integerString.insertDigit(e.key));
 
-          const clear = !multipleSelection.current;
           if (e.key === "ArrowDown")
-            return ok($gridSelection.move(0, 1, clear));
+            return ok($gridSelection.move(0, 1, !multipleSelection.current));
           if (e.key === "ArrowLeft")
-            return ok($gridSelection.move(-1, 0, clear));
+            return ok($gridSelection.move(-1, 0, !multipleSelection.current));
           if (e.key === "ArrowRight")
-            return ok($gridSelection.move(1, 0, clear));
-          if (e.key === "ArrowUp") return ok($gridSelection.move(0, -1, clear));
+            return ok($gridSelection.move(1, 0, !multipleSelection.current));
+          if (e.key === "ArrowUp")
+            return ok($gridSelection.move(0, -1, !multipleSelection.current));
 
           return false;
         };
@@ -398,6 +401,7 @@ const IntegerGridEditor = forwardRef<
       },
       [
         $gridSelection.move,
+        $integerString.clear,
         $integerString.deleteDigit,
         $integerString.insertDigit,
         $integerString.removeDigit,
@@ -427,7 +431,7 @@ const IntegerGridEditor = forwardRef<
         window.removeEventListener("focus", clearMultipleSelection);
         window.removeEventListener("mouseup", handleMouseUp);
       };
-    }, [handleKeyDown, handleKeyUp, handleMouseUp]);
+    }, [handleMouseUp]);
 
     const handleFocus = useCallback(() => {
       if (!$gridSelection.hasSelection()) handleCellMouseDown(0, 0, true);
@@ -443,7 +447,7 @@ const IntegerGridEditor = forwardRef<
     const clear = useCallback(() => {
       $gridSelection.clear();
       $integerString.clear();
-      editValues(0, 0);
+      editValues(0);
     }, [$gridSelection.clear, $integerString.clear, editValues]);
 
     const focus = useCallback(() => {
@@ -487,6 +491,7 @@ const IntegerGridEditor = forwardRef<
                   encoding={encoding}
                   id={id}
                   isBackgroundImageVisible={Boolean(backgroundImage)}
+                  isEditing={isEditing}
                   isSelected={$gridSelection.isSelected(x, y)}
                   key={cellId(id, x, y)}
                   onDoubleClick={handleCellDoubleClick}

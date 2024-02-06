@@ -368,6 +368,28 @@ export default function CalculatorSectionTutorial() {
         </div>
       </Tutorial.Section>
 
+      <Tutorial.Section title="Typing Configurations">
+        <div>
+          You can customize how you type the digits of the numbers in different
+          ways. However, I suggest sticking to one of these two presets, that
+          reflect the most common or intuitive way of typing:
+        </div>
+        <div>
+          <b>Number (default):</b> Typing Direction = Left, Typing Mode =
+          Insert, Move Cursor = Off.
+          <br />
+          This is, in my opinion, the most intuitive way to type numbers: the
+          digits will be inserted from right to left, without moving the cursor.
+        </div>
+        <div>
+          <b>Text:</b> Typing Direction = Right, Typing Mode = Insert, Move
+          Cursor = On.
+          <br />
+          This is how one usually types normal text, from left to right,
+          shifting the cursor after typing.
+        </div>
+      </Tutorial.Section>
+
       <Tutorial.Section title="Basic Actions">
         <div>
           Actions that can be performed while an editor is selected. Between

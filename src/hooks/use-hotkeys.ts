@@ -17,9 +17,9 @@ export default function useHotkeys(hotkeys: Hotkey[]): void {
       for (const hotkey of hotkeys)
         if (
           e.key === hotkey.key &&
-          (!hotkey.ctrl || e.ctrlKey) &&
-          (!hotkey.meta || e.metaKey) &&
-          (!hotkey.shift || e.shiftKey)
+          Boolean(hotkey.ctrl) === e.ctrlKey &&
+          Boolean(hotkey.meta) === e.metaKey &&
+          Boolean(hotkey.shift) === e.shiftKey
         ) {
           if (hotkey.onPress()) {
             e.preventDefault();

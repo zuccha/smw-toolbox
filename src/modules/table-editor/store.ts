@@ -88,7 +88,7 @@ export const useTableEditorTabSettingsIsVisible = () =>
   useStoreBoolean(`${tableEditorId}.tab.settings.isVisible`, true);
 
 export const useTableEditorTabTutorialIsVisible = () =>
-  useStoreBoolean(`${tableEditorId}.tab.tutorial.isVisible`, true);
+  useStoreBoolean(`${tableEditorId}.tab.tutorial.isVisible`, false);
 
 export const useTableEditorUnit = () =>
   useStore(`${tableEditorId}.unit`, IntegerUnit.Byte, IntegerUnitSchema.parse);

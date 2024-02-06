@@ -7,6 +7,7 @@ export type InputProps = {
   onChange: (value: string) => string | void;
   pattern?: RegExp;
   placeholder: string;
+  prefix?: string;
   size?: number;
   type: "number" | "text";
   value: string;
@@ -18,6 +19,7 @@ export default function Input({
   onChange,
   pattern,
   placeholder,
+  prefix = "",
   size,
   type,
   value,
@@ -41,11 +43,19 @@ export default function Input({
     }
   }, [type]);
 
+  const handleMouseDown = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    inputRef.current?.focus();
+  }, []);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       e.stopPropagation();
       const nextValue = e.currentTarget.value;
-      if (!pattern || pattern.test(nextValue)) {
+      if (
+        (!pattern || pattern.test(nextValue)) &&
+        (size === undefined || nextValue.length <= size)
+      ) {
         const otherNextValue = onChange(nextValue);
         if (otherNextValue === undefined) {
           valueRef.current = nextValue;
@@ -57,7 +67,7 @@ export default function Input({
         restoreValue();
       }
     },
-    [onChange, pattern, restoreValue],
+    [onChange, pattern, restoreValue, size],
   );
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -66,17 +76,19 @@ export default function Input({
   }, []);
 
   return (
-    <input
-      class="Input"
-      max={max}
-      min={min}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      placeholder={placeholder}
-      ref={inputRef}
-      size={size}
-      type={type}
-      value={value}
-    />
+    <div class="Input" onMouseDown={handleMouseDown}>
+      {prefix && <span class="Input_Prefix">{prefix}</span>}
+      <input
+        max={max}
+        min={min}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        ref={inputRef}
+        size={size}
+        type={type}
+        value={value}
+      />
+    </div>
   );
 }

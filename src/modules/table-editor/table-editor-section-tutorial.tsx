@@ -30,14 +30,12 @@ const actions: TutorialAction[] = [
   },
   {
     name: "Backspace (⌫)",
-    description:
-      "Delete the last typed digit in the selection. If the selection has not modified yet, it sets its value to zero.",
+    description: "Delete the last typed digit in the selection.",
     keybindings: [],
   },
   {
     name: "Delete (DEL)",
-    description:
-      "If the selection has not modified yet, it sets its value to zero.",
+    description: "It sets the value of the selection to zero.",
     keybindings: [],
   },
   {

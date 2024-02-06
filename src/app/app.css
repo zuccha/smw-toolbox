@@ -84,6 +84,12 @@
   gap: 1em;
 }
 
+.App_SectionActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5em;
+}
+
 .App_SectionCol {
   display: flex;
   flex-direction: column;

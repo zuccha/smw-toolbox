@@ -53,7 +53,7 @@ export const useCalculatorEditorsShouldFlipBitOnClick = () =>
   useStoreBoolean(`${calculatorId}.editors.shouldFlipBitOnClick`, false);
 
 export const useCalculatorEditorsShouldMoveAfterTyping = () =>
-  useStoreBoolean(`${calculatorId}.editors.shouldMoveAfterTyping`, true);
+  useStoreBoolean(`${calculatorId}.editors.shouldMoveAfterTyping`, false);
 
 export const useCalculatorEditorsSpaceFrequency = () =>
   useStore(
@@ -65,24 +65,24 @@ export const useCalculatorEditorsSpaceFrequency = () =>
 export const useCalculatorEditorsTypingDirection = () =>
   useStore(
     `${calculatorId}.editors.typingDirection`,
-    IntegerStringTypingDirection.Right,
+    IntegerStringTypingDirection.Left,
     IntegerStringTypingDirectionSchema.parse,
   );
 
 export const useCalculatorEditorsTypingMode = () =>
   useStore(
     `${calculatorId}.editors.typingMode`,
-    IntegerStringTypingMode.Overwrite,
+    IntegerStringTypingMode.Insert,
     IntegerStringTypingModeSchema.parse,
   );
 
 export const useCalculatorIsAdvanced = () =>
-  useStoreBoolean(`${calculatorId}.isAdvanced`, false);
+  useStoreBoolean(`${calculatorId}.isAdvanced`, true);
 
 export const useCalculatorKeyboardMode = () =>
   useStore(
     `${calculatorId}.keyboard.mode`,
-    KeyboardMode.None,
+    KeyboardMode.Compact,
     KeyboardModeSchema.parse,
   );
 
@@ -121,10 +121,10 @@ export const useCalculatorOperation = () =>
   );
 
 export const useCalculatorTabSettingsIsVisible = () =>
-  useStoreBoolean(`${calculatorId}.tab.settings.isVisible`, false);
+  useStoreBoolean(`${calculatorId}.tab.settings.isVisible`, true);
 
 export const useCalculatorTabTutorialIsVisible = () =>
   useStoreBoolean(`${calculatorId}.tab.tutorial.isVisible`, false);
 
 export const useCalculatorUnit = () =>
-  useStore(`${calculatorId}.unit`, IntegerUnit.Byte, IntegerUnitSchema.parse);
+  useStore(`${calculatorId}.unit`, IntegerUnit.Word, IntegerUnitSchema.parse);

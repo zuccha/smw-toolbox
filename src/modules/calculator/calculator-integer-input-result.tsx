@@ -62,6 +62,7 @@ export default forwardRef<IntegerInputRef>(
         caret={caret}
         integer={result}
         isPasteIconHidden
+        isDisabled
         isSignedBin={isBinSigned}
         isSignedDec={isDecSigned}
         isSignedHex={isHexSigned}

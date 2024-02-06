@@ -3,6 +3,11 @@ type Callback<T> = (value: T) => void;
 const listeners = new Map<string, Set<Callback<any>>>();
 
 const Storage = {
+  clear: (): void => {
+    localStorage.clear();
+    window.location.reload();
+  },
+
   load: <T>(id: string, defaultValue: T, parse: (maybeT: unknown) => T): T => {
     try {
       const stringOrNull = localStorage.getItem(id);
