@@ -1,10 +1,8 @@
-import { ChangelogRelease } from "../../components/changelog";
-
-const changelog: ChangelogRelease[] = [
+[
   {
-    version: "1.0.0",
-    date: "2024-02-06",
-    added: [
+    "version": "1.0.0",
+    "date": "2024-02-06",
+    "added": [
       "<b>Calculator</b> widget to display and edit numbers in binary, decimal, and hexadecimal formats.",
       "<b>Calculator:</b> Button and hotkey (<kbd>Ctrl+C</kbd>) to copy the selected value to the clipboard.",
       "<b>Calculator:</b> Button and hotkey (<kbd>Ctrl+V</kbd>) to paste the selected value from the clipboard.",
@@ -66,9 +64,7 @@ const changelog: ChangelogRelease[] = [
       "<b>App Info:</b> License.",
       "Hotkeys (<kbd>Ctrl+Digit</kbd>) to select tab.",
       "Hotkeys (<kbd>Tab/Shift+Tab</kbd>) to navigate through focusable elements.",
-      "Navigation through URL tags.",
-    ],
-  },
-];
-
-export default changelog;
+      "Navigation through URL tags."
+    ]
+  }
+]

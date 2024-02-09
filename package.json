@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts"
   },
   "dependencies": {
     "lucide-preact": "^0.316.0",
