@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - unreleased
+
+### Fixed
+
+- Use system font in place of Inter to prevent bad small-caps computation.
+
 ## [1.0.0] - 2024-02-06
 
 ### Added
