@@ -14,7 +14,7 @@ export default function AppInfoSectionAbout() {
       <div>
         <b>SMW Toolbox: Tools for hacking Super Mario World</b>
       </div>
-      <div>Version 1.0.0 &#8212; 2024/02/03</div>
+      <div>Version 1.0.1 &#8212; 2024/09/08</div>
       <div>©2024 zuccha</div>
       <div>
         <a href="https://github.com/zuccha/smw-toolbox" target="_blank">
