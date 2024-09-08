@@ -1,10 +1,16 @@
 # Changelog
 
+## [1.2.0] - unreleased
+
+### Fixed
+
+- Non-collapsible section headers not having small-caps font.
+
 ## [1.0.1] - 2024-09-08
 
 ### Fixed
 
-- Use system font in place of Inter to prevent bad small-caps computation.
+- Broken small-caps font by replacing Inter with system font.
 
 ## [1.0.0] - 2024-02-06
 

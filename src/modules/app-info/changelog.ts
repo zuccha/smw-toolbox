@@ -2,10 +2,17 @@ import { ChangelogRelease } from "../../components/changelog";
 
 const changelog: ChangelogRelease[] = [
   {
+    version: "1.2.0",
+    date: "unreleased",
+    fixed: [
+      "Non-collapsible section headers not having small-caps font.",
+    ],
+  },
+  {
     version: "1.0.1",
     date: "2024-09-08",
     fixed: [
-      "Use system font in place of Inter to prevent bad small-caps computation.",
+      "Broken small-caps font by replacing Inter with system font.",
     ],
   },
   {
