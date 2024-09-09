@@ -22,6 +22,7 @@ export default function AsarEditor({ onChange, value }: AsarEditorProps) {
       onChange={handleChange}
       placeholder="Write your ASM code here"
       rows={20}
+      spellcheck={false}
       value={value}
     ></textarea>
   );
