@@ -15,5 +15,8 @@
   flex: 1;
   display: flex;
   align-items: center;
+}
+
+.Setting_Input.lg {
   font-size: 1.2em;
 }
