@@ -10,7 +10,7 @@
     "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts"
   },
   "dependencies": {
-    "lucide-preact": "^0.316.0",
+    "lucide-preact": "^0.439.0",
     "preact": "^10.23.2",
     "react-device-detect": "^2.2.3",
     "vite-plugin-singlefile": "^0.13.5",
