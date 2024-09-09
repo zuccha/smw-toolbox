@@ -27,6 +27,8 @@ export default function EmulatorSectionSnes() {
 
   const [ps] = useState(0b00110000);
 
+  const [memoryAddress, setMemoryAddress] = useState(0);
+
   return (
     <SectionCollapsible
       isVisible={isTabSnesVisible}
@@ -35,7 +37,7 @@ export default function EmulatorSectionSnes() {
     >
       <div className="App_SectionCol">
         <div className="App_SectionRow align-items_flex-start">
-          <Setting label="Registers">
+          <Setting label="Registers" size="md">
             <div className="App_SectionCluster align-items_flex-start">
               <SnesRegisterGroup name="Registers">
                 <SnesRegister
@@ -99,13 +101,17 @@ export default function EmulatorSectionSnes() {
             </div>
           </Setting>
 
-          <Setting label="Processor Status">
+          <Setting label="Processor Status" size="md">
             <SnesProcessorStatus status={ps} />
           </Setting>
         </div>
 
-        <Setting label="Memory">
-          <SnesMemory address={0} values={memory} />
+        <Setting label="Memory" size="md">
+          <SnesMemory
+            address={memoryAddress}
+            onChangeAddress={setMemoryAddress}
+            values={memory}
+          />
         </Setting>
       </div>
     </SectionCollapsible>

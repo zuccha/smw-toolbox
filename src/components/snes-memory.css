@@ -49,6 +49,28 @@
 }
 
 .SnesMemory_Corner {
+  display: flex;
+  justify-content: flex-end;
   border-bottom: 1px solid var(--color-neutral-2);
   border-right: 1px solid var(--color-neutral-2);
+}
+
+.SnesMemory_Corner .IntegerStringInput_Char {
+  width: unset;
+}
+
+.SnesMemory_Corner
+  .IntegerStringInput:not(.disabled):focus
+  .IntegerStringInput_Char.solid {
+  color: var(--color-primary-1);
+}
+
+.SnesMemory_Corner
+  .IntegerStringInput:not(.disabled):focus
+  .IntegerStringInput_Char.selected {
+  color: var(--color-primary-2);
+}
+
+.SnesMemory_Corner .IntegerStringInput_Caret {
+  display: none;
 }
