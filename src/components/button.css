@@ -63,6 +63,8 @@
   border-radius: 0.2em;
   pointer-events: none;
   font-size: 0.8rem;
+  font-variant: normal;
+  font-weight: normal;
   opacity: 0;
 }
 

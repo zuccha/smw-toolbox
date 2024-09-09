@@ -113,25 +113,18 @@ export default function TableEditorSectionGrid() {
 
   useHotkeys(hotkeys);
 
+  const actions = useMemo(
+    () => [
+      { icon: ClipboardPaste, onClick: pasteTable, tooltip: "Paste" },
+      { icon: CopyOrCheck, onClick: copyTable, tooltip: "Copy" },
+      { icon: X, onClick: clearGrid, tooltip: "Clear" },
+    ],
+    [clearGrid, copyTable, pasteTable],
+  );
+
   return (
-    <SectionStatic label="Table Editor">
+    <SectionStatic actions={actions} label="Table Editor">
       <div class="App_SectionCol">
-        <div class="App_SectionRow font-size_l">
-          <span class="font-family_monospace">{name ? `${name}:` : ""}</span>
-
-          <div class="flex_1" />
-
-          <div class="App_SectionCluster">
-            <IconButton
-              Icon={ClipboardPaste}
-              onClick={pasteTable}
-              tooltip="Paste"
-            />
-            <IconButton Icon={CopyOrCheck} onClick={copyTable} tooltip="Copy" />
-            <IconButton Icon={X} onClick={clearGrid} tooltip="Clear" />
-          </div>
-        </div>
-
         {importError && (
           <div class="App_SectionCluster">
             <div class="flex_1" />

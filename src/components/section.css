@@ -11,6 +11,13 @@
   width: 100%;
   padding: 1em;
   font-variant: small-caps;
+  position: relative;
+}
+
+.Section_Header_Actions {
+  position: absolute;
+  right: 1em;
+  font-size: 1.2em;
 }
 
 .Section_Children {
