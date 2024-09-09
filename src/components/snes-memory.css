@@ -1,0 +1,54 @@
+.SnesMemory {
+  display: flex;
+  border: 1px solid var(--color-neutral-2);
+  font-family: monospace;
+  flex: 1;
+}
+
+.SnesMemory_Group {
+  display: flex;
+  flex-direction: column;
+}
+
+.SnesMemory_ColIndex,
+.SnesMemory_RowIndex,
+.SnesMemory_Grid,
+.SnesMemory_Corner {
+  padding: 0.5em 0.75em;
+  row-gap: 0.2em;
+}
+
+.SnesMemory_ColIndex,
+.SnesMemory_Grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  flex: 1;
+}
+
+.SnesMemory_ColIndex > div,
+.SnesMemory_Grid > div {
+  display: flex;
+  justify-content: center;
+}
+
+.SnesMemory_ColIndex,
+.SnesMemory_RowIndex,
+.SnesMemory_Corner {
+  background-color: var(--color-background-1);
+  color: var(--color-neutral-2);
+}
+
+.SnesMemory_ColIndex {
+  border-bottom: 1px solid var(--color-neutral-2);
+}
+
+.SnesMemory_RowIndex {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-neutral-2);
+}
+
+.SnesMemory_Corner {
+  border-bottom: 1px solid var(--color-neutral-2);
+  border-right: 1px solid var(--color-neutral-2);
+}

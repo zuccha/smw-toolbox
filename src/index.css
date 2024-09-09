@@ -69,6 +69,22 @@ kbd {
   align-items: center;
 }
 
+.align-items_flex-start {
+  align-items: flex-start;
+}
+
+.justify-content_center {
+  justify-content: center;
+}
+
+.justify-content_space-between {
+  justify-content: space-between;
+}
+
+.flex {
+  display: flex;
+}
+
 .flex_1 {
   flex: 1;
 }

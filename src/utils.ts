@@ -95,8 +95,14 @@ export function ko(_: unknown): false {
   return false;
 }
 
-export function toDec(n: number): string {
-  return n.toString(10);
+export function toBin(n: number, minLength?: number): string {
+  const bin = n.toString(2);
+  return minLength !== undefined ? padL(bin, minLength, "0") : bin;
+}
+
+export function toDec(n: number, minLength?: number): string {
+  const dec = n.toString(10);
+  return minLength !== undefined ? padL(dec, minLength, "0") : dec;
 }
 
 export function toHex(n: number, minLength?: number): string {

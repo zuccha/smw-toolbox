@@ -1,0 +1,15 @@
+.AsarEditor {
+  padding: 0.5em 0.75em;
+  background-color: var(--color-background-2);
+  color: var(--color-neutral-1);
+  width: 100%;
+
+  font-size: 1.2em;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: scroll;
+}
+
+.AsarEditor:focus {
+  outline-color: var(--color-primary-1);
+}
