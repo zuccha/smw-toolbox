@@ -9,6 +9,7 @@ import { clamp, padL } from "../utils";
 export enum IntegerUnit {
   Byte,
   Word,
+  Long,
 }
 
 export const IntegerUnitSchema = z.nativeEnum(IntegerUnit);
@@ -32,6 +33,7 @@ export const IntegerEncodingSchema = z.nativeEnum(IntegerEncoding);
 export const IntegerSize = {
   [IntegerUnit.Byte]: 1,
   [IntegerUnit.Word]: 2,
+  [IntegerUnit.Long]: 3,
 } as const;
 
 //==============================================================================
@@ -41,6 +43,7 @@ export const IntegerSize = {
 export const IntegerBoundsUnsigned = {
   [IntegerUnit.Byte]: { min: 0, max: 255 },
   [IntegerUnit.Word]: { min: 0, max: 65535 },
+  [IntegerUnit.Long]: { min: 0, max: 16777215 },
 } as const;
 
 //==============================================================================
@@ -50,6 +53,7 @@ export const IntegerBoundsUnsigned = {
 export const IntegerBoundsSigned = {
   [IntegerUnit.Byte]: { min: -129, max: 127 },
   [IntegerUnit.Word]: { min: -32768, max: 32767 },
+  [IntegerUnit.Long]: { min: -8388608, max: 8388607 },
 } as const;
 
 //==============================================================================
@@ -58,12 +62,16 @@ export const IntegerBoundsSigned = {
 
 export const IntegerMask = {
   [IntegerUnit.Byte]: {
-    hide: 65280, // %1111111100000000
-    show: 255, //   %0000000011111111
+    hide: 16776960, // %111111111111111100000000
+    show: 255, //      %000000000000000011111111
   },
   [IntegerUnit.Word]: {
-    hide: 0, //     %0000000000000000
-    show: 65535, // %1111111111111111
+    hide: 16711680, // %111111110000000000000000
+    show: 65535, //    %000000001111111111111111
+  },
+  [IntegerUnit.Long]: {
+    hide: 0, //        %000000000000000000000000
+    show: 16777215, // %111111111111111111111111
   },
 };
 
@@ -117,6 +125,11 @@ export const IntegerLength = {
     [IntegerEncoding.Bin]: 16,
     [IntegerEncoding.Dec]: 5,
     [IntegerEncoding.Hex]: 4,
+  },
+  [IntegerUnit.Long]: {
+    [IntegerEncoding.Bin]: 24,
+    [IntegerEncoding.Dec]: 8,
+    [IntegerEncoding.Hex]: 6,
   },
 } as const;
 
