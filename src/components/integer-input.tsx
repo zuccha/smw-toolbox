@@ -1,6 +1,6 @@
 import { Copy, Check, ClipboardPaste } from "lucide-preact";
-import { ReactNode, forwardRef } from "preact/compat";
-import { Ref, useCallback, useRef, useImperativeHandle } from "preact/hooks";
+import { ReactNode, Ref, RefObject, forwardRef } from "preact/compat";
+import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import useComponentsWithCooldown from "../hooks/use-alternate-with-cooldown";
 import { Integer, IntegerUnit, IntegerEncoding } from "../models/integer";
 import {
@@ -96,7 +96,7 @@ export type IntegerInputRef = {
   moveUp: () => boolean;
 };
 
-const useEditor = (ref: Ref<IntegerStringInputRef>) => {
+const useEditor = (ref: RefObject<IntegerStringInputRef>) => {
   const copy = useCallback(() => ref.current?.copy(), [ref]);
   const paste = useCallback(() => ref.current?.paste(), [ref]);
   return { copy, paste, ref };
