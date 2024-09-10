@@ -1,12 +1,12 @@
 @top Program { line* }
 
-@skip { comment }
+@skip { comment | space }
 
 line {
-  Instruction (newline | eof) | space* newline
+  Instruction (newline | eof) | newline
 }
 
-Instruction { space* Opcode (space+ param)? space* }
+Instruction { Opcode param? }
 
 @tokens {
   space { $[ \t]+ }

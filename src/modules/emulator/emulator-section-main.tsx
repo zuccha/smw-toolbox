@@ -2,6 +2,7 @@ import { PlayIcon } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 import CodeEditor from "../../components/code-editor";
 import SectionStatic from "../../components/section-static";
+import { asm65168AssemblerLinter } from "../../languages/asm65168-assembler";
 import asm65168Editor from "../../languages/asm65168-editor";
 import { Asm65168ProgramFromCode } from "../../models/asm65168-program";
 
@@ -30,15 +31,15 @@ ADC [$00],y   ; Indirect Long Byte Y
 JML [$0000]   ; Indirect Long Word
 MVN $00,$00   ; Move`;
 
-const extensions = [asm65168Editor()];
+const extensions = [asm65168Editor(), asm65168AssemblerLinter];
 
 export default function EmulatorSectionMain() {
   const [code, setCode] = useState(defaultCode);
 
   const run = useCallback(() => {
-    const { errors, instructions } = Asm65168ProgramFromCode(code.trimEnd());
-    console.log(instructions);
-    console.log(errors);
+    const program = Asm65168ProgramFromCode(code.trimEnd());
+    console.log(program.instructions);
+    console.log(program.errors);
   }, [code]);
 
   const actions = useMemo(
