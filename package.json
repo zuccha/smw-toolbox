@@ -7,15 +7,20 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts"
+    "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts",
+    "grammar:asm": "lezer-generator src/languages/asm-65168.grammar -o src/languages/asm-65168-parser.js"
   },
   "dependencies": {
+    "@codemirror/language": "^6.10.2",
+    "@uiw/codemirror-themes": "^4.23.1",
+    "@uiw/react-codemirror": "^4.23.1",
     "lucide-preact": "^0.439.0",
     "preact": "^10.23.2",
     "react-device-detect": "^2.2.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@lezer/generator": "^1.7.1",
     "@preact/preset-vite": "^2.9.0",
     "typescript": "^5.6.2",
     "vite": "^5.4.3"

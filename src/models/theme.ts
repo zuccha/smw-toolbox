@@ -24,6 +24,8 @@ export const ThemeColorSchema = z.nativeEnum(ThemeColor);
 
 export const Theme = {
   [ThemeMode.Dark]: {
+    mode: ThemeMode.Dark,
+
     background1: "#3b3b3b",
     background2: "#242424",
     background3: "#141414",
@@ -74,6 +76,8 @@ export const Theme = {
     },
   },
   [ThemeMode.Light]: {
+    mode: ThemeMode.Light,
+
     background1: "#e4e4e4",
     background2: "#f9f9f9",
     background3: "#dddddd",
