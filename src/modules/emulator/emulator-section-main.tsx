@@ -2,9 +2,7 @@ import { PlayIcon } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 import AsmEditor from "../../components/asm-editor";
 import SectionStatic from "../../components/section-static";
-// import { asm65168Language } from "../../languages/asm-65168";
-import { asm65168AssemblerLanguage } from "../../languages/asm-65168-assembler";
-import { logTree } from "../../languages/print-lezer-tree";
+import { Asm65168ProgramFromCode } from "../../models/asm65168-program";
 
 const defaultCode = `\
 NOP           ; Implied
@@ -35,8 +33,9 @@ export default function EmulatorSectionMain() {
   const [code, setCode] = useState(defaultCode);
 
   const run = useCallback(() => {
-    const tree = asm65168AssemblerLanguage.parser.parse(code.trimEnd());
-    logTree(tree, code.trimEnd());
+    const { errors, instructions } = Asm65168ProgramFromCode(code.trimEnd());
+    console.log(instructions);
+    console.log(errors);
   }, [code]);
 
   const actions = useMemo(

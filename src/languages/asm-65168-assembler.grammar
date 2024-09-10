@@ -6,7 +6,7 @@ line {
   Instruction (newline | eof) | space* newline
 }
 
-Instruction { space* Opcode (space+ Param)? space* }
+Instruction { space* Opcode (space+ param)? space* }
 
 @tokens {
   space { $[ \t]+ }
@@ -46,57 +46,58 @@ Instruction { space* Opcode (space+ Param)? space* }
     "ADC" | "AND" | "ASL" | "BCC" | "BCS" | "BEQ" | "BIT" | "BMI" | "BNE" | "BPL"
   | "BRA" | "BRK" | "BRL" | "BVC" | "BVS" | "CLC" | "CLD" | "CLI" | "CLV" | "CMP"
   | "COP" | "CPX" | "CPY" | "DEC" | "DEX" | "DEY" | "EOR" | "INC" | "INX" | "INY"
-  | "JMP" | "JML" | "JSR" | "LDA" | "LDX" | "LDY" | "LSR" | "MVN" | "MVP" | "NOP"
-  | "ORA" | "PEA" | "PEI" | "PER" | "PHA" | "PHB" | "PHD" | "PHK" | "PHP" | "PHX"
-  | "PHY" | "PLA" | "PLB" | "PLD" | "PLP" | "PLX" | "PLY" | "REP" | "ROL" | "ROR"
-  | "RTI" | "RTL" | "RTS" | "SBC" | "SEC" | "SED" | "SEI" | "SEP" | "STA" | "STP"
-  | "STX" | "STY" | "STZ" | "TAX" | "TAY" | "TCD" | "TCS" | "TDC" | "TRB" | "TSB"
-  | "TSC" | "TSX" | "TXA" | "TXS" | "TXY" | "TYA" | "TYX" | "WAI" | "WDM" | "XBA"
-  | "XCE"
-  | "adc" | "and" | "asl" | "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl"
+  | "JMP" | "JML" | "JSL" | "JSR" | "LDA" | "LDX" | "LDY" | "LSR" | "MVN" | "MVP"
+  | "NOP" | "ORA" | "PEA" | "PEI" | "PER" | "PHA" | "PHB" | "PHD" | "PHK" | "PHP"
+  | "PHX" | "PHY" | "PLA" | "PLB" | "PLD" | "PLP" | "PLX" | "PLY" | "REP" | "ROL"
+  | "ROR" | "RTI" | "RTL" | "RTS" | "SBC" | "SEC" | "SED" | "SEI" | "SEP" | "STA"
+  | "STP" | "STX" | "STY" | "STZ" | "TAX" | "TAY" | "TCD" | "TCS" | "TDC" | "TRB"
+  | "TSB" | "TSC" | "TSX" | "TXA" | "TXS" | "TXY" | "TYA" | "TYX" | "WAI" | "WDM"
+  | "XBA" | "XCE"
+    "adc" | "and" | "asl" | "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl"
   | "bra" | "brk" | "brl" | "bvc" | "bvs" | "clc" | "cld" | "cli" | "clv" | "cmp"
   | "cop" | "cpx" | "cpy" | "dec" | "dex" | "dey" | "eor" | "inc" | "inx" | "iny"
-  | "jmp" | "jml" | "jsr" | "lda" | "ldx" | "ldy" | "lsr" | "mvn" | "mvp" | "nop"
-  | "ora" | "pea" | "pei" | "per" | "pha" | "phb" | "phd" | "phk" | "php" | "phx"
-  | "phy" | "pla" | "plb" | "pld" | "plp" | "plx" | "ply" | "rep" | "rol" | "ror"
-  | "rti" | "rtl" | "rts" | "sbc" | "sec" | "sed" | "sei" | "sep" | "sta" | "stp"
-  | "stx" | "sty" | "stz" | "tax" | "tay" | "tcd" | "tcs" | "tdc" | "trb" | "tsb"
-  | "tsc" | "tsx" | "txa" | "txs" | "txy" | "tya" | "tyx" | "wai" | "wdm" | "xba"
-  | "xce"
+  | "jmp" | "jml" | "jsl" | "jsr" | "lda" | "ldx" | "ldy" | "lsr" | "mvn" | "mvp"
+  | "nop" | "ora" | "pea" | "pei" | "per" | "pha" | "phb" | "phd" | "phk" | "php"
+  | "phx" | "phy" | "pla" | "plb" | "pld" | "plp" | "plx" | "ply" | "rep" | "rol"
+  | "ror" | "rti" | "rtl" | "rts" | "sbc" | "sec" | "sed" | "sei" | "sep" | "sta"
+  | "stp" | "stx" | "sty" | "stz" | "tax" | "tay" | "tcd" | "tcs" | "tdc" | "trb"
+  | "tsb" | "tsc" | "tsx" | "txa" | "txs" | "txy" | "tya" | "tyx" | "wai" | "wdm"
+  | "xba" | "xce"
   }
 }
 
-Accumulator         { a }
-Immediate_Byte      { "#" Byte }
-Immediate_Word      { "#" Word }
-Direct_Byte         { Byte }
-Direct_Byte_X       { Byte x }
-Direct_Byte_Y       { Byte y }
-Direct_Byte_S       { Byte s }
-Direct_Word         { Word }
-Direct_Word_X       { Word x }
-Direct_Word_Y       { Word y }
-Direct_Long         { Long }
-Direct_Long_X       { Long x }
-Indirect_Byte       { "(" Byte ")" }
-Indirect_Byte_X     { "(" Byte x ")" }
-Indirect_Byte_Y     { "(" Byte ")" y }
-Indirect_Byte_SY    { "(" Byte s ")" y }
-Indirect_Word       { "(" Word ")" }
-Indirect_Word_X     { "(" Word x ")" }
-IndirectLong_Byte   { "[" Byte "]" }
-IndirectLong_Byte_Y { "[" Byte "]" y }
-IndirectLong_Word   { "[" Word "]" }
-Move                { Byte "," Byte }
+Param_Accumulator         { a }
+Param_Direct_Byte         { Byte }
+Param_Direct_Byte_S       { Byte s }
+Param_Direct_Byte_X       { Byte x }
+Param_Direct_Byte_Y       { Byte y }
+Param_Direct_Long         { Long }
+Param_Direct_Long_X       { Long x }
+Param_Direct_Word         { Word }
+Param_Direct_Word_X       { Word x }
+Param_Direct_Word_Y       { Word y }
+Param_Immediate_Byte      { "#" Byte }
+Param_Immediate_Word      { "#" Word }
+Param_IndirectLong_Byte   { "[" Byte "]" }
+Param_IndirectLong_Byte_Y { "[" Byte "]" y }
+Param_IndirectLong_Word   { "[" Word "]" }
+Param_Indirect_Byte       { "(" Byte ")" }
+Param_Indirect_Byte_SY    { "(" Byte s ")" y }
+Param_Indirect_Byte_X     { "(" Byte x ")" }
+Param_Indirect_Byte_Y     { "(" Byte ")" y }
+Param_Indirect_Word       { "(" Word ")" }
+Param_Indirect_Word_X     { "(" Word x ")" }
+Param_Move                { Byte "," Byte }
 
-Param {
-  Accumulator | Immediate_Byte | Immediate_Word | Direct_Byte
-| Direct_Word | Direct_Long | Direct_Byte_X | Direct_Byte_Y
-| Direct_Byte_S | Direct_Word_X | Direct_Word_Y | Direct_Long_X
-| Indirect_Byte | Indirect_Byte_X | Indirect_Byte_Y
-| Indirect_Byte_SY | Indirect_Word | Indirect_Word_X
-| IndirectLong_Byte | IndirectLong_Byte_Y | IndirectLong_Word
-| Move
+param {
+  Param_Accumulator | Param_Direct_Byte | Param_Direct_Byte_S
+| Param_Direct_Byte_X | Param_Direct_Byte_Y | Param_Direct_Long
+| Param_Direct_Long_X | Param_Direct_Word | Param_Direct_Word_X
+| Param_Direct_Word_Y | Param_Immediate_Byte | Param_Immediate_Word
+| Param_IndirectLong_Byte | Param_IndirectLong_Byte_Y | Param_IndirectLong_Word
+| Param_Indirect_Byte | Param_Indirect_Byte_SY | Param_Indirect_Byte_X
+| Param_Indirect_Byte_Y | Param_Indirect_Word | Param_Indirect_Word_X
+| Param_Move
 }
 
 @detectDelim
