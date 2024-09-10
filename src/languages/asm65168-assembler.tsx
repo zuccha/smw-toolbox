@@ -1,6 +1,6 @@
 import { LanguageSupport, LRLanguage } from "@codemirror/language";
 // @ts-ignore
-import { parser } from "./asm-65168-assembler-parser.js";
+import { parser } from "./asm65168-assembler-parser.js";
 
 const parserWithMetadata = parser.configure({ props: [] });
 

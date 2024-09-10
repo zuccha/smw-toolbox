@@ -1,18 +1,16 @@
 import { tags as t } from "@lezer/highlight";
 import { createTheme } from "@uiw/codemirror-themes";
-import CodeMirror from "@uiw/react-codemirror";
+import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { useMemo } from "preact/hooks";
 import { useAppTheme, useAppThemeColor } from "../app/store";
-import asm65168Editor from "../languages/asm-65168-editor";
 import { Theme, ThemeColor, ThemeMode } from "../models/theme";
-import "./asm-editor.css";
+import "./code-editor.css";
 
-export type AsmEditorProps = {
+export type CodeEditorProps = {
+  extensions?: ReactCodeMirrorProps["extensions"];
   onChange: (value: string) => void;
   value: string;
 };
-
-const extensions = [asm65168Editor()];
 
 const themeDark = Theme[ThemeMode.Dark];
 const themeLight = Theme[ThemeMode.Light];
@@ -89,17 +87,21 @@ const basicSetup = {
   searchKeymap: false,
 };
 
-export default function AsmEditor({ onChange, value }: AsmEditorProps) {
+export default function CodeEditor({
+  extensions,
+  onChange,
+  value,
+}: CodeEditorProps) {
   const appTheme = useAppTheme();
   const [appThemeColor] = useAppThemeColor();
 
   const theme = useMemo(
     () => getTheme(appTheme.mode, appThemeColor),
-    [appTheme.mode],
+    [appTheme.mode, appThemeColor],
   );
 
   return (
-    <div className="AsmEditor">
+    <div className="CodeEditor">
       <CodeMirror
         autoFocus
         basicSetup={basicSetup}

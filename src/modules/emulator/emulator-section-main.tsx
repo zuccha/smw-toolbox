@@ -1,7 +1,8 @@
 import { PlayIcon } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
-import AsmEditor from "../../components/asm-editor";
+import CodeEditor from "../../components/code-editor";
 import SectionStatic from "../../components/section-static";
+import asm65168Editor from "../../languages/asm65168-editor";
 import { Asm65168ProgramFromCode } from "../../models/asm65168-program";
 
 const defaultCode = `\
@@ -29,6 +30,8 @@ ADC [$00],y   ; Indirect Long Byte Y
 JML [$0000]   ; Indirect Long Word
 MVN $00,$00   ; Move`;
 
+const extensions = [asm65168Editor()];
+
 export default function EmulatorSectionMain() {
   const [code, setCode] = useState(defaultCode);
 
@@ -45,7 +48,7 @@ export default function EmulatorSectionMain() {
 
   return (
     <SectionStatic actions={actions} label="Emulator">
-      <AsmEditor onChange={setCode} value={code} />
+      <CodeEditor extensions={extensions} onChange={setCode} value={code} />
     </SectionStatic>
   );
 }

@@ -1,11 +1,11 @@
-.AsmEditor {
+.CodeEditor {
   border: 1px solid var(--color-neutral-2);
 }
 
-.AsmEditor:focus-within {
+.CodeEditor:focus-within {
   border: 1px solid var(--color-primary-1);
 }
 
-.AsmEditor .cm-focused {
+.CodeEditor .cm-focused {
   outline-style: none;
 }

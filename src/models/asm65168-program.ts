@@ -1,5 +1,5 @@
 import { Text } from "@codemirror/state";
-import { asm65168AssemblerLanguage } from "../languages/asm-65168-assembler";
+import { asm65168AssemblerLanguage } from "../languages/asm65168-assembler";
 import {
   Asm65168Instruction,
   Asm65168InstructionSchema,
