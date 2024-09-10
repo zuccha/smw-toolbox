@@ -3,7 +3,7 @@ import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror from "@uiw/react-codemirror";
 import { useMemo } from "preact/hooks";
 import { useAppTheme, useAppThemeColor } from "../app/store";
-import asm65168 from "../languages/asm-65168";
+import asm65168Editor from "../languages/asm-65168-editor";
 import { Theme, ThemeColor, ThemeMode } from "../models/theme";
 import "./asm-editor.css";
 
@@ -11,6 +11,8 @@ export type AsmEditorProps = {
   onChange: (value: string) => void;
   value: string;
 };
+
+const extensions = [asm65168Editor()];
 
 const themeDark = Theme[ThemeMode.Dark];
 const themeLight = Theme[ThemeMode.Light];
@@ -101,7 +103,7 @@ export default function AsmEditor({ onChange, value }: AsmEditorProps) {
       <CodeMirror
         autoFocus
         basicSetup={basicSetup}
-        extensions={[asm65168()]}
+        extensions={extensions}
         indentWithTab={false}
         maxHeight="50em"
         minHeight="25em"
