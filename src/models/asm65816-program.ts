@@ -1,9 +1,9 @@
 import { Text } from "@codemirror/state";
 import {
   Asm65168Instruction,
-  Asm65168InstructionSchema,
-} from "./asm65168-instruction";
-import { asm65168Language } from "../languages/asm65168";
+  Asm65816InstructionSchema,
+} from "./asm65816-instruction";
+import { asm65816Language } from "../languages/asm65816";
 
 //==============================================================================
 // Compilation Error
@@ -61,7 +61,7 @@ function InstructionBuilderFromLine(line: number): InstructionBuilder {
 // Program
 //==============================================================================
 
-export type Asm65168Program = {
+export type Asm65816Program = {
   instructions: Asm65168Instruction[];
   errors: CompilationError[];
 };
@@ -73,8 +73,8 @@ export type Asm65168Program = {
 const paramTypePrefix = "Param_";
 const unitByConstUnit = { ConstByte: "Byte", ConstWord: "Word" } as const;
 
-export function Asm65168ProgramFromCode(code: string): Asm65168Program {
-  const tree = asm65168Language.parser.parse(code);
+export function Asm65168ProgramFromCode(code: string): Asm65816Program {
+  const tree = asm65816Language.parser.parse(code);
 
   const text = Text.of(code.split("\n"));
   const cursor = tree.cursor();
@@ -90,7 +90,7 @@ export function Asm65168ProgramFromCode(code: string): Asm65168Program {
       if (!instructionBuilder.paramType && instructionBuilder.args.length === 0)
         instructionBuilder.paramType = "Implied";
       const instruction =
-        Asm65168InstructionSchema.safeParse(instructionBuilder);
+        Asm65816InstructionSchema.safeParse(instructionBuilder);
       if (instruction.success) instructions.push(instruction.data);
       else if (errors.every((error) => error.line !== range.line)) {
         const paramType = instructionBuilder.paramType;

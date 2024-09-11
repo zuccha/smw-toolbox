@@ -15,7 +15,7 @@ const argsL = z.tuple([argLong]);
 const argsM = z.tuple([argByte, argByte]);
 
 //prettier-ignore
-export const Asm65168InstructionSchema = z.union([
+export const Asm65816InstructionSchema = z.union([
   z.object({ args: argsB, line: z.number(), opcode: z.literal("ADC"), paramType: z.literal("Direct_Byte") }),
   z.object({ args: argsB, line: z.number(), opcode: z.literal("ADC"), paramType: z.literal("Direct_Byte_S") }),
   z.object({ args: argsB, line: z.number(), opcode: z.literal("ADC"), paramType: z.literal("Direct_Byte_X") }),
@@ -292,4 +292,4 @@ export const Asm65168InstructionSchema = z.union([
   z.object({ args: args0, line: z.number(), opcode: z.literal("XCE"), paramType: z.literal("Implied") }),
 ]);
 
-export type Asm65168Instruction = z.infer<typeof Asm65168InstructionSchema>;
+export type Asm65168Instruction = z.infer<typeof Asm65816InstructionSchema>;

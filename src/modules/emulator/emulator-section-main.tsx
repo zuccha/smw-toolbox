@@ -2,8 +2,8 @@ import { PlayIcon } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 import CodeEditor from "../../components/code-editor";
 import SectionStatic from "../../components/section-static";
-import { Asm65168ProgramFromCode } from "../../models/asm65168-program";
-import asm65168, { asm65168Linter } from "../../languages/asm65168";
+import { Asm65168ProgramFromCode } from "../../models/asm65816-program";
+import asm65816, { asm65816Linter } from "../../languages/asm65816";
 
 const defaultCode = `\
 NOP           ; Implied
@@ -30,7 +30,7 @@ ADC [$00],y   ; Indirect Long Byte Y
 JML [$0000]   ; Indirect Long Word
 MVN $00,$00   ; Move`;
 
-const extensions = [asm65168(), asm65168Linter];
+const extensions = [asm65816(), asm65816Linter];
 
 export default function EmulatorSectionMain() {
   const [code, setCode] = useState(defaultCode);

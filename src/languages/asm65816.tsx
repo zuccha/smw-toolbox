@@ -1,9 +1,9 @@
 import { LanguageSupport, LRLanguage } from "@codemirror/language";
 import { linter, Diagnostic } from "@codemirror/lint";
 import { styleTags, tags as t } from "@lezer/highlight";
-import { Asm65168ProgramFromCode } from "../models/asm65168-program";
+import { Asm65168ProgramFromCode } from "../models/asm65816-program.js";
 // @ts-ignore
-import { parser } from "./asm65168-parser.js";
+import { parser } from "./asm65816-parser.js";
 
 const parserWithMetadata = parser.configure({
   props: [
@@ -18,16 +18,16 @@ const parserWithMetadata = parser.configure({
   ],
 });
 
-export const asm65168Language = LRLanguage.define({
+export const asm65816Language = LRLanguage.define({
   parser: parserWithMetadata,
   languageData: { commentTokens: { line: ";" } },
 });
 
-export default function asm65168() {
-  return new LanguageSupport(asm65168Language, []);
+export default function asm65816() {
+  return new LanguageSupport(asm65816Language, []);
 }
 
-export const asm65168Linter = linter((view) => {
+export const asm65816Linter = linter((view) => {
   const diagnostics: Diagnostic[] = [];
 
   const code = view.contentDOM.innerText;
