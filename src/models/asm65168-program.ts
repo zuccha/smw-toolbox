@@ -1,9 +1,9 @@
 import { Text } from "@codemirror/state";
-import { asm65168AssemblerLanguage } from "../languages/asm65168-assembler";
 import {
   Asm65168Instruction,
   Asm65168InstructionSchema,
 } from "./asm65168-instruction";
+import { asm65168Language } from "../languages/asm65168";
 
 //==============================================================================
 // Compilation Error
@@ -71,9 +71,10 @@ export type Asm65168Program = {
 //==============================================================================
 
 const paramTypePrefix = "Param_";
+const unitByConstUnit = { ConstByte: "Byte", ConstWord: "Word" } as const;
 
 export function Asm65168ProgramFromCode(code: string): Asm65168Program {
-  const tree = asm65168AssemblerLanguage.parser.parse(code);
+  const tree = asm65168Language.parser.parse(code);
 
   const text = Text.of(code.split("\n"));
   const cursor = tree.cursor();
@@ -156,8 +157,16 @@ export function Asm65168ProgramFromCode(code: string): Asm65168Program {
       continue;
     }
 
-    const name = cursor.type.name;
-    error(`Unknown node (${name})`);
+    if (cursor.type.name == "ConstByte" || cursor.type.name == "ConstWord") {
+      const unit = unitByConstUnit[cursor.type.name];
+      const value = code.slice(cursor.from, cursor.to);
+      if (!instructionBuilder)
+        error(`Arg (${unit}): missing instruction builder`);
+      else instructionBuilder.args.push({ value, unit });
+      continue;
+    }
+
+    // Ignore other nodes.
   }
 
   pushInstruction();

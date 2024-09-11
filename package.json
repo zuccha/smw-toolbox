@@ -8,9 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts",
-    "grammar:asm": "npm run grammar:asm:editor && npm run grammar:asm:assembler",
-    "grammar:asm:editor": "lezer-generator src/languages/asm65168-editor.grammar -o src/languages/asm65168-editor-parser.js",
-    "grammar:asm:assembler": "lezer-generator src/languages/asm65168-assembler.grammar -o src/languages/asm65168-assembler-parser.js"
+    "grammar:asm": "lezer-generator src/languages/asm65168.grammar -o src/languages/asm65168-parser.js"
   },
   "dependencies": {
     "@codemirror/language": "^6.10.2",
