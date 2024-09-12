@@ -816,5 +816,5 @@ const InstructionSchema = z
 
 type Instruction = z.infer<typeof InstructionSchema>;
 
-export const Asm65168InstructionSchema = InstructionSchema;
-export type Asm65168Instruction = Instruction;
+export const Asm65816InstructionSchema = InstructionSchema;
+export type Asm65816Instruction = Instruction;

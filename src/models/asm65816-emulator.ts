@@ -1,7 +1,4 @@
-import {
-  Asm65168Instruction,
-  Asm65816InstructionId,
-} from "./asm65816-instruction";
+import { Asm65816Instruction } from "./asm65816-instruction";
 import { IntegerBoundsUnsigned, IntegerUnit } from "./integer";
 
 //==============================================================================
@@ -130,6 +127,8 @@ function StepFromScratch(): Step {
   return { report: ReportFromScratch(), state: StateFromScratch() };
 }
 
+export const As65816EmulatorStepFromScratch = StepFromScratch;
+
 //==============================================================================
 // Emulator
 //==============================================================================
@@ -173,16 +172,13 @@ const operation = {
     flags: number,
   ): { a: number; flags: number } => {
     const result = l(value) + l(a) + (flags & Flag.C);
+    const newFlags =
+      (l(result) & (Flag.N | Flag.V)) |
+      (l(result) === 0 ? Flag.Z : 0) |
+      (result > Bound.Byte ? Flag.C : 0);
     return {
       a: h(a) | l(result),
-      flags: applyFlags(
-        Flag.N | Flag.V | Flag.Z | Flag.C,
-        flags,
-        (result & Flag.N) |
-          (result & Flag.V) |
-          (result === 0 ? Flag.Z : 0) |
-          (result > Bound.Byte ? Flag.C : 0),
-      ),
+      flags: applyFlags(Flag.N | Flag.V | Flag.Z | Flag.C, flags, newFlags),
     };
   },
   adc16Bit: (
@@ -191,16 +187,13 @@ const operation = {
     flags: number,
   ): { a: number; flags: number } => {
     const result = w(value) + w(a) + (flags & Flag.C);
+    const newFlags =
+      ((w(result) & ((Flag.N | Flag.V) << 8)) >> 8) |
+      (w(result) === 0 ? Flag.Z : 0) |
+      (result > Bound.Word ? Flag.C : 0);
     return {
       a: w(result),
-      flags: applyFlags(
-        Flag.N | Flag.V | Flag.Z | Flag.C,
-        flags,
-        (result & Flag.N) |
-          (result & Flag.V) |
-          (result === 0 ? Flag.Z : 0) |
-          (result > Bound.Word ? Flag.C : 0),
-      ),
+      flags: applyFlags(Flag.N | Flag.V | Flag.Z | Flag.C, flags, newFlags),
     };
   },
 };
@@ -211,7 +204,7 @@ const operation = {
 
 function executeInstruction(
   prevStep: Step,
-  instruction: Asm65168Instruction,
+  instruction: Asm65816Instruction,
 ): Step {
   const step = { state: { ...prevStep.state }, report: ReportFromScratch() };
   const state = step.state;
@@ -270,30 +263,30 @@ function executeInstruction(
 
   switch (instruction.id) {
     case "ADC-Direct_Byte": {
-      const arg = instruction.arg;
+      const addr = addrDp(instruction.arg);
       const result = isA8Bit
-        ? operation.adc8Bit(loadDirectByte(arg), state.a, state.flags)
-        : operation.adc16Bit(loadDirectWord(arg), state.a, state.flags);
+        ? operation.adc8Bit(loadDirectByte(addr), state.a, state.flags)
+        : operation.adc16Bit(loadDirectWord(addr), state.a, state.flags);
       state.a = result.a;
       state.flags = result.flags;
       break;
     }
     case "ADC-Immediate_Byte": {
       if (!isA8Bit) console.error("Invalid instruction with A 16-bit");
-      const arg = instruction.arg;
+      const immediate = instruction.arg;
       const result = isA8Bit
-        ? operation.adc8Bit(arg, state.a, state.flags)
-        : operation.adc16Bit(arg, state.a, state.flags);
+        ? operation.adc8Bit(immediate, state.a, state.flags)
+        : operation.adc16Bit(immediate, state.a, state.flags);
       state.a = result.a;
       state.flags = result.flags;
       break;
     }
     case "ADC-Immediate_Word": {
       if (isA8Bit) console.error("Invalid instruction with A 8-bit");
-      const arg = instruction.arg;
+      const immediate = instruction.arg;
       const result = isA8Bit
-        ? operation.adc8Bit(arg, state.a, state.flags)
-        : operation.adc16Bit(arg, state.a, state.flags);
+        ? operation.adc8Bit(immediate, state.a, state.flags)
+        : operation.adc16Bit(immediate, state.a, state.flags);
       state.a = result.a;
       state.flags = result.flags;
       break;
@@ -302,6 +295,8 @@ function executeInstruction(
 
   return step;
 }
+
+export const executeAsm65816EmulatorInstruction = executeInstruction;
 
 //==============================================================================
 // Execute
@@ -312,7 +307,7 @@ function EmulatorFromScratch(): Emulator {
 }
 
 function EmulatorFromInstructions(
-  instructions: Asm65168Instruction[],
+  instructions: Asm65816Instruction[],
 ): Emulator {
   if (instructions.length === 0) return EmulatorFromScratch();
 

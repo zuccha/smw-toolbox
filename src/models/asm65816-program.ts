@@ -1,7 +1,7 @@
 import { Text } from "@codemirror/state";
 import {
-  Asm65168Instruction,
-  Asm65168InstructionSchema,
+  Asm65816Instruction,
+  Asm65816InstructionSchema,
   Asm65816InstructionMode,
   Asm65816InstructionModeMetaByMode,
 } from "./asm65816-instruction";
@@ -39,7 +39,7 @@ function InstructionBuilderFromLine(line: number): InstructionBuilder {
 //==============================================================================
 
 export type Asm65816Program = {
-  instructions: Asm65168Instruction[];
+  instructions: Asm65816Instruction[];
   errors: CompilationError[];
 };
 
@@ -56,7 +56,7 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
   const text = Text.of(code.split("\n"));
   const cursor = tree.cursor();
 
-  const instructions: Asm65168Instruction[] = [];
+  const instructions: Asm65816Instruction[] = [];
   let instructionBuilder: InstructionBuilder | undefined = undefined;
   let range = { from: 0, to: 0, line: 0 };
 
@@ -68,7 +68,7 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
         instructionBuilder.mode = "Implied";
       instructionBuilder.id = `${instructionBuilder.opcode}-${instructionBuilder.mode}`;
       const instruction =
-        Asm65168InstructionSchema.safeParse(instructionBuilder);
+        Asm65816InstructionSchema.safeParse(instructionBuilder);
       if (instruction.success) {
         instructions.push(instruction.data);
       } else if (errors.every((error) => error.line !== range.line)) {

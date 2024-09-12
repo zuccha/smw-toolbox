@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts",
-    "grammar:asm": "lezer-generator src/languages/asm65816.grammar -o src/languages/asm65816-parser.js"
+    "grammar:asm": "lezer-generator src/languages/asm65816.grammar -o src/languages/asm65816-parser.js",
+    "test": "vitest"
   },
   "dependencies": {
     "@codemirror/language": "^6.10.2",
@@ -24,6 +25,7 @@
     "@lezer/generator": "^1.7.1",
     "@preact/preset-vite": "^2.9.0",
     "typescript": "^5.6.2",
-    "vite": "^5.4.3"
+    "vite": "^5.4.3",
+    "vitest": "^2.1.0"
   }
 }
