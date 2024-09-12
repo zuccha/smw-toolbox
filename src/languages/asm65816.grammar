@@ -6,7 +6,7 @@ line {
   Instruction (newline | eof) | newline
 }
 
-Instruction { Opcode param? }
+Instruction { Opcode mode? }
 
 @tokens {
   space { $[ \t]+ }
@@ -71,38 +71,37 @@ Instruction { Opcode param? }
   }
 }
 
-Param_Accumulator         { A }
-Param_Direct_Byte         { Byte }
-Param_Direct_Byte_S       { Byte S }
-Param_Direct_Byte_X       { Byte X }
-Param_Direct_Byte_Y       { Byte Y }
-Param_Direct_Long         { Long }
-Param_Direct_Long_X       { Long X }
-Param_Direct_Word         { Word }
-Param_Direct_Word_X       { Word X }
-Param_Direct_Word_Y       { Word Y }
-Param_Immediate_Byte      { ConstByte }
-Param_Immediate_Word      { ConstWord }
-Param_IndirectLong_Byte   { "[" Byte "]" }
-Param_IndirectLong_Byte_Y { "[" Byte "]" Y }
-Param_IndirectLong_Word   { "[" Word "]" }
-Param_Indirect_Byte       { "(" Byte ")" }
-Param_Indirect_Byte_SY    { "(" Byte S ")" Y }
-Param_Indirect_Byte_X     { "(" Byte X ")" }
-Param_Indirect_Byte_Y     { "(" Byte ")" Y }
-Param_Indirect_Word       { "(" Word ")" }
-Param_Indirect_Word_X     { "(" Word X ")" }
-Param_Move                { Byte "," Byte }
+Mode_Accumulator         { A }
+Mode_Direct_Byte         { Byte }
+Mode_Direct_Byte_S       { Byte S }
+Mode_Direct_Byte_X       { Byte X }
+Mode_Direct_Byte_Y       { Byte Y }
+Mode_Direct_Long         { Long }
+Mode_Direct_Long_X       { Long X }
+Mode_Direct_Word         { Word }
+Mode_Direct_Word_X       { Word X }
+Mode_Direct_Word_Y       { Word Y }
+Mode_Immediate_Byte      { ConstByte }
+Mode_Immediate_Word      { ConstWord }
+Mode_IndirectLong_Byte   { "[" Byte "]" }
+Mode_IndirectLong_Byte_Y { "[" Byte "]" Y }
+Mode_IndirectLong_Word   { "[" Word "]" }
+Mode_Indirect_Byte       { "(" Byte ")" }
+Mode_Indirect_Byte_SY    { "(" Byte S ")" Y }
+Mode_Indirect_Byte_X     { "(" Byte X ")" }
+Mode_Indirect_Byte_Y     { "(" Byte ")" Y }
+Mode_Indirect_Word       { "(" Word ")" }
+Mode_Indirect_Word_X     { "(" Word X ")" }
+Mode_Move                { Byte "," Byte }
 
-param {
-  Param_Accumulator | Param_Direct_Byte | Param_Direct_Byte_S
-| Param_Direct_Byte_X | Param_Direct_Byte_Y | Param_Direct_Long
-| Param_Direct_Long_X | Param_Direct_Word | Param_Direct_Word_X
-| Param_Direct_Word_Y | Param_Immediate_Byte | Param_Immediate_Word
-| Param_IndirectLong_Byte | Param_IndirectLong_Byte_Y | Param_IndirectLong_Word
-| Param_Indirect_Byte | Param_Indirect_Byte_SY | Param_Indirect_Byte_X
-| Param_Indirect_Byte_Y | Param_Indirect_Word | Param_Indirect_Word_X
-| Param_Move
+mode {
+  Mode_Accumulator | Mode_Direct_Byte | Mode_Direct_Byte_S | Mode_Direct_Byte_X
+| Mode_Direct_Byte_Y | Mode_Direct_Long | Mode_Direct_Long_X | Mode_Direct_Word
+| Mode_Direct_Word_X | Mode_Direct_Word_Y | Mode_Immediate_Byte
+| Mode_Immediate_Word | Mode_IndirectLong_Byte | Mode_IndirectLong_Byte_Y
+| Mode_IndirectLong_Word | Mode_Indirect_Byte | Mode_Indirect_Byte_SY
+| Mode_Indirect_Byte_X | Mode_Indirect_Byte_Y | Mode_Indirect_Word
+| Mode_Indirect_Word_X | Mode_Move
 }
 
 @detectDelim

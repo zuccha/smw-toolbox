@@ -1,7 +1,9 @@
 import { Text } from "@codemirror/state";
 import {
   Asm65168Instruction,
-  Asm65816InstructionSchema,
+  Asm65168InstructionSchema,
+  Asm65816InstructionMode,
+  Asm65816InstructionModeMetaByMode,
 } from "./asm65816-instruction";
 import { asm65816Language } from "../languages/asm65816";
 
@@ -16,45 +18,20 @@ type CompilationError = {
   message: string;
 };
 
-const messageByParamType: Record<string, string> = {
-  Implied: "",
-  Accumulator: " A",
-  Direct_Byte: " dp",
-  Direct_Byte_S: " dp,s",
-  Direct_Byte_X: " dp,x",
-  Direct_Byte_Y: " dp,y",
-  Direct_Long: " long",
-  Direct_Long_X: " long,x",
-  Direct_Word: " addr",
-  Direct_Word_X: " addr,x",
-  Direct_Word_Y: " addr,y",
-  Immediate_Byte: " #const",
-  Immediate_Word: " #const",
-  IndirectLong_Byte: " [dp]",
-  IndirectLong_Byte_Y: " [dp],y",
-  IndirectLong_Word: " [addr]",
-  Indirect_Byte: " (dp)",
-  Indirect_Byte_SY: " (sr,s),y",
-  Indirect_Byte_X: " (dp,x)",
-  Indirect_Byte_Y: " (dp),y",
-  Indirect_Word: " (addr)",
-  Indirect_Word_X: " (addr,x)",
-  Move: " srcBank,destBank",
-};
-
 //==============================================================================
 // Instruction Builder
 //==============================================================================
 
 type InstructionBuilder = {
   line: number;
+  id: string | undefined;
   opcode: string | undefined;
-  paramType: string | undefined;
+  mode: string | undefined;
   args: { unit: "Byte" | "Word" | "Long"; value: string }[];
 };
 
 function InstructionBuilderFromLine(line: number): InstructionBuilder {
-  return { line, opcode: undefined, paramType: undefined, args: [] };
+  return { line, id: undefined, opcode: undefined, mode: undefined, args: [] };
 }
 
 //==============================================================================
@@ -70,7 +47,7 @@ export type Asm65816Program = {
 // Constructor
 //==============================================================================
 
-const paramTypePrefix = "Param_";
+const modePrefix = "Mode_";
 const unitByConstUnit = { ConstByte: "Byte", ConstWord: "Word" } as const;
 
 export function Asm65168ProgramFromCode(code: string): Asm65816Program {
@@ -87,21 +64,23 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
 
   const pushInstruction = () => {
     if (instructionBuilder) {
-      if (!instructionBuilder.paramType && instructionBuilder.args.length === 0)
-        instructionBuilder.paramType = "Implied";
+      if (!instructionBuilder.mode && instructionBuilder.args.length === 0)
+        instructionBuilder.mode = "Implied";
+      instructionBuilder.id = `${instructionBuilder.opcode}-${instructionBuilder.mode}`;
       const instruction =
-        Asm65816InstructionSchema.safeParse(instructionBuilder);
-      if (instruction.success) instructions.push(instruction.data);
-      else if (errors.every((error) => error.line !== range.line)) {
-        const paramType = instructionBuilder.paramType;
-        const paramTypeMessage = paramType
-          ? messageByParamType[paramType] ?? paramType
-          : "";
+        Asm65168InstructionSchema.safeParse(instructionBuilder);
+      if (instruction.success) {
+        instructions.push(instruction.data);
+      } else if (errors.every((error) => error.line !== range.line)) {
+        const mode = instructionBuilder.mode;
+        const modeMeta =
+          Asm65816InstructionModeMetaByMode[mode as Asm65816InstructionMode];
+        const modeLabel = modeMeta?.label ? ` ${modeMeta.label}` : "";
         errors.push({
           line: range.line,
           from: range.from,
           to: range.to,
-          message: `Instruction "${instructionBuilder.opcode}${paramTypeMessage}" doesn't exist`,
+          message: `Instruction "${instructionBuilder.opcode}${modeLabel}" doesn't exist`,
         });
       }
     }
@@ -134,13 +113,13 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
       continue;
     }
 
-    if (cursor.type.name.startsWith(paramTypePrefix)) {
-      const type = cursor.type.name.substring(paramTypePrefix.length);
+    if (cursor.type.name.startsWith(modePrefix)) {
+      const type = cursor.type.name.substring(modePrefix.length);
       if (!instructionBuilder)
         error(`Param Type (${type}): missing instruction builder`);
-      else if (instructionBuilder.paramType)
+      else if (instructionBuilder.mode)
         error(`Param Type (${type}): param type already present`);
-      else instructionBuilder.paramType = type;
+      else instructionBuilder.mode = type;
       continue;
     }
 
