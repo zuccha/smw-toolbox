@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IntegerFromString, IntegerUnit } from "./integer";
 
 //==============================================================================
 // Instruction Opcode
@@ -360,6 +361,28 @@ type ArgUnit = "Byte" | "Word" | "Long";
 export type Asm65816InstructionArgUnit = ArgUnit;
 
 //==============================================================================
+// Instruction Arg
+//==============================================================================
+
+const ArgByteSchema = z.object({ unit: z.literal("Byte"), value: z.string() });
+const ArgWordSchema = z.object({ unit: z.literal("Word"), value: z.string() });
+const ArgLongSchema = z.object({ unit: z.literal("Long"), value: z.string() });
+
+type ArgByte = z.infer<typeof ArgByteSchema>;
+type ArgWord = z.infer<typeof ArgWordSchema>;
+type ArgLong = z.infer<typeof ArgLongSchema>;
+
+type Arg = ArgByte | ArgWord | ArgLong;
+
+export type Asm65168InstructionArg = Arg;
+
+const ArgsNoneSchema = z.tuple([]);
+const ArgsByteSchema = z.tuple([ArgByteSchema]);
+const ArgsWordSchema = z.tuple([ArgWordSchema]);
+const ArgsLongSchema = z.tuple([ArgLongSchema]);
+const ArgsMoveSchema = z.tuple([ArgByteSchema, ArgByteSchema]);
+
+//==============================================================================
 // Instruction Mode Meta
 //==============================================================================
 
@@ -716,38 +739,79 @@ export const Asm65816InstructionMetaById = MetaById;
 // Instruction
 //==============================================================================
 
-const ArgByteSchema = z.object({ unit: z.literal("Byte"), value: z.string() });
-const ArgWordSchema = z.object({ unit: z.literal("Word"), value: z.string() });
-const ArgLongSchema = z.object({ unit: z.literal("Long"), value: z.string() });
-
-const ArgsNoneSchema = z.tuple([]);
-const ArgsByteSchema = z.tuple([ArgByteSchema]);
-const ArgsWordSchema = z.tuple([ArgWordSchema]);
-const ArgsLongSchema = z.tuple([ArgLongSchema]);
-const ArgsMoveSchema = z.tuple([ArgByteSchema, ArgByteSchema]);
-
-const ArgsSchema = z.union([
-  ArgsNoneSchema,
-  ArgsByteSchema,
-  ArgsWordSchema,
-  ArgsLongSchema,
-  ArgsMoveSchema,
-]);
-
-const ArgsSchemaByArgsType = {
-  [ArgsType.None]: ArgsNoneSchema,
-  [ArgsType.Byte]: ArgsByteSchema,
-  [ArgsType.Word]: ArgsWordSchema,
-  [ArgsType.Long]: ArgsLongSchema,
-  [ArgsType.Move]: ArgsMoveSchema,
-} as const;
-
 const InstructionSchema = z
-  .intersection(TypeSchema, z.object({ args: ArgsSchema, line: z.number() }))
-  .refine((instruction) => {
+  .intersection(TypeSchema, z.object({ args: z.any(), line: z.number() }))
+  .transform((instruction, ctx) => {
+    const code = z.ZodIssueCode.custom;
+
+    const issueMismatch = (expectedArgsType: ArgsType) => {
+      const args = JSON.stringify(instruction.args);
+      ctx.addIssue({
+        code,
+        message: `Mismatching args: expected "${expectedArgsType}" but received "${args}"`,
+      });
+      return z.NEVER;
+    };
+
+    const issueInvalid = (arg: string) => {
+      ctx.addIssue({
+        code,
+        message: `Invalid args: "${arg}" is not a valid value`,
+      });
+      return z.NEVER;
+    };
+
+    let arg = -1;
+
     const modeMeta = ModeMetaByMode[instruction.mode];
-    const argsSchema = ArgsSchemaByArgsType[modeMeta.argsType];
-    return argsSchema.safeParse(instruction.args).success;
+    switch (modeMeta.argsType) {
+      case ArgsType.None: {
+        const args = ArgsNoneSchema.safeParse(instruction.args);
+        if (!args.success) return issueMismatch(ArgsType.None);
+        arg = -1;
+        break;
+      }
+      case ArgsType.Byte: {
+        const args = ArgsByteSchema.safeParse(instruction.args);
+        if (!args.success) return issueMismatch(ArgsType.Byte);
+        const byteContext = { unit: IntegerUnit.Byte };
+        const integer = IntegerFromString(args.data[0].value, byteContext);
+        if (!integer) return issueInvalid(args.data[0].value);
+        arg = integer.value;
+        break;
+      }
+      case ArgsType.Word: {
+        const args = ArgsWordSchema.safeParse(instruction.args);
+        if (!args.success) return issueMismatch(ArgsType.Word);
+        const wordContext = { unit: IntegerUnit.Word };
+        const integer = IntegerFromString(args.data[0].value, wordContext);
+        if (!integer) return issueInvalid(args.data[0].value);
+        arg = integer.value;
+        break;
+      }
+      case ArgsType.Long: {
+        const args = ArgsLongSchema.safeParse(instruction.args);
+        if (!args.success) return issueMismatch(ArgsType.Long);
+        const longContext = { unit: IntegerUnit.Long };
+        const integer = IntegerFromString(args.data[0].value, longContext);
+        if (!integer) return issueInvalid(args.data[0].value);
+        arg = integer.value;
+        break;
+      }
+      case ArgsType.Move: {
+        const args = ArgsMoveSchema.safeParse(instruction.args);
+        if (!args.success) return issueMismatch(ArgsType.Move);
+        const byteContext = { unit: IntegerUnit.Byte };
+        const integer1 = IntegerFromString(args.data[0].value, byteContext);
+        const integer2 = IntegerFromString(args.data[1].value, byteContext);
+        if (!integer1) return issueInvalid(args.data[0].value);
+        if (!integer2) return issueInvalid(args.data[1].value);
+        arg = (integer2.value << 8) | integer1.value;
+        break;
+      }
+    }
+
+    return { ...instruction, arg };
   });
 
 type Instruction = z.infer<typeof InstructionSchema>;

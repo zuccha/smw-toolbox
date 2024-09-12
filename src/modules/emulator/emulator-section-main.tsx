@@ -2,7 +2,10 @@ import { PlayIcon } from "lucide-preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 import CodeEditor from "../../components/code-editor";
 import SectionStatic from "../../components/section-static";
-import { Asm65168ProgramFromCode } from "../../models/asm65816-program";
+import {
+  Asm65168ProgramFromCode,
+  Asm65816Program,
+} from "../../models/asm65816-program";
 import asm65816, { asm65816Linter } from "../../languages/asm65816";
 
 const defaultCode = `\
@@ -32,14 +35,19 @@ MVN $00,$00   ; Move`;
 
 const extensions = [asm65816(), asm65816Linter];
 
-export default function EmulatorSectionMain() {
+type EmulatorSectionMainProps = {
+  onRun: (program: Asm65816Program) => void;
+};
+
+export default function EmulatorSectionMain({
+  onRun,
+}: EmulatorSectionMainProps) {
   const [code, setCode] = useState(defaultCode);
 
   const run = useCallback(() => {
     const program = Asm65168ProgramFromCode(code.trimEnd());
-    console.log(program.instructions);
-    console.log(program.errors);
-  }, [code]);
+    onRun(program);
+  }, [code, onRun]);
 
   const actions = useMemo(
     () => [{ icon: PlayIcon, onClick: run, tooltip: "Run" }],

@@ -138,7 +138,7 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
 
     if (cursor.type.name == "ConstByte" || cursor.type.name == "ConstWord") {
       const unit = unitByConstUnit[cursor.type.name];
-      const value = code.slice(cursor.from, cursor.to);
+      const value = code.slice(cursor.from + 1, cursor.to); // +1 to remove #
       if (!instructionBuilder)
         error(`Arg (${unit}): missing instruction builder`);
       else instructionBuilder.args.push({ value, unit });

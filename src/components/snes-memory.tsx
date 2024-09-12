@@ -1,38 +1,47 @@
 import { useCallback, useMemo } from "preact/hooks";
+import { IntegerEncoding, IntegerLength, IntegerUnit } from "../models/integer";
+import { useIntegerState } from "../hooks/use-integer";
+import {
+  Asm65816EmulatorMemory,
+  getAsm65816EmulatorMemoryValue as getAsm65816EmulatorMemoryByte,
+} from "../models/asm65816-emulator";
+import {
+  IntegerStringTypingDirection,
+  IntegerStringTypingMode,
+} from "../models/integer-string";
 import { range, toHex } from "../utils";
 import IntegerStringInput, {
   IntegerStringInputCaret,
   IntegerStringInputSpaceFrequency,
 } from "./integer-string-input";
 import "./snes-memory.css";
-import { IntegerEncoding, IntegerLength, IntegerUnit } from "../models/integer";
-import { useIntegerState } from "../hooks/use-integer";
-import {
-  IntegerStringTypingDirection,
-  IntegerStringTypingMode,
-} from "../models/integer-string";
 
 type SnesMemoryProps = {
   address: number;
+  memory: Asm65816EmulatorMemory;
   onChangeAddress: (address: number) => void;
-  values: number[];
+  size: number;
 };
 
 const valueLength = IntegerLength[IntegerUnit.Byte][IntegerEncoding.Hex];
 
 export default function SnesMemory({
   address,
+  memory,
   onChangeAddress,
-  values,
+  size,
 }: SnesMemoryProps) {
   const [addressInteger, addressIntegerMethods] = useIntegerState(
     { value: address, valueRaw: address },
     { unit: IntegerUnit.Long },
   );
 
-  const formattedValues = useMemo(() => {
-    return values.map((value) => toHex(value, valueLength));
-  }, [values]);
+  const values = useMemo(() => {
+    return range(size).map((index) => {
+      const byte = getAsm65816EmulatorMemoryByte(memory, address + index);
+      return toHex(byte, valueLength);
+    });
+  }, [address, memory, size]);
 
   const changeAddress = useCallback(
     (nextAddress: number) => {
@@ -74,7 +83,7 @@ export default function SnesMemory({
           ))}
         </div>
         <div className="SnesMemory_Grid">
-          {formattedValues.map((value) => (
+          {values.map((value) => (
             <div>{value}</div>
           ))}
         </div>

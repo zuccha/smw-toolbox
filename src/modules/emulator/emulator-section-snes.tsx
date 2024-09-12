@@ -5,29 +5,26 @@ import SnesMemory from "../../components/snes-memory";
 import SnesProcessorStatus from "../../components/snes-processor-status";
 import SnesRegister from "../../components/snes-register";
 import SnesRegisterGroup from "../../components/snes-register-group";
+import {
+  Asm65816Emulator,
+  Asm65816EmulatorFlag,
+} from "../../models/asm65816-emulator";
 import { IntegerUnit } from "../../models/integer";
-import { range } from "../../utils";
 import { useEmulatorTabSnesIsVisible } from "./store";
 
-const memory = range(16 * 8);
+type EmulatorSectionSnesProps = {
+  emulator: Asm65816Emulator;
+};
 
-export default function EmulatorSectionSnes() {
+export default function EmulatorSectionSnes({
+  emulator,
+}: EmulatorSectionSnesProps) {
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
-  const [a] = useState(0);
-  const [x] = useState(0);
-  const [y] = useState(0);
-
-  const [pb] = useState(0);
-  const [db] = useState(0);
-
-  const [pc] = useState(0);
-  const [dp] = useState(0);
-  const [sp] = useState(0);
-
-  const [ps] = useState(0b00110000);
-
   const [memoryAddress, setMemoryAddress] = useState(0);
+
+  const isA8Bit = Boolean(emulator.state.flags & Asm65816EmulatorFlag.M);
+  const isX8Bit = Boolean(emulator.state.flags & Asm65816EmulatorFlag.X);
 
   return (
     <SectionCollapsible
@@ -42,22 +39,22 @@ export default function EmulatorSectionSnes() {
               <SnesRegisterGroup name="Registers">
                 <SnesRegister
                   label="A"
-                  shouldDimHighByte={Boolean(ps & 0b00100000)}
-                  value={a}
+                  shouldDimHighByte={isA8Bit}
+                  value={emulator.state.a}
                   tooltip="Accumulator"
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="X"
-                  shouldDimHighByte={Boolean(ps & 0b00010000)}
-                  value={x}
+                  shouldDimHighByte={isX8Bit}
+                  value={emulator.state.x}
                   tooltip="X Index"
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="Y"
-                  shouldDimHighByte={Boolean(ps & 0b00010000)}
-                  value={y}
+                  shouldDimHighByte={isX8Bit}
+                  value={emulator.state.y}
                   tooltip="Y Index"
                   unit={IntegerUnit.Word}
                 />
@@ -67,13 +64,13 @@ export default function EmulatorSectionSnes() {
                 <SnesRegister
                   label="PB"
                   tooltip="Program Bank"
-                  value={pb}
+                  value={emulator.state.pb}
                   unit={IntegerUnit.Byte}
                 />
                 <SnesRegister
                   label="DB"
                   tooltip="Data Bank"
-                  value={db}
+                  value={emulator.state.db}
                   unit={IntegerUnit.Byte}
                 />
               </SnesRegisterGroup>
@@ -82,19 +79,19 @@ export default function EmulatorSectionSnes() {
                 <SnesRegister
                   label="PC"
                   tooltip="Program Counter"
-                  value={pc}
+                  value={emulator.state.pc}
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="DP"
                   tooltip="Direct Page"
-                  value={dp}
+                  value={emulator.state.dp}
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="SP"
                   tooltip="Stack Pointer"
-                  value={sp}
+                  value={emulator.state.sp}
                   unit={IntegerUnit.Word}
                 />
               </SnesRegisterGroup>
@@ -102,15 +99,16 @@ export default function EmulatorSectionSnes() {
           </Setting>
 
           <Setting label="Processor Status" size="md">
-            <SnesProcessorStatus status={ps} />
+            <SnesProcessorStatus status={emulator.state.flags} />
           </Setting>
         </div>
 
         <Setting label="Memory" size="md">
           <SnesMemory
             address={memoryAddress}
+            memory={emulator.state.memory}
             onChangeAddress={setMemoryAddress}
-            values={memory}
+            size={8 * 16}
           />
         </Setting>
       </div>
