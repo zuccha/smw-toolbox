@@ -8,6 +8,7 @@ import { Flag, Mask, Report, State } from "./_types";
 // Get only the desired bytes of a number.
 export const l = (val: number) => val & Mask.LowByte;
 export const h = (val: number) => val & Mask.HighByte;
+export const b = (val: number) => val & Mask.BankByte;
 export const w = (val: number) => val & Mask.Word;
 
 // Compose bytes into little endian format.
@@ -44,13 +45,13 @@ export function produceReport(id: Asm65816InstructionId, state: State): Report {
 
   if (
     meta.cyclesModifiers & CyclesModifiers.Plus2IfMIsZero &&
-    state.flags & Flag.M
+    (state.flags & Flag.M) === 0
   )
     cycles += 2;
 
   if (
     meta.cyclesModifiers & CyclesModifiers.Plus1IfXIsZero &&
-    state.flags & Flag.X
+    (state.flags & Flag.X) === 0
   )
     cycles += 1;
 
@@ -73,16 +74,25 @@ export function produceReport(id: Asm65816InstructionId, state: State): Report {
   //   cycles += 1;
 
   if (
-    meta.bytesModifiers & CyclesModifiers.Plus2IfMIsZero &&
-    state.flags & Flag.M
+    meta.bytesModifiers & CyclesModifiers.Plus1IfMIsZero &&
+    (state.flags & Flag.M) === 0
   )
     bytes += 1;
 
   if (
     meta.bytesModifiers & CyclesModifiers.Plus1IfXIsZero &&
-    state.flags & Flag.X
+    (state.flags & Flag.X) === 0
   )
     bytes += 1;
 
   return { bytes, cycles };
+}
+
+export function incrementPc(
+  pb: number,
+  pc: number,
+  increment: number,
+): { pb: number; pc: number } {
+  const counter = ((l(pb) << 16) | w(pc)) + increment;
+  return { pb: l(counter) >> 16, pc: w(counter) };
 }

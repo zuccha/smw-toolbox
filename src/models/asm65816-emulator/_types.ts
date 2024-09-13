@@ -7,6 +7,7 @@ import { IntegerBoundsUnsigned, IntegerUnit } from "../integer";
 export enum Mask {
   LowByte = 0b00000000_00000000_11111111,
   HighByte = 0b00000000_11111111_00000000,
+  BankByte = 0b11111111_00000000_00000000,
   Word = 0b00000000_11111111_11111111,
   Long = 0b11111111_11111111_11111111,
 }

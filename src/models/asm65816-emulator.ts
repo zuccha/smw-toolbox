@@ -8,11 +8,19 @@ import {
   StateFromScratch,
   Step,
 } from "./asm65816-emulator/_types";
-import { produceReport } from "./asm65816-emulator/_utils";
+import {
+  b,
+  h,
+  incrementPc,
+  l,
+  produceReport,
+} from "./asm65816-emulator/_utils";
 import { adc_Direct_Byte, adc_Immediate } from "./asm65816-emulator/adc";
 import {
   Asm65816Instruction,
+  Asm65816InstructionHex,
   Asm65816InstructionId,
+  Asm65816InstructionIdByHex,
 } from "./asm65816-instruction";
 
 const operationNotImplemented = () => ({ state: {} });
@@ -138,7 +146,7 @@ const operationsByInstructionId: Record<
   "JMP-Indirect_Word": operationNotImplemented,
   "JMP-Indirect_Word_X": operationNotImplemented,
   "JMP-IndirectLong_Word": operationNotImplemented,
-  "JSL-Implied": operationNotImplemented,
+  "JSL-Direct_Long": operationNotImplemented,
   "JSR-Direct_Long": operationNotImplemented,
   "JSR-Direct_Word": operationNotImplemented,
   "JSR-Indirect_Word_X": operationNotImplemented,
@@ -292,13 +300,20 @@ const operationsByInstructionId: Record<
 
 function executeInstruction(
   state: State,
-  instruction: Asm65816Instruction,
+  id: Asm65816InstructionId,
+  arg: { l: number; h: number; b: number },
 ): Step {
   const ctx = ContextFromState(state);
-  const operation = operationsByInstructionId[instruction.id];
+  const operation = operationsByInstructionId[id];
 
-  const report = produceReport(instruction.id, state);
-  const step = operation(instruction.arg.value, state, ctx);
+  const report = produceReport(id, state);
+
+  let value = 0;
+  if (arg.l !== -1) value |= l(arg.l);
+  if (arg.h !== -1) value |= h(arg.h);
+  if (arg.b !== -1) value |= b(arg.b);
+
+  const step = operation(value, state, ctx);
 
   const changes: Step["state"] = {};
 
@@ -347,20 +362,56 @@ function EmulatorFromScratch(): Emulator {
 function EmulatorFromInstructions(
   instructions: Asm65816Instruction[],
 ): Emulator {
-  if (instructions.length === 0) return EmulatorFromScratch();
-
   let state = StateFromScratch();
   const report = ReportFromScratch();
   const steps = instructions.map((instruction) => {
-    const step = executeInstruction(state, instruction);
+    const step = executeInstruction(state, instruction.id, instruction.arg);
     state = applyStateDiff(state, step.state);
     report.bytes += step.report.bytes;
     report.cycles += step.report.cycles;
+
+    const { pb, pc } = incrementPc(state.pb, state.pc, report.bytes);
+    state.pb = pb;
+    state.pc = pc;
+
     return step;
   });
 
   return { report, state, steps };
 }
 
+function EmulatorFromBytes(bytes: number[]): Emulator {
+  let state = StateFromScratch();
+  const report = ReportFromScratch();
+  const steps: Step[] = [];
+  let i = 0;
+  while (i < bytes.length) {
+    const hex = l(bytes[i]!);
+    const id = Asm65816InstructionIdByHex[hex as Asm65816InstructionHex];
+
+    const arg = {
+      l: bytes[i + 1] ?? 0,
+      h: (bytes[i + 2] ?? 0) << 8,
+      b: (bytes[i + 3] ?? 0) << 16,
+    };
+
+    const step = executeInstruction(state, id, arg);
+    state = applyStateDiff(state, step.state);
+    report.bytes += step.report.bytes;
+    report.cycles += step.report.cycles;
+
+    i += report.bytes;
+
+    const { pb, pc } = incrementPc(state.pb, state.pc, report.bytes);
+    state.pb = pb;
+    state.pc = pc;
+
+    steps.push(step);
+  }
+
+  return { report, state, steps };
+}
+
 export const Asm65816EmulatorFromScratch = EmulatorFromScratch;
 export const Asm65816EmulatorFromInstructions = EmulatorFromInstructions;
+export const Asm65816EmulatorFromBytes = EmulatorFromBytes;

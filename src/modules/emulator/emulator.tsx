@@ -1,6 +1,6 @@
 import { useCallback, useState } from "preact/hooks";
 import {
-  Asm65816EmulatorFromInstructions,
+  Asm65816EmulatorFromBytes,
   Asm65816EmulatorFromScratch,
 } from "../../models/asm65816-emulator";
 import { Asm65816Program } from "../../models/asm65816-program";
@@ -13,9 +13,10 @@ export default function Emulator() {
 
   const run = useCallback((program: Asm65816Program) => {
     console.log(program.instructions);
+    console.log(program.bytes);
     console.log(program.errors);
     if (program.errors.length === 0)
-      setEmulator(Asm65816EmulatorFromInstructions(program.instructions));
+      setEmulator(Asm65816EmulatorFromBytes(program.bytes));
   }, []);
 
   return (
