@@ -15,7 +15,17 @@ import {
   l,
   produceReport,
 } from "./asm65816-emulator/_utils";
-import { adc_Direct_Byte, adc_Immediate } from "./asm65816-emulator/adc";
+import {
+  adc_Direct_Byte,
+  adc_Direct_Byte_S,
+  adc_Direct_Byte_X,
+  adc_Direct_Long,
+  adc_Direct_Long_X,
+  adc_Direct_Word,
+  adc_Direct_Word_X,
+  adc_Direct_Word_Y,
+  adc_Immediate,
+} from "./asm65816-emulator/adc";
 import {
   Asm65816Instruction,
   Asm65816InstructionHex,
@@ -34,13 +44,13 @@ const operationsByInstructionId: Record<
   ) => { state: Partial<State>; report?: Partial<Report> }
 > = {
   "ADC-Direct_Byte": adc_Direct_Byte,
-  "ADC-Direct_Byte_S": operationNotImplemented,
-  "ADC-Direct_Byte_X": operationNotImplemented,
-  "ADC-Direct_Long": operationNotImplemented,
-  "ADC-Direct_Long_X": operationNotImplemented,
-  "ADC-Direct_Word": operationNotImplemented,
-  "ADC-Direct_Word_X": operationNotImplemented,
-  "ADC-Direct_Word_Y": operationNotImplemented,
+  "ADC-Direct_Byte_S": adc_Direct_Byte_S,
+  "ADC-Direct_Byte_X": adc_Direct_Byte_X,
+  "ADC-Direct_Long": adc_Direct_Long,
+  "ADC-Direct_Long_X": adc_Direct_Long_X,
+  "ADC-Direct_Word": adc_Direct_Word,
+  "ADC-Direct_Word_X": adc_Direct_Word_X,
+  "ADC-Direct_Word_Y": adc_Direct_Word_Y,
   "ADC-Immediate": adc_Immediate,
   "ADC-Indirect_Byte": operationNotImplemented,
   "ADC-Indirect_Byte_SY": operationNotImplemented,

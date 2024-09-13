@@ -8,6 +8,9 @@ export type Context = {
   addrDp: (value: number) => number;
   addrAbs: (value: number) => number;
   addrLong: (value: number) => number;
+  addrSr: (value: number) => number;
+  addrX: (value: number) => number;
+  addrY: (value: number) => number;
 
   loadDirectByte: (addr: number) => number;
   saveDirectByte: (addr: number, byte: number) => void;
@@ -34,9 +37,12 @@ export function ContextFromState(state: State): Context {
   const isX8Bit = Boolean(state.flags & Flag.X);
 
   // Use value as an address.
-  const addrDp = (value: number) => w(w(state.dp) | l(value));
-  const addrAbs = (value: number) => (l(state.db) << 16) | w(value);
+  const addrDp = (value: number) => w(state.dp) + value;
+  const addrAbs = (value: number) => (l(state.db) << 16) + value;
   const addrLong = (value: number) => value & Mask.Long;
+  const addrSr = (value: number) => l(value) + w(state.sp);
+  const addrX = (value: number) => value + w(state.x);
+  const addrY = (value: number) => value + w(state.y);
 
   // Access direct memory
   const loadDirectByte = (addr: number): number => l(state.memory[addr] ?? 0);
@@ -91,6 +97,9 @@ export function ContextFromState(state: State): Context {
     addrDp,
     addrAbs,
     addrLong,
+    addrSr,
+    addrX,
+    addrY,
 
     loadDirectByte,
     saveDirectByte,

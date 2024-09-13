@@ -17,7 +17,7 @@ export function littleEndian(
   high: number,
   long: number = 0,
 ): number {
-  return l(long << 16) | l(high << 8) | l(low);
+  return (l(long) << 16) | (l(high) << 8) | l(low);
 }
 
 // Set/unset new flags.
@@ -88,6 +88,7 @@ export function produceReport(id: Asm65816InstructionId, state: State): Report {
   return { bytes, cycles };
 }
 
+// Compute new PC.
 export function incrementPc(
   pb: number,
   pc: number,
