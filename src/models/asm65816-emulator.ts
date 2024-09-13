@@ -1,201 +1,305 @@
-import { Asm65816Instruction } from "./asm65816-instruction";
-import { IntegerBoundsUnsigned, IntegerUnit } from "./integer";
+import { Context, ContextFromState } from "./asm65816-emulator/_context";
+import {
+  applyStateDiff,
+  Emulator,
+  Report,
+  ReportFromScratch,
+  State,
+  StateFromScratch,
+  Step,
+} from "./asm65816-emulator/_types";
+import { produceReport } from "./asm65816-emulator/_utils";
+import {
+  adc_Direct_Byte,
+  adc_Immediate_Byte,
+  adc_Immediate_Word,
+} from "./asm65816-emulator/adc";
+import {
+  Asm65816Instruction,
+  Asm65816InstructionId,
+} from "./asm65816-instruction";
 
-//==============================================================================
-// Mask
-//==============================================================================
+const operationNotImplemented = () => ({ state: {} });
 
-enum Mask {
-  LowByte = 0b00000000_00000000_11111111,
-  HighByte = 0b00000000_11111111_00000000,
-  Word = 0b00000000_11111111_11111111,
-  Long = 0b11111111_11111111_11111111,
-}
-
-export const Asm65816EmulatorMask = Mask;
-
-//==============================================================================
-// Bounds
-//==============================================================================
-
-enum Bound {
-  Byte = IntegerBoundsUnsigned[IntegerUnit.Byte].max,
-  Word = IntegerBoundsUnsigned[IntegerUnit.Word].max,
-  Long = IntegerBoundsUnsigned[IntegerUnit.Long].max,
-}
-
-export const Asm65816EmulatorBound = Bound;
-
-//==============================================================================
-// Flag
-//==============================================================================
-
-enum Flag {
-  C = 0b00000001,
-  Z = 0b00000010,
-  I = 0b00000100,
-  D = 0b00001000,
-  X = 0b00010000,
-  M = 0b00100000,
-  V = 0b01000000,
-  N = 0b10000000,
-}
-
-export const Asm65816EmulatorFlag = Flag;
-
-//==============================================================================
-// Memory
-//==============================================================================
-
-type Memory = Map<number, number>;
-
-export type Asm65816EmulatorMemory = Memory;
-
-export function getAsm65816EmulatorMemoryValue(
-  memory: Memory,
-  addr: number,
-): number {
-  return memory.get(addr) ?? 0;
-}
-
-//==============================================================================
-// State
-//==============================================================================
-
-type State = {
-  pb: number; // Program Bank
-  pc: number; // Program Counter
-
-  a: number; // A
-  x: number; // X
-  y: number; // Y
-
-  db: number; // Data Bank
-  dp: number; // Direct Page
-  sp: number; // Stack Pointer
-
-  flags: number; // NVMXDIZC
-
-  memory: Map<number, number>;
-};
-
-export type Asm65816EmulatorState = State;
-
-function StateFromScratch(): State {
-  return {
-    pb: 0,
-    pc: 0,
-
-    a: 0,
-    x: 0,
-    y: 0,
-
-    db: 0,
-    dp: 0,
-    sp: 0,
-
-    flags: 0,
-
-    memory: new Map(),
-  };
-}
-
-//==============================================================================
-// Report
-//==============================================================================
-
-type Report = {
-  bytes: number;
-  cycles: number;
-};
-
-export type Asm65816EmulatorReport = Report;
-
-function ReportFromScratch(): Report {
-  return { bytes: 0, cycles: 0 };
-}
-
-//==============================================================================
-// Step
-//==============================================================================
-
-type Step = { state: State; report: Report };
-
-export type Asm65168Step = Step;
-
-function StepFromScratch(): Step {
-  return { report: ReportFromScratch(), state: StateFromScratch() };
-}
-
-export const As65816EmulatorStepFromScratch = StepFromScratch;
-
-//==============================================================================
-// Emulator
-//==============================================================================
-
-type Emulator = {
-  report: Report;
-  state: State;
-  steps: Step[];
-};
-
-export type Asm65816Emulator = Emulator;
-
-//==============================================================================
-// Utils
-//==============================================================================
-
-// Get only the desired bytes of a number.
-const l = (val: number) => val & Mask.LowByte;
-const h = (val: number) => val & Mask.HighByte;
-const w = (val: number) => val & Bound.Word;
-
-// Compose bytes into little endian format.
-const littleEndian = (low: number, high: number, long: number = 0): number =>
-  l(long << 16) | l(high << 8) | l(low);
-
-// Set/unset new flags.
-const applyFlags = (
-  resetFlags: number,
-  oldFlags: number,
-  newFlags: number,
-): number => l((oldFlags & ~resetFlags) | newFlags);
-
-//==============================================================================
-// Operations
-//==============================================================================
-
-const operation = {
-  adc8Bit: (
-    value: number,
-    a: number,
-    flags: number,
-  ): { a: number; flags: number } => {
-    const result = l(value) + l(a) + (flags & Flag.C);
-    const newFlags =
-      (l(result) & (Flag.N | Flag.V)) |
-      (l(result) === 0 ? Flag.Z : 0) |
-      (result > Bound.Byte ? Flag.C : 0);
-    return {
-      a: h(a) | l(result),
-      flags: applyFlags(Flag.N | Flag.V | Flag.Z | Flag.C, flags, newFlags),
-    };
-  },
-  adc16Bit: (
-    value: number,
-    a: number,
-    flags: number,
-  ): { a: number; flags: number } => {
-    const result = w(value) + w(a) + (flags & Flag.C);
-    const newFlags =
-      ((w(result) & ((Flag.N | Flag.V) << 8)) >> 8) |
-      (w(result) === 0 ? Flag.Z : 0) |
-      (result > Bound.Word ? Flag.C : 0);
-    return {
-      a: w(result),
-      flags: applyFlags(Flag.N | Flag.V | Flag.Z | Flag.C, flags, newFlags),
-    };
-  },
+const operationsByInstructionId: Record<
+  Asm65816InstructionId,
+  (
+    arg: number,
+    state: State,
+    ctx: Context,
+  ) => { state: Partial<State>; report?: Partial<Report> }
+> = {
+  "ADC-Direct_Byte": adc_Direct_Byte,
+  "ADC-Direct_Byte_S": operationNotImplemented,
+  "ADC-Direct_Byte_X": operationNotImplemented,
+  "ADC-Direct_Long": operationNotImplemented,
+  "ADC-Direct_Long_X": operationNotImplemented,
+  "ADC-Direct_Word": operationNotImplemented,
+  "ADC-Direct_Word_X": operationNotImplemented,
+  "ADC-Direct_Word_Y": operationNotImplemented,
+  "ADC-Immediate_Byte": adc_Immediate_Byte,
+  "ADC-Immediate_Word": adc_Immediate_Word,
+  "ADC-Indirect_Byte": operationNotImplemented,
+  "ADC-Indirect_Byte_SY": operationNotImplemented,
+  "ADC-Indirect_Byte_X": operationNotImplemented,
+  "ADC-Indirect_Byte_Y": operationNotImplemented,
+  "ADC-IndirectLong_Byte": operationNotImplemented,
+  "ADC-IndirectLong_Byte_Y": operationNotImplemented,
+  "AND-Direct_Byte": operationNotImplemented,
+  "AND-Direct_Byte_S": operationNotImplemented,
+  "AND-Direct_Byte_X": operationNotImplemented,
+  "AND-Direct_Long": operationNotImplemented,
+  "AND-Direct_Long_X": operationNotImplemented,
+  "AND-Direct_Word": operationNotImplemented,
+  "AND-Direct_Word_X": operationNotImplemented,
+  "AND-Direct_Word_Y": operationNotImplemented,
+  "AND-Immediate_Byte": operationNotImplemented,
+  "AND-Immediate_Word": operationNotImplemented,
+  "AND-Indirect_Byte": operationNotImplemented,
+  "AND-Indirect_Byte_SY": operationNotImplemented,
+  "AND-Indirect_Byte_X": operationNotImplemented,
+  "AND-Indirect_Byte_Y": operationNotImplemented,
+  "AND-IndirectLong_Byte": operationNotImplemented,
+  "AND-IndirectLong_Byte_Y": operationNotImplemented,
+  "ASL-Accumulator": operationNotImplemented,
+  "ASL-Direct_Byte": operationNotImplemented,
+  "ASL-Direct_Byte_X": operationNotImplemented,
+  "ASL-Direct_Word": operationNotImplemented,
+  "ASL-Direct_Word_X": operationNotImplemented,
+  "BCC-Direct_Byte": operationNotImplemented,
+  "BCS-Direct_Byte": operationNotImplemented,
+  "BEQ-Direct_Byte": operationNotImplemented,
+  "BIT-Direct_Byte": operationNotImplemented,
+  "BIT-Direct_Byte_X": operationNotImplemented,
+  "BIT-Direct_Word": operationNotImplemented,
+  "BIT-Direct_Word_X": operationNotImplemented,
+  "BIT-Immediate_Byte": operationNotImplemented,
+  "BIT-Immediate_Word": operationNotImplemented,
+  "BMI-Direct_Byte": operationNotImplemented,
+  "BNE-Direct_Byte": operationNotImplemented,
+  "BPL-Direct_Byte": operationNotImplemented,
+  "BRA-Direct_Byte": operationNotImplemented,
+  "BRK-Direct_Byte": operationNotImplemented,
+  "BRL-Direct_Word": operationNotImplemented,
+  "BVC-Direct_Byte": operationNotImplemented,
+  "BVS-Direct_Byte": operationNotImplemented,
+  "CLC-Implied": operationNotImplemented,
+  "CLD-Implied": operationNotImplemented,
+  "CLI-Implied": operationNotImplemented,
+  "CLV-Implied": operationNotImplemented,
+  "CMP-Direct_Byte": operationNotImplemented,
+  "CMP-Direct_Byte_S": operationNotImplemented,
+  "CMP-Direct_Byte_X": operationNotImplemented,
+  "CMP-Direct_Long": operationNotImplemented,
+  "CMP-Direct_Long_X": operationNotImplemented,
+  "CMP-Direct_Word": operationNotImplemented,
+  "CMP-Direct_Word_X": operationNotImplemented,
+  "CMP-Direct_Word_Y": operationNotImplemented,
+  "CMP-Immediate_Byte": operationNotImplemented,
+  "CMP-Immediate_Word": operationNotImplemented,
+  "CMP-Indirect_Byte": operationNotImplemented,
+  "CMP-Indirect_Byte_SY": operationNotImplemented,
+  "CMP-Indirect_Byte_X": operationNotImplemented,
+  "CMP-Indirect_Byte_Y": operationNotImplemented,
+  "CMP-IndirectLong_Byte": operationNotImplemented,
+  "CMP-IndirectLong_Byte_Y": operationNotImplemented,
+  "COP-Immediate_Byte": operationNotImplemented,
+  "CPX-Direct_Byte": operationNotImplemented,
+  "CPX-Direct_Word": operationNotImplemented,
+  "CPX-Immediate_Byte": operationNotImplemented,
+  "CPX-Immediate_Word": operationNotImplemented,
+  "CPY-Direct_Byte": operationNotImplemented,
+  "CPY-Direct_Word": operationNotImplemented,
+  "CPY-Immediate_Byte": operationNotImplemented,
+  "CPY-Immediate_Word": operationNotImplemented,
+  "DEC-Accumulator": operationNotImplemented,
+  "DEC-Direct_Byte": operationNotImplemented,
+  "DEC-Direct_Byte_X": operationNotImplemented,
+  "DEC-Direct_Word": operationNotImplemented,
+  "DEC-Direct_Word_X": operationNotImplemented,
+  "DEX-Implied": operationNotImplemented,
+  "DEY-Implied": operationNotImplemented,
+  "EOR-Direct_Byte": operationNotImplemented,
+  "EOR-Direct_Byte_S": operationNotImplemented,
+  "EOR-Direct_Byte_X": operationNotImplemented,
+  "EOR-Direct_Long": operationNotImplemented,
+  "EOR-Direct_Long_X": operationNotImplemented,
+  "EOR-Direct_Word": operationNotImplemented,
+  "EOR-Direct_Word_X": operationNotImplemented,
+  "EOR-Direct_Word_Y": operationNotImplemented,
+  "EOR-Immediate_Byte": operationNotImplemented,
+  "EOR-Immediate_Word": operationNotImplemented,
+  "EOR-Indirect_Byte": operationNotImplemented,
+  "EOR-Indirect_Byte_SY": operationNotImplemented,
+  "EOR-Indirect_Byte_X": operationNotImplemented,
+  "EOR-Indirect_Byte_Y": operationNotImplemented,
+  "EOR-IndirectLong_Byte": operationNotImplemented,
+  "EOR-IndirectLong_Byte_Y": operationNotImplemented,
+  "INC-Accumulator": operationNotImplemented,
+  "INC-Direct_Byte": operationNotImplemented,
+  "INC-Direct_Byte_X": operationNotImplemented,
+  "INC-Direct_Word": operationNotImplemented,
+  "INC-Direct_Word_X": operationNotImplemented,
+  "INX-Implied": operationNotImplemented,
+  "INY-Implied": operationNotImplemented,
+  "JML-Direct_Long": operationNotImplemented,
+  "JML-IndirectLong_Word": operationNotImplemented,
+  "JMP-Direct_Long": operationNotImplemented,
+  "JMP-Direct_Word": operationNotImplemented,
+  "JMP-Indirect_Word": operationNotImplemented,
+  "JMP-Indirect_Word_X": operationNotImplemented,
+  "JMP-IndirectLong_Word": operationNotImplemented,
+  "JSL-Implied": operationNotImplemented,
+  "JSR-Direct_Long": operationNotImplemented,
+  "JSR-Direct_Word": operationNotImplemented,
+  "JSR-Indirect_Word_X": operationNotImplemented,
+  "LDA-Direct_Byte": operationNotImplemented,
+  "LDA-Direct_Byte_S": operationNotImplemented,
+  "LDA-Direct_Byte_X": operationNotImplemented,
+  "LDA-Direct_Long": operationNotImplemented,
+  "LDA-Direct_Long_X": operationNotImplemented,
+  "LDA-Direct_Word": operationNotImplemented,
+  "LDA-Direct_Word_X": operationNotImplemented,
+  "LDA-Direct_Word_Y": operationNotImplemented,
+  "LDA-Immediate_Byte": operationNotImplemented,
+  "LDA-Immediate_Word": operationNotImplemented,
+  "LDA-Indirect_Byte": operationNotImplemented,
+  "LDA-Indirect_Byte_SY": operationNotImplemented,
+  "LDA-Indirect_Byte_X": operationNotImplemented,
+  "LDA-Indirect_Byte_Y": operationNotImplemented,
+  "LDA-IndirectLong_Byte": operationNotImplemented,
+  "LDA-IndirectLong_Byte_Y": operationNotImplemented,
+  "LDX-Direct_Byte": operationNotImplemented,
+  "LDX-Direct_Byte_Y": operationNotImplemented,
+  "LDX-Direct_Word": operationNotImplemented,
+  "LDX-Direct_Word_Y": operationNotImplemented,
+  "LDX-Immediate_Byte": operationNotImplemented,
+  "LDX-Immediate_Word": operationNotImplemented,
+  "LDY-Direct_Byte": operationNotImplemented,
+  "LDY-Direct_Byte_X": operationNotImplemented,
+  "LDY-Direct_Word": operationNotImplemented,
+  "LDY-Direct_Word_X": operationNotImplemented,
+  "LDY-Immediate_Byte": operationNotImplemented,
+  "LDY-Immediate_Word": operationNotImplemented,
+  "LSR-Accumulator": operationNotImplemented,
+  "LSR-Direct_Byte": operationNotImplemented,
+  "LSR-Direct_Byte_X": operationNotImplemented,
+  "LSR-Direct_Word": operationNotImplemented,
+  "LSR-Direct_Word_X": operationNotImplemented,
+  "MVN-Move": operationNotImplemented,
+  "MVP-Move": operationNotImplemented,
+  "NOP-Implied": operationNotImplemented,
+  "ORA-Direct_Byte": operationNotImplemented,
+  "ORA-Direct_Byte_S": operationNotImplemented,
+  "ORA-Direct_Byte_X": operationNotImplemented,
+  "ORA-Direct_Long": operationNotImplemented,
+  "ORA-Direct_Long_X": operationNotImplemented,
+  "ORA-Direct_Word": operationNotImplemented,
+  "ORA-Direct_Word_X": operationNotImplemented,
+  "ORA-Direct_Word_Y": operationNotImplemented,
+  "ORA-Immediate_Byte": operationNotImplemented,
+  "ORA-Immediate_Word": operationNotImplemented,
+  "ORA-Indirect_Byte": operationNotImplemented,
+  "ORA-Indirect_Byte_SY": operationNotImplemented,
+  "ORA-Indirect_Byte_X": operationNotImplemented,
+  "ORA-Indirect_Byte_Y": operationNotImplemented,
+  "ORA-IndirectLong_Byte": operationNotImplemented,
+  "ORA-IndirectLong_Byte_Y": operationNotImplemented,
+  "PEA-Direct_Word": operationNotImplemented,
+  "PEI-Indirect_Byte": operationNotImplemented,
+  "PER-Direct_Word": operationNotImplemented,
+  "PHA-Implied": operationNotImplemented,
+  "PHB-Implied": operationNotImplemented,
+  "PHD-Implied": operationNotImplemented,
+  "PHK-Implied": operationNotImplemented,
+  "PHP-Implied": operationNotImplemented,
+  "PHX-Implied": operationNotImplemented,
+  "PHY-Implied": operationNotImplemented,
+  "PLA-Implied": operationNotImplemented,
+  "PLB-Implied": operationNotImplemented,
+  "PLD-Implied": operationNotImplemented,
+  "PLP-Implied": operationNotImplemented,
+  "PLX-Implied": operationNotImplemented,
+  "PLY-Implied": operationNotImplemented,
+  "REP-Immediate_Byte": operationNotImplemented,
+  "ROL-Accumulator": operationNotImplemented,
+  "ROL-Direct_Byte": operationNotImplemented,
+  "ROL-Direct_Byte_X": operationNotImplemented,
+  "ROL-Direct_Word": operationNotImplemented,
+  "ROL-Direct_Word_X": operationNotImplemented,
+  "ROR-Accumulator": operationNotImplemented,
+  "ROR-Direct_Byte": operationNotImplemented,
+  "ROR-Direct_Byte_X": operationNotImplemented,
+  "ROR-Direct_Word": operationNotImplemented,
+  "ROR-Direct_Word_X": operationNotImplemented,
+  "RTI-Implied": operationNotImplemented,
+  "RTL-Implied": operationNotImplemented,
+  "RTS-Implied": operationNotImplemented,
+  "SBC-Direct_Byte": operationNotImplemented,
+  "SBC-Direct_Byte_S": operationNotImplemented,
+  "SBC-Direct_Byte_X": operationNotImplemented,
+  "SBC-Direct_Long": operationNotImplemented,
+  "SBC-Direct_Long_X": operationNotImplemented,
+  "SBC-Direct_Word": operationNotImplemented,
+  "SBC-Direct_Word_X": operationNotImplemented,
+  "SBC-Direct_Word_Y": operationNotImplemented,
+  "SBC-Immediate_Byte": operationNotImplemented,
+  "SBC-Immediate_Word": operationNotImplemented,
+  "SBC-Indirect_Byte": operationNotImplemented,
+  "SBC-Indirect_Byte_SY": operationNotImplemented,
+  "SBC-Indirect_Byte_X": operationNotImplemented,
+  "SBC-Indirect_Byte_Y": operationNotImplemented,
+  "SBC-IndirectLong_Byte": operationNotImplemented,
+  "SBC-IndirectLong_Byte_Y": operationNotImplemented,
+  "SEC-Implied": operationNotImplemented,
+  "SED-Implied": operationNotImplemented,
+  "SEI-Implied": operationNotImplemented,
+  "SEP-Immediate_Byte": operationNotImplemented,
+  "STA-Direct_Byte": operationNotImplemented,
+  "STA-Direct_Byte_S": operationNotImplemented,
+  "STA-Direct_Byte_X": operationNotImplemented,
+  "STA-Direct_Long": operationNotImplemented,
+  "STA-Direct_Long_X": operationNotImplemented,
+  "STA-Direct_Word": operationNotImplemented,
+  "STA-Direct_Word_X": operationNotImplemented,
+  "STA-Direct_Word_Y": operationNotImplemented,
+  "STA-Indirect_Byte": operationNotImplemented,
+  "STA-Indirect_Byte_SY": operationNotImplemented,
+  "STA-Indirect_Byte_X": operationNotImplemented,
+  "STA-Indirect_Byte_Y": operationNotImplemented,
+  "STA-IndirectLong_Byte": operationNotImplemented,
+  "STA-IndirectLong_Byte_Y": operationNotImplemented,
+  "STP-Implied": operationNotImplemented,
+  "STX-Direct_Byte": operationNotImplemented,
+  "STX-Direct_Byte_Y": operationNotImplemented,
+  "STX-Direct_Word": operationNotImplemented,
+  "STY-Direct_Byte": operationNotImplemented,
+  "STY-Direct_Byte_X": operationNotImplemented,
+  "STY-Direct_Word": operationNotImplemented,
+  "STZ-Direct_Byte": operationNotImplemented,
+  "STZ-Direct_Byte_X": operationNotImplemented,
+  "STZ-Direct_Word": operationNotImplemented,
+  "STZ-Direct_Word_X": operationNotImplemented,
+  "TAX-Implied": operationNotImplemented,
+  "TAY-Implied": operationNotImplemented,
+  "TCD-Implied": operationNotImplemented,
+  "TCS-Implied": operationNotImplemented,
+  "TDC-Implied": operationNotImplemented,
+  "TRB-Direct_Byte": operationNotImplemented,
+  "TRB-Direct_Word": operationNotImplemented,
+  "TSB-Direct_Byte": operationNotImplemented,
+  "TSB-Direct_Word": operationNotImplemented,
+  "TSC-Implied": operationNotImplemented,
+  "TSX-Implied": operationNotImplemented,
+  "TXA-Implied": operationNotImplemented,
+  "TXS-Implied": operationNotImplemented,
+  "TXY-Implied": operationNotImplemented,
+  "TYA-Implied": operationNotImplemented,
+  "TYX-Implied": operationNotImplemented,
+  "WAI-Implied": operationNotImplemented,
+  "WDM-Implied": operationNotImplemented,
+  "XBA-Implied": operationNotImplemented,
+  "XCE-Implied": operationNotImplemented,
 };
 
 //==============================================================================
@@ -203,100 +307,50 @@ const operation = {
 //==============================================================================
 
 function executeInstruction(
-  prevStep: Step,
+  state: State,
   instruction: Asm65816Instruction,
 ): Step {
-  const step = { state: { ...prevStep.state }, report: ReportFromScratch() };
-  const state = step.state;
-  const report = step.report;
+  const ctx = ContextFromState(state);
+  const operation = operationsByInstructionId[instruction.id];
 
-  const isA8Bit = Boolean(state.flags & Flag.M);
-  const isX8Bit = Boolean(state.flags & Flag.X);
+  const report = produceReport(instruction.id, state);
+  const step = operation(instruction.arg, state, ctx);
 
-  // Use value as an address.
-  const addrDp = (value: number) => w(w(state.dp) | l(value));
-  const addrAbs = (value: number) => (l(state.db) << 16) | w(value);
-  const addrLong = (value: number) => value & Mask.Long;
+  const changes: Step["state"] = {};
 
-  // Access direct memory
-  const loadDirectByte = (addr: number): number =>
-    l(state.memory.get(addr) ?? 0);
-  const saveDirectByte = (addr: number, byte: number) =>
-    state.memory.set(addr, l(byte));
+  if (step.state.pb) changes.pb = { from: state.pb, to: step.state.pb };
+  if (step.state.pc) changes.pc = { from: state.pc, to: step.state.pc };
 
-  const loadDirectWord = (addr: number): number =>
-    littleEndian(loadDirectByte(addr), loadDirectByte(addr + 1));
-  const saveDirectWord = (addr: number, word: number) =>
-    state.memory.set(addr, l(word));
+  if (step.state.a) changes.a = { from: state.a, to: step.state.a };
+  if (step.state.x) changes.x = { from: state.x, to: step.state.x };
+  if (step.state.y) changes.y = { from: state.y, to: step.state.y };
 
-  // Access indirect memory
-  const indirect = (addr: number): number =>
-    addrAbs(littleEndian(loadDirectByte(addr), loadDirectByte(addr + 1)));
+  if (step.state.db) changes.db = { from: state.db, to: step.state.db };
+  if (step.state.dp) changes.dp = { from: state.dp, to: step.state.dp };
+  if (step.state.sp) changes.sp = { from: state.sp, to: step.state.sp };
 
-  const loadIndirectByte = (addr: number): number =>
-    loadDirectByte(indirect(addr));
-  const saveIndirectByte = (addr: number, byte: number) =>
-    saveDirectByte(indirect(addr), byte);
+  if (step.state.flags)
+    changes.flags = { from: state.flags, to: step.state.flags };
 
-  const loadIndirectWord = (addr: number): number =>
-    loadDirectWord(indirect(addr));
-  const saveIndirectWord = (addr: number, word: number) =>
-    saveDirectWord(indirect(addr), word);
-
-  // Access indirect long memory
-  const indirectLong = (addr: number): number =>
-    littleEndian(
-      loadDirectByte(addr),
-      loadDirectByte(addr + 1),
-      loadDirectByte(addr + 2),
+  if (step.state.memory) {
+    changes.memory = Object.fromEntries(
+      Object.entries(step.state.memory ?? {}).map(([addr, byte]) => [
+        addr,
+        { from: state.memory[addr as unknown as number] ?? 0, to: byte },
+      ]),
     );
-
-  const loadIndirectLongByte = (addr: number): number =>
-    loadDirectByte(indirectLong(addr));
-  const saveIndirectLongByte = (addr: number, byte: number) =>
-    saveDirectByte(indirectLong(addr), byte);
-
-  const loadIndirectLongWord = (addr: number): number =>
-    loadDirectWord(indirectLong(addr));
-  const saveIndirectLongWord = (addr: number, word: number) =>
-    saveDirectWord(indirectLong(addr), word);
-
-  switch (instruction.id) {
-    case "ADC-Direct_Byte": {
-      const addr = addrDp(instruction.arg);
-      const result = isA8Bit
-        ? operation.adc8Bit(loadDirectByte(addr), state.a, state.flags)
-        : operation.adc16Bit(loadDirectWord(addr), state.a, state.flags);
-      state.a = result.a;
-      state.flags = result.flags;
-      break;
-    }
-    case "ADC-Immediate_Byte": {
-      if (!isA8Bit) console.error("Invalid instruction with A 16-bit");
-      const immediate = instruction.arg;
-      const result = isA8Bit
-        ? operation.adc8Bit(immediate, state.a, state.flags)
-        : operation.adc16Bit(immediate, state.a, state.flags);
-      state.a = result.a;
-      state.flags = result.flags;
-      break;
-    }
-    case "ADC-Immediate_Word": {
-      if (isA8Bit) console.error("Invalid instruction with A 8-bit");
-      const immediate = instruction.arg;
-      const result = isA8Bit
-        ? operation.adc8Bit(immediate, state.a, state.flags)
-        : operation.adc16Bit(immediate, state.a, state.flags);
-      state.a = result.a;
-      state.flags = result.flags;
-      break;
-    }
   }
 
-  return step;
+  return {
+    state: changes,
+    report: step.report
+      ? {
+          bytes: report.bytes + (step.report.bytes ?? 0),
+          cycles: report.cycles + (step.report.cycles ?? 0),
+        }
+      : report,
+  };
 }
-
-export const executeAsm65816EmulatorInstruction = executeInstruction;
 
 //==============================================================================
 // Execute
@@ -311,16 +365,15 @@ function EmulatorFromInstructions(
 ): Emulator {
   if (instructions.length === 0) return EmulatorFromScratch();
 
-  const steps = [executeInstruction(StepFromScratch(), instructions[0]!)];
-  const report = steps[0]!.report;
-  let state = steps[0]!.state;
-  for (let i = 1; i < instructions.length; ++i) {
-    const step = executeInstruction(steps[i - 1]!, instructions[i]!);
-    steps.push(step);
-    state = step.state;
+  let state = StateFromScratch();
+  const report = ReportFromScratch();
+  const steps = instructions.map((instruction) => {
+    const step = executeInstruction(state, instruction);
+    state = applyStateDiff(state, step.state);
     report.bytes += step.report.bytes;
     report.cycles += step.report.cycles;
-  }
+    return step;
+  });
 
   return { report, state, steps };
 }

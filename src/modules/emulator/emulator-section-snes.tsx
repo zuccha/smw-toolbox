@@ -8,7 +8,7 @@ import SnesRegisterGroup from "../../components/snes-register-group";
 import {
   Asm65816Emulator,
   Asm65816EmulatorFlag,
-} from "../../models/asm65816-emulator";
+} from "../../models/asm65816-emulator/_types";
 import { IntegerUnit } from "../../models/integer";
 import { useEmulatorTabSnesIsVisible } from "./store";
 

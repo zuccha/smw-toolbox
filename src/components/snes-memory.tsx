@@ -3,8 +3,8 @@ import { IntegerEncoding, IntegerLength, IntegerUnit } from "../models/integer";
 import { useIntegerState } from "../hooks/use-integer";
 import {
   Asm65816EmulatorMemory,
-  getAsm65816EmulatorMemoryValue as getAsm65816EmulatorMemoryByte,
-} from "../models/asm65816-emulator";
+  getAsm65816EmulatorMemoryByte,
+} from "../models/asm65816-emulator/_types";
 import {
   IntegerStringTypingDirection,
   IntegerStringTypingMode,
