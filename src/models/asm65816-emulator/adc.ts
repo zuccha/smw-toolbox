@@ -50,17 +50,7 @@ export function adc_Direct_Byte(arg: number, state: State, ctx: Context) {
   return { state: result };
 }
 
-export function adc_Immediate_Byte(arg: number, state: State, ctx: Context) {
-  if (!ctx.isA8Bit) console.error("Invalid instruction with A 16-bit");
-  const immediate = arg;
-  const result = ctx.isA8Bit
-    ? adc8Bit(immediate, state.a, state.flags)
-    : adc16Bit(immediate, state.a, state.flags);
-  return { state: result };
-}
-
-export function adc_Immediate_Word(arg: number, state: State, ctx: Context) {
-  if (ctx.isA8Bit) console.error("Invalid instruction with A 8-bit");
+export function adc_Immediate(arg: number, state: State, ctx: Context) {
   const immediate = arg;
   const result = ctx.isA8Bit
     ? adc8Bit(immediate, state.a, state.flags)

@@ -4,6 +4,7 @@ import {
   Asm65816InstructionSchema,
   Asm65816InstructionMode,
   Asm65816InstructionModeMetaByMode,
+  Asm65816InstructionMetaById,
 } from "./asm65816-instruction";
 import { asm65816Language } from "../languages/asm65816";
 
@@ -39,6 +40,7 @@ function InstructionBuilderFromLine(line: number): InstructionBuilder {
 //==============================================================================
 
 export type Asm65816Program = {
+  bytes: number[];
   instructions: Asm65816Instruction[];
   errors: CompilationError[];
 };
@@ -150,5 +152,13 @@ export function Asm65168ProgramFromCode(code: string): Asm65816Program {
 
   pushInstruction();
 
-  return { errors, instructions };
+  const bytes: number[] = [];
+  for (const instruction of instructions) {
+    bytes.push(Asm65816InstructionMetaById[instruction.id].hex);
+    if (instruction.arg.l !== -1) bytes.push(instruction.arg.l);
+    if (instruction.arg.h !== -1) bytes.push(instruction.arg.h);
+    if (instruction.arg.b !== -1) bytes.push(instruction.arg.b);
+  }
+
+  return { bytes, errors, instructions };
 }

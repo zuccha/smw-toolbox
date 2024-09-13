@@ -1,5 +1,5 @@
 import {
-  Asm65816InstructionCyclesModifiers,
+  Asm65816InstructionModifier,
   Asm65816InstructionId,
   Asm65816InstructionMetaById,
 } from "../asm65816-instruction";
@@ -31,10 +31,10 @@ export function applyFlags(
 // Produce report
 export function produceReport(id: Asm65816InstructionId, state: State): Report {
   const meta = Asm65816InstructionMetaById[id];
-  const bytes = meta.bytes;
+  let bytes = meta.bytes;
   let cycles = meta.cycles;
 
-  const CyclesModifiers = Asm65816InstructionCyclesModifiers;
+  const CyclesModifiers = Asm65816InstructionModifier;
 
   if (
     meta.cyclesModifiers & CyclesModifiers.Plus1IfMIsZero &&
@@ -71,6 +71,18 @@ export function produceReport(id: Asm65816InstructionId, state: State): Report {
   //   ?
   // )
   //   cycles += 1;
+
+  if (
+    meta.bytesModifiers & CyclesModifiers.Plus2IfMIsZero &&
+    state.flags & Flag.M
+  )
+    bytes += 1;
+
+  if (
+    meta.bytesModifiers & CyclesModifiers.Plus1IfXIsZero &&
+    state.flags & Flag.X
+  )
+    bytes += 1;
 
   return { bytes, cycles };
 }

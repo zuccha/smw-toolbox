@@ -81,8 +81,7 @@ Mode_Direct_Long_X       { Long X }
 Mode_Direct_Word         { Word }
 Mode_Direct_Word_X       { Word X }
 Mode_Direct_Word_Y       { Word Y }
-Mode_Immediate_Byte      { ConstByte }
-Mode_Immediate_Word      { ConstWord }
+Mode_Immediate           { ConstByte | ConstWord }
 Mode_IndirectLong_Byte   { "[" Byte "]" }
 Mode_IndirectLong_Byte_Y { "[" Byte "]" Y }
 Mode_IndirectLong_Word   { "[" Word "]" }
@@ -97,8 +96,8 @@ Mode_Move                { Byte "," Byte }
 mode {
   Mode_Accumulator | Mode_Direct_Byte | Mode_Direct_Byte_S | Mode_Direct_Byte_X
 | Mode_Direct_Byte_Y | Mode_Direct_Long | Mode_Direct_Long_X | Mode_Direct_Word
-| Mode_Direct_Word_X | Mode_Direct_Word_Y | Mode_Immediate_Byte
-| Mode_Immediate_Word | Mode_IndirectLong_Byte | Mode_IndirectLong_Byte_Y
+| Mode_Direct_Word_X | Mode_Direct_Word_Y | Mode_Immediate
+| Mode_IndirectLong_Byte | Mode_IndirectLong_Byte_Y
 | Mode_IndirectLong_Word | Mode_Indirect_Byte | Mode_Indirect_Byte_SY
 | Mode_Indirect_Byte_X | Mode_Indirect_Byte_Y | Mode_Indirect_Word
 | Mode_Indirect_Word_X | Mode_Move
