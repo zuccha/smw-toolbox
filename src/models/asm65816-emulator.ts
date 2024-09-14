@@ -2,35 +2,22 @@ import { Context, ContextFromState } from "./asm65816-emulator/_context";
 import {
   applyStateDiff,
   Emulator,
+  Flag,
   Report,
   ReportFromScratch,
   State,
   StateFromScratch,
   Step,
 } from "./asm65816-emulator/_types";
-import {
-  b,
-  h,
-  incrementPc,
-  l,
-  produceReport,
-} from "./asm65816-emulator/_utils";
-import {
-  adc_Direct_Byte,
-  adc_Direct_Byte_S,
-  adc_Direct_Byte_X,
-  adc_Direct_Long,
-  adc_Direct_Long_X,
-  adc_Direct_Word,
-  adc_Direct_Word_X,
-  adc_Direct_Word_Y,
-  adc_Immediate,
-} from "./asm65816-emulator/adc";
+import { b, h, l, w } from "./asm65816-emulator/_utils";
+import { adcByInstructionId } from "./asm65816-emulator/adc";
 import {
   Asm65816Instruction,
   Asm65816InstructionHex,
   Asm65816InstructionId,
   Asm65816InstructionIdByHex,
+  Asm65816InstructionMetaById,
+  Asm65816InstructionModifier,
 } from "./asm65816-instruction";
 
 const operationNotImplemented = () => ({ state: {} });
@@ -43,21 +30,7 @@ const operationsByInstructionId: Record<
     ctx: Context,
   ) => { state: Partial<State>; report?: Partial<Report> }
 > = {
-  "ADC-Direct_Byte": adc_Direct_Byte,
-  "ADC-Direct_Byte_S": adc_Direct_Byte_S,
-  "ADC-Direct_Byte_X": adc_Direct_Byte_X,
-  "ADC-Direct_Long": adc_Direct_Long,
-  "ADC-Direct_Long_X": adc_Direct_Long_X,
-  "ADC-Direct_Word": adc_Direct_Word,
-  "ADC-Direct_Word_X": adc_Direct_Word_X,
-  "ADC-Direct_Word_Y": adc_Direct_Word_Y,
-  "ADC-Immediate": adc_Immediate,
-  "ADC-Indirect_Byte": operationNotImplemented,
-  "ADC-Indirect_Byte_SY": operationNotImplemented,
-  "ADC-Indirect_Byte_X": operationNotImplemented,
-  "ADC-Indirect_Byte_Y": operationNotImplemented,
-  "ADC-IndirectLong_Byte": operationNotImplemented,
-  "ADC-IndirectLong_Byte_Y": operationNotImplemented,
+  ...adcByInstructionId,
   "AND-Direct_Byte": operationNotImplemented,
   "AND-Direct_Byte_S": operationNotImplemented,
   "AND-Direct_Byte_X": operationNotImplemented,
@@ -303,6 +276,81 @@ const operationsByInstructionId: Record<
   "XBA-Implied": operationNotImplemented,
   "XCE-Implied": operationNotImplemented,
 };
+
+//==============================================================================
+// Produce Report
+//==============================================================================
+
+export function produceReport(id: Asm65816InstructionId, state: State): Report {
+  const meta = Asm65816InstructionMetaById[id];
+  let bytes = meta.bytes;
+  let cycles = meta.cycles;
+
+  const CyclesModifiers = Asm65816InstructionModifier;
+
+  if (
+    meta.cyclesModifiers & CyclesModifiers.Plus1IfMIsZero &&
+    state.flags & Flag.M
+  )
+    cycles += 1;
+
+  if (
+    meta.cyclesModifiers & CyclesModifiers.Plus2IfMIsZero &&
+    (state.flags & Flag.M) === 0
+  )
+    cycles += 2;
+
+  if (
+    meta.cyclesModifiers & CyclesModifiers.Plus1IfXIsZero &&
+    (state.flags & Flag.X) === 0
+  )
+    cycles += 1;
+
+  // if (
+  //   meta.cyclesModifiers & CyclesModifiers.Plus1IfEIsZero &&
+  //   state.flags & Flag.E
+  // )
+  //   cycles += 1;
+
+  if (
+    meta.cyclesModifiers & CyclesModifiers.Plus1IfDirectPageLowByteIsNonZero &&
+    l(state.dp) > 0
+  )
+    cycles += 1;
+
+  // if (
+  //   meta.cyclesModifiers & CyclesModifiers.Plus1IfIndexCrossesPageBoundary &&
+  //   ?
+  // )
+  //   cycles += 1;
+
+  if (
+    meta.bytesModifiers & CyclesModifiers.Plus1IfMIsZero &&
+    (state.flags & Flag.M) === 0
+  )
+    bytes += 1;
+
+  if (
+    meta.bytesModifiers & CyclesModifiers.Plus1IfXIsZero &&
+    (state.flags & Flag.X) === 0
+  )
+    bytes += 1;
+
+  return { bytes, cycles };
+}
+
+//==============================================================================
+// Increment Program Counter
+//==============================================================================
+
+export function incrementPc(
+  pb: number,
+  pc: number,
+  increment: number,
+): { pb: number; pc: number } {
+  const counter = ((l(pb) << 16) | w(pc)) + increment;
+  return { pb: l(counter) >> 16, pc: w(counter) };
+}
 
 //==============================================================================
 // Execute Instruction

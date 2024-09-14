@@ -1,122 +1,90 @@
-import { Flag, Mask, Memory, State } from "./_types";
-import { h, l, littleEndian, w } from "./_utils";
+import { Flag, Memory, State } from "./_types";
+import { h, l, w } from "./_utils";
 
 export type Context = {
+  // Registers
   isA8Bit: boolean;
   isX8Bit: boolean;
 
-  addrDp: (value: number) => number;
-  addrAbs: (value: number) => number;
-  addrLong: (value: number) => number;
-  addrSr: (value: number) => number;
-  addrX: (value: number) => number;
-  addrY: (value: number) => number;
+  // Memory access
+  load_byte: (addr: number) => number;
+  load_word: (addr: number) => number;
+  save_byte: (addr: number, val: number) => Memory;
+  save_word: (addr: number, val: number) => Memory;
 
-  loadDirectByte: (addr: number) => number;
-  saveDirectByte: (addr: number, byte: number) => void;
-
-  loadDirectWord: (addr: number) => number;
-  saveDirectWord: (addr: number, word: number) => void;
-
-  loadIndirectByte: (addr: number) => number;
-  saveIndirectByte: (addr: number, byte: number) => void;
-
-  loadIndirectWord: (addr: number) => number;
-  saveIndirectWord: (addr: number, wrd: number) => void;
-
-  loadIndirectLongByte: (addr: number) => number;
-  saveIndirectLongByte: (addr: number, byte: number) => void;
-
-  loadIndirectLongWord: (addr: number) => number;
-  saveIndirectLongWord: (addr: number, word: number) => void;
+  // Addressing modes
+  direct: (val: number) => number;
+  direct_x: (val: number) => number;
+  direct_y: (val: number) => number;
+  direct_indirect: (val: number) => number;
+  direct_x_indirect: (val: number) => number;
+  direct_indirect_y: (val: number) => number;
+  direct_indirectLong: (val: number) => number;
+  direct_indirectLong_y: (val: number) => number;
+  absolute: (val: number) => number;
+  absolute_x: (val: number) => number;
+  absolute_y: (val: number) => number;
+  absolute_indirect: (val: number) => number;
+  absolute_indirectLong: (val: number) => number;
+  absolute_x_indirect: (val: number) => number;
+  absoluteLong: (val: number) => number;
+  absoluteLong_x: (val: number) => number;
+  stackRelative: (val: number) => number;
+  stackRelative_indirect_y: (val: number) => number;
 };
 
 export function ContextFromState(state: State): Context {
-  // Registers state
   const isA8Bit = Boolean(state.flags & Flag.M);
   const isX8Bit = Boolean(state.flags & Flag.X);
 
-  // Use value as an address.
-  const addrDp = (value: number) => w(state.dp) + value;
-  const addrAbs = (value: number) => (l(state.db) << 16) + value;
-  const addrLong = (value: number) => value & Mask.Long;
-  const addrSr = (value: number) => l(value) + w(state.sp);
-  const addrX = (value: number) => value + w(state.x);
-  const addrY = (value: number) => value + w(state.y);
+  const x = w(state.x);
+  const y = w(state.y);
+  const dp = w(state.dp);
+  const db = l(state.db) << 16;
+  const sp = w(state.sp);
+  const memory = state.memory;
 
-  // Access direct memory
-  const loadDirectByte = (addr: number): number => l(state.memory[addr] ?? 0);
-  const saveDirectByte = (addr: number, byte: number): Memory => ({
-    [addr]: l(byte),
+  const load_byte = (addr: number) => l(memory[addr] ?? 0);
+  const load_word = (addr: number) =>
+    (load_byte(addr + 1) << 8) + load_byte(addr);
+  const load_long = (addr: number) =>
+    (load_byte(addr + 2) << 16) + (load_byte(addr + 1) << 8) + load_byte(addr);
+
+  const save_byte = (addr: number, val: number): Memory => ({
+    [addr]: l(val),
   });
-
-  const loadDirectWord = (addr: number): number =>
-    littleEndian(loadDirectByte(addr), loadDirectByte(addr + 1));
-  const saveDirectWord = (addr: number, word: number): Memory => ({
-    [addr]: l(word),
-    [addr + 1]: h(word),
+  const save_word = (addr: number, val: number): Memory => ({
+    [addr]: l(val),
+    [addr + 1]: h(val),
   });
-
-  // Access indirect memory
-  const indirect = (addr: number): number =>
-    addrAbs(littleEndian(loadDirectByte(addr), loadDirectByte(addr + 1)));
-
-  const loadIndirectByte = (addr: number): number =>
-    loadDirectByte(indirect(addr));
-  const saveIndirectByte = (addr: number, byte: number): Memory =>
-    saveDirectByte(indirect(addr), byte);
-
-  const loadIndirectWord = (addr: number): number =>
-    loadDirectWord(indirect(addr));
-  const saveIndirectWord = (addr: number, word: number): Memory =>
-    saveDirectWord(indirect(addr), word);
-
-  // Access indirect long memory
-  const indirectLong = (addr: number): number =>
-    littleEndian(
-      loadDirectByte(addr),
-      loadDirectByte(addr + 1),
-      loadDirectByte(addr + 2),
-    );
-
-  const loadIndirectLongByte = (addr: number): number =>
-    loadDirectByte(indirectLong(addr));
-  const saveIndirectLongByte = (addr: number, byte: number): Memory =>
-    saveDirectByte(indirectLong(addr), byte);
-
-  const loadIndirectLongWord = (addr: number): number =>
-    loadDirectWord(indirectLong(addr));
-  const saveIndirectLongWord = (addr: number, word: number): Memory =>
-    saveDirectWord(indirectLong(addr), word);
 
   // Context
   return {
     isA8Bit,
     isX8Bit,
 
-    addrDp,
-    addrAbs,
-    addrLong,
-    addrSr,
-    addrX,
-    addrY,
+    load_byte,
+    load_word,
+    save_byte,
+    save_word,
 
-    loadDirectByte,
-    saveDirectByte,
-
-    loadDirectWord,
-    saveDirectWord,
-
-    loadIndirectByte,
-    saveIndirectByte,
-
-    loadIndirectWord,
-    saveIndirectWord,
-
-    loadIndirectLongByte,
-    saveIndirectLongByte,
-
-    loadIndirectLongWord,
-    saveIndirectLongWord,
+    direct: (val: number) => l(val) + dp,
+    direct_x: (val: number) => l(val) + dp + x,
+    direct_y: (val: number) => l(val) + dp + y,
+    direct_indirect: (val: number) => db + load_word(l(val) + dp),
+    direct_x_indirect: (val: number) => db + load_word(l(val) + dp + x),
+    direct_indirect_y: (val: number) => db + load_word(l(val) + dp) + y,
+    direct_indirectLong: (val: number) => load_long(l(val) + dp),
+    direct_indirectLong_y: (val: number) => load_long(l(val) + dp) + y,
+    absolute: (val: number) => db + w(val),
+    absolute_x: (val: number) => db + w(val) + x,
+    absolute_y: (val: number) => db + w(val) + y,
+    absolute_indirect: (val: number) => db + load_word(db + w(val)),
+    absolute_indirectLong: (val: number) => load_long(db + w(val)),
+    absolute_x_indirect: (val: number) => db + load_word(db + w(val) + x),
+    absoluteLong: (val: number) => val,
+    absoluteLong_x: (val: number) => val + x,
+    stackRelative: (val: number) => sp + l(val),
+    stackRelative_indirect_y: (val: number) => db + load_word(sp + l(val)) + y,
   };
 }
