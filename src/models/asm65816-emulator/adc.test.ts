@@ -19,116 +19,29 @@ import {
   adc_IndirectLong_Byte_Y,
 } from "./adc";
 
-describe("ADC dp", () => {
-  describe("A 8-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0xf0ff;
-      state.flags = Flag.M;
-      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0xf004, flags: Flag.M | Flag.C } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition adding a word when A is 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0xf0ff;
-      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with direct page set", () => {
-      const state = StateFromScratch();
-      state.a = 0xf0ff;
-      state.dp = 0x1234;
-      state.memory = { 0x00123e: 0x05, 0x00123f: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC sr,S", () => {
+describe("ADC addr", () => {
   describe("A 8-bit", () => {
     test("addition", () => {
       const state = StateFromScratch();
       state.a = 0x0f10;
-      state.sp = 0x000a;
+      state.db = 0x12;
       state.flags = Flag.M;
-      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f16, flags: Flag.M } };
-      expect(adc_Direct_Byte_S(0x01, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0xf015;
-      state.sp = 0x000a;
-      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0xf61a, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte_S(0x00, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC dp,X", () => {
-  describe("A 8-bit", () => {
-    test("addition when X is 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x000a;
-      state.dp = 0x0120;
-      state.flags = Flag.M | Flag.X;
-      state.memory = { 0x00012b: 0x05, 0x00012c: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
-      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition when X is 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x100a;
-      state.dp = 0x0120;
-      state.flags = Flag.M;
-      state.memory = { 0x00112b: 0x05, 0x00112c: 0x06 };
+      state.memory = { 0x12d901: 0x05, 0x12d902: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
     });
   });
 
   describe("A 16-bit", () => {
-    test("addition when X is 8-bit", () => {
+    test("addition", () => {
       const state = StateFromScratch();
       state.a = 0x0f10;
-      state.x = 0x000a;
-      state.dp = 0x0120;
-      state.memory = { 0x0001d5: 0x05, 0x0001d6: 0x06 };
+      state.db = 0x12;
+      state.memory = { 0x12d901: 0x38, 0x12d902: 0x10 };
       const ctx = ContextFromState(state);
-      const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition when X is 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x1e0a;
-      state.dp = 0x0120;
-      state.memory = { 0x001fd5: 0x05, 0x001fd6: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
+      const output = { state: { a: 0x1f48, flags: 0 } };
+      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -202,33 +115,6 @@ describe("ADC long,X", () => {
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
       expect(adc_Direct_Long_X(0x12d901, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC addr", () => {
-  describe("A 8-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.db = 0x12;
-      state.flags = Flag.M;
-      state.memory = { 0x12d901: 0x05, 0x12d902: 0x06 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.db = 0x12;
-      state.memory = { 0x12d901: 0x38, 0x12d902: 0x10 };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x1f48, flags: 0 } };
-      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -333,6 +219,384 @@ describe("ADC addr,Y", () => {
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
       expect(adc_Direct_Word_Y(0x2001, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC dp", () => {
+  describe("A 8-bit", () => {
+    test("addition", () => {
+      const state = StateFromScratch();
+      state.a = 0xf0ff;
+      state.flags = Flag.M;
+      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0xf004, flags: Flag.M | Flag.C } };
+      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition adding a word when A is 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0xf0ff;
+      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
+      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with direct page set", () => {
+      const state = StateFromScratch();
+      state.a = 0xf0ff;
+      state.dp = 0x1234;
+      state.memory = { 0x00123e: 0x05, 0x00123f: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
+      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC (dp)", () => {
+  describe("A 8-bit", () => {
+    test("addition", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.dp = 0x1020;
+      state.flags = Flag.M;
+      state.memory = { 0x00106a: 0xff, 0x00106b: 0x1f, 0x001fff: 0xa0 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
+      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x20b0, flags: 0 } };
+      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC [dp]", () => {
+  describe("A 8-bit", () => {
+    test("addition", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.dp = 0x1020;
+      state.flags = Flag.M | Flag.X;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x011fff: 0xa0,
+        0x012000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
+      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x011fff: 0xa0,
+        0x012000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x20b0, flags: 0 } };
+      expect(adc_IndirectLong_Byte(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC [dp],y", () => {
+  describe("A 8-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x0001;
+      state.dp = 0x1020;
+      state.flags = Flag.M | Flag.X;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x011fff: 0xa0,
+        0x012000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
+      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x1001;
+      state.dp = 0x1020;
+      state.flags = Flag.M;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x012fff: 0xa0,
+        0x013000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: Flag.M } };
+      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x0001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x011fff: 0xa0,
+        0x012000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: 0 } };
+      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x1001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x00106c: 0x01,
+        0x012fff: 0xa0,
+        0x013000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: 0 } };
+      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC (dp),y", () => {
+  describe("A 8-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x0001;
+      state.dp = 0x1020;
+      state.flags = Flag.M | Flag.X;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
+      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x1001;
+      state.dp = 0x1020;
+      state.flags = Flag.M;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x002fff: 0xa0,
+        0x003000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: Flag.M } };
+      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x0001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: 0 } };
+      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.y = 0x1001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x002fff: 0xa0,
+        0x003000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f21, flags: 0 } };
+      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC dp,X", () => {
+  describe("A 8-bit", () => {
+    test("addition when X is 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x000a;
+      state.dp = 0x0120;
+      state.flags = Flag.M | Flag.X;
+      state.memory = { 0x00012b: 0x05, 0x00012c: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
+      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition when X is 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x100a;
+      state.dp = 0x0120;
+      state.flags = Flag.M;
+      state.memory = { 0x00112b: 0x05, 0x00112c: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0f15, flags: Flag.M } };
+      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition when X is 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x000a;
+      state.dp = 0x0120;
+      state.memory = { 0x0001d5: 0x05, 0x0001d6: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x1515, flags: 0 } };
+      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition when X is 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x1e0a;
+      state.dp = 0x0120;
+      state.memory = { 0x001fd5: 0x05, 0x001fd6: 0x06 };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x1515, flags: 0 } };
+      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
+    });
+  });
+});
+
+describe("ADC (dp,x)", () => {
+  describe("A 8-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x0001;
+      state.dp = 0x1020;
+      state.flags = Flag.M | Flag.X;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
+      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x1001;
+      state.dp = 0x1020;
+      state.flags = Flag.M;
+      state.memory = {
+        0x00206a: 0xff,
+        0x00206b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
+      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+    });
+  });
+
+  describe("A 16-bit", () => {
+    test("addition with X 8-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x0001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00106a: 0xff,
+        0x00106b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x20b0, flags: 0 } };
+      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+    });
+
+    test("addition with X 16-bit", () => {
+      const state = StateFromScratch();
+      state.a = 0x0f10;
+      state.x = 0x1001;
+      state.dp = 0x1020;
+      state.memory = {
+        0x00206a: 0xff,
+        0x00206b: 0x1f,
+        0x001fff: 0xa0,
+        0x002000: 0x11,
+      };
+      const ctx = ContextFromState(state);
+      const output = { state: { a: 0x20b0, flags: 0 } };
+      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -482,34 +746,29 @@ describe("ADC #const", () => {
   });
 });
 
-describe("ADC (dp)", () => {
+describe("ADC sr,S", () => {
   describe("A 8-bit", () => {
     test("addition", () => {
       const state = StateFromScratch();
       state.a = 0x0f10;
-      state.dp = 0x1020;
+      state.sp = 0x000a;
       state.flags = Flag.M;
-      state.memory = { 0x00106a: 0xff, 0x00106b: 0x1f, 0x001fff: 0xa0 };
+      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
-      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+      const output = { state: { a: 0x0f16, flags: Flag.M } };
+      expect(adc_Direct_Byte_S(0x01, state, ctx)).toStrictEqual(output);
     });
   });
 
   describe("A 16-bit", () => {
     test("addition", () => {
       const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
+      state.a = 0xf015;
+      state.sp = 0x000a;
+      state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
-      const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+      const output = { state: { a: 0xf61a, flags: Flag.N | Flag.V } };
+      expect(adc_Direct_Byte_S(0x00, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -582,265 +841,6 @@ describe("ADC (sr,s),y", () => {
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
       expect(adc_Indirect_Byte_SY(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC (dp,x)", () => {
-  describe("A 8-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x0001;
-      state.dp = 0x1020;
-      state.flags = Flag.M | Flag.X;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x1001;
-      state.dp = 0x1020;
-      state.flags = Flag.M;
-      state.memory = {
-        0x00206a: 0xff,
-        0x00206b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x0001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.x = 0x1001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00206a: 0xff,
-        0x00206b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC (dp),y", () => {
-  describe("A 8-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x0001;
-      state.dp = 0x1020;
-      state.flags = Flag.M | Flag.X;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x1001;
-      state.dp = 0x1020;
-      state.flags = Flag.M;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x002fff: 0xa0,
-        0x003000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: Flag.M } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x0001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x001fff: 0xa0,
-        0x002000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x1001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x002fff: 0xa0,
-        0x003000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC [dp]", () => {
-  describe("A 8-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.dp = 0x1020;
-      state.flags = Flag.M | Flag.X;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x011fff: 0xa0,
-        0x012000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x011fff: 0xa0,
-        0x012000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_IndirectLong_Byte(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-});
-
-describe("ADC [dp],y", () => {
-  describe("A 8-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x0001;
-      state.dp = 0x1020;
-      state.flags = Flag.M | Flag.X;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x011fff: 0xa0,
-        0x012000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x1001;
-      state.dp = 0x1020;
-      state.flags = Flag.M;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x012fff: 0xa0,
-        0x013000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: Flag.M } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-  });
-
-  describe("A 16-bit", () => {
-    test("addition with X 8-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x0001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x011fff: 0xa0,
-        0x012000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
-    });
-
-    test("addition with X 16-bit", () => {
-      const state = StateFromScratch();
-      state.a = 0x0f10;
-      state.y = 0x1001;
-      state.dp = 0x1020;
-      state.memory = {
-        0x00106a: 0xff,
-        0x00106b: 0x1f,
-        0x00106c: 0x01,
-        0x012fff: 0xa0,
-        0x013000: 0x11,
-      };
-      const ctx = ContextFromState(state);
-      const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 });
