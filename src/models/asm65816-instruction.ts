@@ -1036,8 +1036,8 @@ const InstructionSchema = z
         const integer = IntegerFromString(args.data[0].value, wordContext);
         if (!integer) return issueInvalid(args.data[0].value);
         arg.l = integer.value & 0x0000ff;
-        arg.h = integer.value & 0x00ff00;
-        arg.value = (arg.h << 8) | arg.l;
+        arg.h = (integer.value & 0x00ff00) >> 8;
+        arg.value = integer.value & 0x00ffff;
         break;
       }
       case ArgsType.Long: {
@@ -1047,9 +1047,9 @@ const InstructionSchema = z
         const integer = IntegerFromString(args.data[0].value, longContext);
         if (!integer) return issueInvalid(args.data[0].value);
         arg.l = integer.value & 0x0000ff;
-        arg.h = integer.value & 0x00ff00;
-        arg.b = integer.value & 0xff0000;
-        arg.value = (arg.b << 16) | (arg.h << 8) | arg.l;
+        arg.h = (integer.value & 0x00ff00) >> 8;
+        arg.b = (integer.value & 0xff0000) >> 16;
+        arg.value = integer.value & 0xffffff;
         break;
       }
       case ArgsType.Move: {
@@ -1061,7 +1061,7 @@ const InstructionSchema = z
         if (!integer1) return issueInvalid(args.data[0].value);
         if (!integer2) return issueInvalid(args.data[1].value);
         arg.l = integer1.value & 0x0000ff;
-        arg.h = (integer2.value << 8) & 0x00ff00;
+        arg.h = integer2.value & 0x0000ff;
         arg.value = (arg.h << 8) | arg.l;
         break;
       }
@@ -1081,8 +1081,8 @@ const InstructionSchema = z
             const integer = IntegerFromString(args.data[0].value, context);
             if (!integer) return issueInvalid(args.data[0].value);
             arg.l = integer.value & 0x0000ff;
-            arg.h = integer.value & 0x00ff00;
-            arg.value = (arg.h << 8) | arg.l;
+            arg.h = (integer.value & 0x00ff00) >> 8;
+            arg.value = integer.value & 0x00ffff;
           }
         } else {
           const args = ArgsByteSchema.safeParse(instruction.args);
@@ -1091,6 +1091,7 @@ const InstructionSchema = z
           const integer = IntegerFromString(args.data[0].value, byteContext);
           if (!integer) return issueInvalid(args.data[0].value);
           arg.l = integer.value & 0x0000ff;
+          arg.value = arg.l;
         }
         break;
       }

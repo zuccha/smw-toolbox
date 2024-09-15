@@ -9,7 +9,7 @@ import {
   StateFromScratch,
   Step,
 } from "./asm65816-emulator/_types";
-import { b, h, l, w } from "./asm65816-emulator/_utils";
+import { l, w } from "./asm65816-emulator/_utils";
 import { adcByInstructionId } from "./asm65816-emulator/adc";
 import {
   Asm65816Instruction,
@@ -368,8 +368,8 @@ function executeInstruction(
 
   let value = 0;
   if (arg.l !== -1) value |= l(arg.l);
-  if (arg.h !== -1) value |= h(arg.h);
-  if (arg.b !== -1) value |= b(arg.b);
+  if (arg.h !== -1) value |= l(arg.h) << 8;
+  if (arg.b !== -1) value |= l(arg.b) << 16;
 
   const step = operation(value, state, ctx);
 
@@ -449,8 +449,8 @@ function EmulatorFromBytes(bytes: number[]): Emulator {
 
     const arg = {
       l: bytes[i + 1] ?? 0,
-      h: (bytes[i + 2] ?? 0) << 8,
-      b: (bytes[i + 3] ?? 0) << 16,
+      h: bytes[i + 2] ?? 0,
+      b: bytes[i + 3] ?? 0,
     };
 
     const step = executeInstruction(state, id, arg);
@@ -458,9 +458,9 @@ function EmulatorFromBytes(bytes: number[]): Emulator {
     report.bytes += step.report.bytes;
     report.cycles += step.report.cycles;
 
-    i += report.bytes;
+    i += step.report.bytes;
 
-    const { pb, pc } = incrementPc(state.pb, state.pc, report.bytes);
+    const { pb, pc } = incrementPc(state.pb, state.pc, step.report.bytes);
     state.pb = pb;
     state.pc = pc;
 
