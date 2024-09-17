@@ -8,6 +8,7 @@ export abstract class ASL extends Instruction {
   }
 
   protected asl(value: number): number {
+    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(value << 1);
       this._core.n = result.low & Core.Flag.N;
@@ -36,7 +37,6 @@ export namespace ASL {
     public execute(): void {
       const value = this._core.A;
       this._core.A = this.asl(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -51,7 +51,6 @@ export namespace ASL {
     public execute(): void {
       const addr = this._core.direct(this._arg);
       this._core.save(addr, this.asl(this._core.load(addr)));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -66,7 +65,6 @@ export namespace ASL {
     public execute(): void {
       const addr = this._core.direct_x(this._arg);
       this._core.save(addr, this.asl(this._core.load(addr)));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -81,7 +79,6 @@ export namespace ASL {
     public execute(): void {
       const addr = this._core.absolute(this._arg);
       this._core.save(addr, this.asl(this._core.load(addr)));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -96,7 +93,6 @@ export namespace ASL {
     public execute(): void {
       const addr = this._core.absolute_x(this._arg);
       this._core.save(addr, this.asl(this._core.load(addr)));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 }

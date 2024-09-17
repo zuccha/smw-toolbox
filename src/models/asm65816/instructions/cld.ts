@@ -11,7 +11,7 @@ export class CLD extends Instruction {
   public get type(): Instruction.Type { return Instruction.Type.Implied; }
 
   public execute(): void {
-    this._core.d = 0;
     this._core.PC = this._core.PC + this.length;
+    this._core.d = 0;
   }
 }

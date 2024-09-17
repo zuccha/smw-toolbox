@@ -11,7 +11,7 @@ export class CLC extends Instruction {
   public get type(): Instruction.Type { return Instruction.Type.Implied; }
 
   public execute(): void {
-    this._core.c = 0;
     this._core.PC = this._core.PC + this.length;
+    this._core.c = 0;
   }
 }

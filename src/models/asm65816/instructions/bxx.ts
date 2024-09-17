@@ -96,10 +96,9 @@ export namespace BXX {
     public get type(): Instruction.Type { return Instruction.Type.Immediate; }
 
     public execute(): void {
-      this._core.PC = this._core.PC + this.length;
       const offset =
         (this._arg.w >> 8) & Core.Flag.N ? this._arg.w - 0x10000 : this._arg.w;
-      this._core.PC = this._core.PC + offset;
+      this._core.PC = this._core.PC + this.length + offset;
     }
   }
 }

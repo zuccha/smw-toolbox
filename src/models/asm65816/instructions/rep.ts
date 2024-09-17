@@ -12,6 +12,8 @@ export class REP extends Instruction {
   public get type(): Instruction.Type { return Instruction.Type.Immediate; }
 
   public execute(): void {
+    this._core.PC = this._core.PC + this.length;
+
     const arg = this._arg.b;
     if (arg & Core.Flag.N) this._core.n = 0;
     if (arg & Core.Flag.V) this._core.v = 0;
@@ -26,7 +28,5 @@ export class REP extends Instruction {
       this._core.m = 1;
       this._core.x = 1;
     }
-
-    this._core.PC = this._core.PC + this.length;
   }
 }

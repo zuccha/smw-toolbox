@@ -8,6 +8,7 @@ export abstract class BIT extends Instruction {
   }
 
   protected bit(value: number): number {
+    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(this._core.A & value).b;
       this._core.n = value | Core.Flag.Z;
@@ -36,7 +37,6 @@ export namespace BIT {
     public execute(): void {
       const result = this._core.A & (this._core.m ? this._arg.b : this._arg.w);
       this._core.z = result === 0;
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -51,7 +51,6 @@ export namespace BIT {
     public execute(): void {
       const addr = this._core.direct(this._arg);
       this.bit(this._core.load(addr));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -66,7 +65,6 @@ export namespace BIT {
     public execute(): void {
       const addr = this._core.direct_x(this._arg);
       this.bit(this._core.load(addr));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -81,7 +79,6 @@ export namespace BIT {
     public execute(): void {
       const addr = this._core.absolute(this._arg);
       this.bit(this._core.load(addr));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -96,7 +93,6 @@ export namespace BIT {
     public execute(): void {
       const addr = this._core.absolute_x(this._arg);
       this.bit(this._core.load(addr));
-      this._core.PC = this._core.PC + this.length;
     }
   }
 }

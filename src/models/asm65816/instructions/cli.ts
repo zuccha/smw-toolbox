@@ -11,7 +11,7 @@ export class CLI extends Instruction {
   public get type(): Instruction.Type { return Instruction.Type.Implied; }
 
   public execute(): void {
-    this._core.i = 0;
     this._core.PC = this._core.PC + this.length;
+    this._core.i = 0;
   }
 }

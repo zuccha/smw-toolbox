@@ -12,6 +12,8 @@ export class SEP extends Instruction {
   public get type(): Instruction.Type { return Instruction.Type.Immediate; }
 
   public execute(): void {
+    this._core.PC = this._core.PC + this.length;
+
     const arg = this._arg.b;
     if (arg & Core.Flag.N) this._core.n = 1;
     if (arg & Core.Flag.V) this._core.v = 1;
@@ -21,7 +23,5 @@ export class SEP extends Instruction {
     if (arg & Core.Flag.I) this._core.i = 1;
     if (arg & Core.Flag.Z) this._core.z = 1;
     if (arg & Core.Flag.C) this._core.c = 1;
-
-    this._core.PC = this._core.PC + this.length;
   }
 }

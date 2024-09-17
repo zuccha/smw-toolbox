@@ -8,6 +8,7 @@ export abstract class ADC extends Instruction {
   }
 
   protected adc(value: number): number {
+    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(value + this._core.A + this._core.c);
       this._core.n = result.low & Core.Flag.N;
@@ -38,7 +39,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.m ? this._arg.b : this._arg.w;
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -53,7 +53,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -68,7 +67,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct_x(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -83,7 +81,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct_indirect(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -98,7 +95,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct_x_indirect(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -113,7 +109,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct_indirect_y(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -128,7 +123,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.direct_indirectLong(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -144,7 +138,6 @@ export namespace ADC {
       const addr = this._core.direct_indirectLong_y(this._arg);
       const value = this._core.load(addr);
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -159,7 +152,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.absolute(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -174,7 +166,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.absolute_x(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -189,7 +180,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.absolute_y(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -204,7 +194,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.absoluteLong(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -219,7 +208,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.absoluteLong_x(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -234,7 +222,6 @@ export namespace ADC {
     public execute(): void {
       const value = this._core.load(this._core.stackRelative(this._arg));
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 
@@ -250,7 +237,6 @@ export namespace ADC {
       const addr = this._core.stackRelative_indirect_y(this._arg);
       const value = this._core.load(addr);
       this._core.A = this.adc(value);
-      this._core.PC = this._core.PC + this.length;
     }
   }
 }
