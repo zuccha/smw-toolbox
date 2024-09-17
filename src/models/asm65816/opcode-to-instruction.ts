@@ -1,6 +1,7 @@
 import { ADC } from "./instructions/adc";
 import { AND } from "./instructions/and";
 import { ASL } from "./instructions/asl";
+import { BIT } from "./instructions/bit";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -51,15 +52,15 @@ export const opcodeToInstruction = {
   [0x10]: NOP, // BPL nearlabel
   [0x30]: NOP, // BMI nearlabel
   [0x50]: NOP, // BVC nearlabel
-  [0x70]: NOP, // BVS nearlabe
+  [0x70]: NOP, // BVS nearlabel
   [0x80]: NOP, // BRA nearlabel
   [0x82]: NOP, // BRL label
 
-  [0x89]: NOP, // BIT #const
-  [0x24]: NOP, // BIT dp
-  [0x34]: NOP, // BIT dp,
-  [0x2c]: NOP, // BIT addr
-  [0x3c]: NOP, // BIT addr,x
+  [0x89]: BIT.Immediate, // BIT #const
+  [0x24]: BIT.Direct, // BIT dp
+  [0x34]: BIT.Direct_X, // BIT dp,
+  [0x2c]: BIT.Absolute, // BIT addr
+  [0x3c]: BIT.Absolute_X, // BIT addr,x
 
   [0x00]: NOP, // BRK #const
   [0x02]: NOP, // COP #const

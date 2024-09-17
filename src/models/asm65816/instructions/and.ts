@@ -161,7 +161,7 @@ export namespace AND {
 
   export class Absolute_X extends AND {
     // prettier-ignore
-    public get cycles(): number { return 5 - this._core.m + this._core.X_cross(this._core.direct_indirect_y(this._arg)); }
+    public get cycles(): number { return 5 - this._core.m + this._core.X_cross(this._core.absolute_x(this._arg)); }
     // prettier-ignore
     public get length(): number { return 3; }
     // prettier-ignore
@@ -176,7 +176,7 @@ export namespace AND {
 
   export class Absolute_Y extends AND {
     // prettier-ignore
-    public get cycles(): number { return 5 - this._core.m + this._core.Y_cross(this._core.direct_indirect_y(this._arg)); }
+    public get cycles(): number { return 5 - this._core.m + this._core.Y_cross(this._core.absolute_y(this._arg)); }
     // prettier-ignore
     public get length(): number { return 3; }
     // prettier-ignore
