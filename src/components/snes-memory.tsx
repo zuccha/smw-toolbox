@@ -2,10 +2,6 @@ import { useCallback, useMemo } from "preact/hooks";
 import { IntegerEncoding, IntegerLength, IntegerUnit } from "../models/integer";
 import { useIntegerState } from "../hooks/use-integer";
 import {
-  Asm65816EmulatorMemory,
-  getAsm65816EmulatorMemoryByte,
-} from "../models/asm65816-emulator/_types";
-import {
   IntegerStringTypingDirection,
   IntegerStringTypingMode,
 } from "../models/integer-string";
@@ -18,7 +14,7 @@ import "./snes-memory.css";
 
 type SnesMemoryProps = {
   address: number;
-  memory: Asm65816EmulatorMemory;
+  memory: Record<string, number>;
   onChangeAddress: (address: number) => void;
   size: number;
 };
@@ -38,7 +34,7 @@ export default function SnesMemory({
 
   const values = useMemo(() => {
     return range(size).map((index) => {
-      const byte = getAsm65816EmulatorMemoryByte(memory, address + index);
+      const byte = memory[`${address + index}`] ?? 0;
       return toHex(byte, valueLength);
     });
   }, [address, memory, size]);
