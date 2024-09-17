@@ -20,6 +20,12 @@ export class Emulator {
       instruction.execute();
       this._reports.push(instruction.report());
     }
+
+    console.log(`Instructions:`);
+    for (const report of this._reports) console.log(report.format());
+    const length = this._reports.reduce((sum, r) => sum + r.length, 0);
+    const cycles = this._reports.reduce((sum, r) => sum + r.cycles, 0);
+    console.log(`${cycles} cycles, ${length} bytes`);
   }
 
   public snapshot(): Core.Snapshot {

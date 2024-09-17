@@ -25,17 +25,27 @@ export class Core {
         i: this._i,
         z: this._z,
         c: this._c,
+        e: this._e,
+        b: this._b,
       },
 
-      flags:
-        (this._n << 7) |
-        (this._v << 6) |
-        (this._m << 5) |
-        (this._x << 4) |
-        (this._d << 3) |
-        (this._i << 2) |
-        (this._z << 1) |
-        (this._c << 0),
+      flags: this.e
+        ? (this._n << 7) |
+          (this._v << 6) |
+          (this._m << 5) |
+          (this._b << 4) |
+          (this._d << 3) |
+          (this._i << 2) |
+          (this._z << 1) |
+          (this._c << 0)
+        : (this._n << 7) |
+          (this._v << 6) |
+          (this._m << 5) |
+          (this._x << 4) |
+          (this._d << 3) |
+          (this._i << 2) |
+          (this._z << 1) |
+          (this._c << 0),
 
       ram: Object.fromEntries(this._ram),
     };
@@ -393,6 +403,8 @@ export namespace Core {
       i: number;
       z: number;
       c: number;
+      e: number;
+      b: number;
     };
 
     flags: number;

@@ -1,4 +1,3 @@
-import { toHex } from "../../utils";
 import { Core } from "./core";
 import { Integer } from "./integer";
 
@@ -10,16 +9,24 @@ export abstract class Instruction {
 
   protected _core: Core;
   protected _arg: Integer;
+  protected _PC: number;
 
   public constructor(core: Core, arg: Integer) {
     this._core = core;
     this._arg = arg;
+    this._PC = core.PC;
   }
 
   public abstract execute(): void;
 
   public report(): Instruction.Report {
-    return new Instruction.Report(this.cycles, this.length, this.text);
+    return new Instruction.Report(
+      this.cycles,
+      this.length,
+      this.text,
+      this._core.snapshot(),
+      this._PC,
+    );
   }
 
   protected get text(): string {
@@ -99,11 +106,56 @@ export namespace Instruction {
     public readonly cycles: number;
     public readonly length: number;
     public readonly text: string;
+    public readonly snapshot: Core.Snapshot;
+    public readonly PC: number;
 
-    public constructor(cycles: number, length: number, text: string) {
+    public constructor(
+      cycles: number,
+      length: number,
+      text: string,
+      snapshot: Core.Snapshot,
+      PC: number,
+    ) {
       this.cycles = cycles;
       this.length = length;
       this.text = text;
+      this.snapshot = snapshot;
+      this.PC = PC;
+    }
+
+    public format(): string {
+      const pc = `${toHex(this.PC, 6)}`;
+      const text = `${padR(this.text, 13, " ")}`;
+      const a = `A:${toHex(this.snapshot.A, 4)}`;
+      const x = `X:${toHex(this.snapshot.X, 4)}`;
+      const y = `Y:${toHex(this.snapshot.Y, 4)}`;
+      const sp = `SP:${toHex(this.snapshot.SP, 4)}`;
+      const dp = `DP:${toHex(this.snapshot.DP, 4)}`;
+      const db = `DB:${toHex(this.snapshot.DB, 2)}`;
+
+      const capitalize = (flag: string, i: number) =>
+        this.snapshot.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
+      const flags = this.snapshot.flag.e
+        ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
+        : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
+
+      const cycles = `${this.cycles} cycles`;
+      const length = `${this.length} bytes`;
+
+      return [pc, text, a, x, y, sp, dp, db, flags, cycles, length].join(" ");
     }
   }
+}
+
+function padL(text: string, length: number, fill: string): string {
+  return `${fill.repeat(length - text.length)}${text}`;
+}
+
+function padR(text: string, length: number, fill: string): string {
+  return `${text}${fill.repeat(length - text.length)}`;
+}
+
+function toHex(n: number, minLength: number): string {
+  const hex = n.toString(16).toUpperCase();
+  return padL(hex, minLength, "0");
 }
