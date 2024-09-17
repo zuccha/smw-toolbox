@@ -5,17 +5,12 @@ import SnesMemory from "../../components/snes-memory";
 import SnesProcessorStatus from "../../components/snes-processor-status";
 import SnesRegister from "../../components/snes-register";
 import SnesRegisterGroup from "../../components/snes-register-group";
-import { Core } from "../../models/asm65816/core";
 import { IntegerUnit } from "../../models/integer";
 import { useEmulatorTabSnesIsVisible } from "./store";
+import useEmulator from "./use-emulator";
 
-type EmulatorSectionSnesProps = {
-  snapshot: Core.Snapshot;
-};
-
-export default function EmulatorSectionSnes({
-  snapshot,
-}: EmulatorSectionSnesProps) {
+export default function EmulatorSectionSnes() {
+  const { snapshot } = useEmulator();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
   const [memoryAddress, setMemoryAddress] = useState(0);
