@@ -11,6 +11,8 @@ import {
 } from "./asm65816-emulator/_types";
 import { l, w } from "./asm65816-emulator/_utils";
 import { adcByInstructionId } from "./asm65816-emulator/adc";
+import { andByInstructionId } from "./asm65816-emulator/and";
+import { aslByInstructionId } from "./asm65816-emulator/asl";
 import {
   Asm65816Instruction,
   Asm65816InstructionHex,
@@ -31,26 +33,8 @@ const operationsByInstructionId: Record<
   ) => { state: Partial<State>; report?: Partial<Report> }
 > = {
   ...adcByInstructionId,
-  "AND-Absolute": operationNotImplemented,
-  "AND-AbsoluteLong": operationNotImplemented,
-  "AND-AbsoluteLong_X": operationNotImplemented,
-  "AND-Absolute_X": operationNotImplemented,
-  "AND-Absolute_Y": operationNotImplemented,
-  "AND-Direct": operationNotImplemented,
-  "AND-Direct_Indirect": operationNotImplemented,
-  "AND-Direct_IndirectLong": operationNotImplemented,
-  "AND-Direct_IndirectLong_Y": operationNotImplemented,
-  "AND-Direct_Indirect_Y": operationNotImplemented,
-  "AND-Direct_X": operationNotImplemented,
-  "AND-Direct_X_Indirect": operationNotImplemented,
-  "AND-Immediate": operationNotImplemented,
-  "AND-StackRelative": operationNotImplemented,
-  "AND-StackRelative_Indirect_Y": operationNotImplemented,
-  "ASL-Absolute": operationNotImplemented,
-  "ASL-Absolute_X": operationNotImplemented,
-  "ASL-Accumulator": operationNotImplemented,
-  "ASL-Direct": operationNotImplemented,
-  "ASL-Direct_X": operationNotImplemented,
+  ...andByInstructionId,
+  ...aslByInstructionId,
   "BCC-Direct": operationNotImplemented,
   "BCS-Direct": operationNotImplemented,
   "BEQ-Direct": operationNotImplemented,

@@ -56,76 +56,51 @@ function adcLoadImmediate(value: number, state: State, ctx: Context) {
 // Instructions
 //==============================================================================
 
-export function adc_Direct_Byte(arg: number, state: State, ctx: Context) {
-  const addr = ctx.direct(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Direct_Byte_S(arg: number, state: State, ctx: Context) {
-  const addr = ctx.stackRelative(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Direct_Byte_X(arg: number, state: State, ctx: Context) {
-  const addr = ctx.direct_x(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Direct_Long(arg: number, state: State, ctx: Context) {
-  const addr = ctx.absoluteLong(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Direct_Long_X(arg: number, state: State, ctx: Context) {
-  const addr = ctx.absoluteLong_x(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Direct_Word(arg: number, state: State, ctx: Context) {
+export function adc_Absolute(arg: number, state: State, ctx: Context) {
   const addr = ctx.absolute(arg);
   return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_Direct_Word_X(arg: number, state: State, ctx: Context) {
+export function adc_AbsoluteLong(arg: number, state: State, ctx: Context) {
+  const addr = ctx.absoluteLong(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_AbsoluteLong_X(arg: number, state: State, ctx: Context) {
+  const addr = ctx.absoluteLong_x(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_Absolute_X(arg: number, state: State, ctx: Context) {
   const addr = ctx.absolute_x(arg);
   return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_Direct_Word_Y(arg: number, state: State, ctx: Context) {
+export function adc_Absolute_Y(arg: number, state: State, ctx: Context) {
   const addr = ctx.absolute_y(arg);
   return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_Immediate(arg: number, state: State, ctx: Context) {
-  return adcLoadImmediate(arg, state, ctx);
+export function adc_Direct(arg: number, state: State, ctx: Context) {
+  const addr = ctx.direct(arg);
+  return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_Indirect_Byte(arg: number, state: State, ctx: Context) {
+export function adc_Direct_Indirect(arg: number, state: State, ctx: Context) {
   const addr = ctx.direct_indirect(arg);
   return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_Indirect_Byte_SY(arg: number, state: State, ctx: Context) {
-  const addr = ctx.stackRelative_indirect_y(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Indirect_Byte_X(arg: number, state: State, ctx: Context) {
-  const addr = ctx.direct_x_indirect(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_Indirect_Byte_Y(arg: number, state: State, ctx: Context) {
-  const addr = ctx.direct_indirect_y(arg);
-  return adcLoadAddr(addr, state, ctx);
-}
-
-export function adc_IndirectLong_Byte(arg: number, state: State, ctx: Context) {
+export function adc_Direct_IndirectLong(
+  arg: number,
+  state: State,
+  ctx: Context,
+) {
   const addr = ctx.direct_indirectLong(arg);
   return adcLoadAddr(addr, state, ctx);
 }
 
-export function adc_IndirectLong_Byte_Y(
+export function adc_Direct_IndirectLong_Y(
   arg: number,
   state: State,
   ctx: Context,
@@ -134,24 +109,57 @@ export function adc_IndirectLong_Byte_Y(
   return adcLoadAddr(addr, state, ctx);
 }
 
+export function adc_Direct_Indirect_Y(arg: number, state: State, ctx: Context) {
+  const addr = ctx.direct_indirect_y(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_Direct_X(arg: number, state: State, ctx: Context) {
+  const addr = ctx.direct_x(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_Direct_X_Indirect(arg: number, state: State, ctx: Context) {
+  const addr = ctx.direct_x_indirect(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_Immediate(arg: number, state: State, ctx: Context) {
+  return adcLoadImmediate(arg, state, ctx);
+}
+
+export function adc_StackRelative(arg: number, state: State, ctx: Context) {
+  const addr = ctx.stackRelative(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
+export function adc_StackRelative_Indirect_Y(
+  arg: number,
+  state: State,
+  ctx: Context,
+) {
+  const addr = ctx.stackRelative_indirect_y(arg);
+  return adcLoadAddr(addr, state, ctx);
+}
+
 //==============================================================================
 // Operations
 //==============================================================================
 
 export const adcByInstructionId = {
-  "ADC-Absolute": adc_Direct_Word,
-  "ADC-AbsoluteLong": adc_Direct_Long,
-  "ADC-AbsoluteLong_X": adc_Direct_Long_X,
-  "ADC-Absolute_X": adc_Direct_Word_X,
-  "ADC-Absolute_Y": adc_Direct_Word_Y,
-  "ADC-Direct": adc_Direct_Byte,
-  "ADC-Direct_Indirect": adc_Indirect_Byte,
-  "ADC-Direct_IndirectLong": adc_IndirectLong_Byte,
-  "ADC-Direct_IndirectLong_Y": adc_IndirectLong_Byte_Y,
-  "ADC-Direct_Indirect_Y": adc_Indirect_Byte_Y,
-  "ADC-Direct_X": adc_Direct_Byte_X,
-  "ADC-Direct_X_Indirect": adc_Indirect_Byte_X,
+  "ADC-Absolute": adc_Absolute,
+  "ADC-AbsoluteLong": adc_AbsoluteLong,
+  "ADC-AbsoluteLong_X": adc_AbsoluteLong_X,
+  "ADC-Absolute_X": adc_Absolute_X,
+  "ADC-Absolute_Y": adc_Absolute_Y,
+  "ADC-Direct": adc_Direct,
+  "ADC-Direct_Indirect": adc_Direct_Indirect,
+  "ADC-Direct_IndirectLong": adc_Direct_IndirectLong,
+  "ADC-Direct_IndirectLong_Y": adc_Direct_IndirectLong_Y,
+  "ADC-Direct_Indirect_Y": adc_Direct_Indirect_Y,
+  "ADC-Direct_X": adc_Direct_X,
+  "ADC-Direct_X_Indirect": adc_Direct_X_Indirect,
   "ADC-Immediate": adc_Immediate,
-  "ADC-StackRelative": adc_Direct_Byte_S,
-  "ADC-StackRelative_Indirect_Y": adc_Indirect_Byte_SY,
+  "ADC-StackRelative": adc_StackRelative,
+  "ADC-StackRelative_Indirect_Y": adc_StackRelative_Indirect_Y,
 } as const;

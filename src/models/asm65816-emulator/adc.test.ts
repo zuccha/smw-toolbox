@@ -2,21 +2,21 @@ import { describe, expect, test } from "vitest";
 import { ContextFromState } from "./_context";
 import { Flag, StateFromScratch } from "./_types";
 import {
-  adc_Direct_Byte,
-  adc_Direct_Byte_S,
-  adc_Direct_Byte_X,
-  adc_Direct_Long,
-  adc_Direct_Long_X,
-  adc_Direct_Word,
-  adc_Direct_Word_X,
-  adc_Direct_Word_Y,
+  adc_Direct,
+  adc_StackRelative,
+  adc_Direct_X,
+  adc_AbsoluteLong,
+  adc_AbsoluteLong_X,
+  adc_Absolute,
+  adc_Absolute_X,
+  adc_Absolute_Y,
   adc_Immediate,
-  adc_Indirect_Byte,
-  adc_Indirect_Byte_SY,
-  adc_Indirect_Byte_X,
-  adc_Indirect_Byte_Y,
-  adc_IndirectLong_Byte,
-  adc_IndirectLong_Byte_Y,
+  adc_Direct_Indirect,
+  adc_StackRelative_Indirect_Y,
+  adc_Direct_X_Indirect,
+  adc_Direct_Indirect_Y,
+  adc_Direct_IndirectLong,
+  adc_Direct_IndirectLong_Y,
 } from "./adc";
 
 describe("ADC addr", () => {
@@ -29,7 +29,7 @@ describe("ADC addr", () => {
       state.memory = { 0x12d901: 0x05, 0x12d902: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute(0xd901, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -41,7 +41,7 @@ describe("ADC addr", () => {
       state.memory = { 0x12d901: 0x38, 0x12d902: 0x10 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1f48, flags: 0 } };
-      expect(adc_Direct_Word(0xd901, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute(0xd901, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -55,7 +55,7 @@ describe("ADC long", () => {
       state.memory = { 0x12d901: 0x05, 0x12d902: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Long(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong(0x12d901, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -66,7 +66,7 @@ describe("ADC long", () => {
       state.memory = { 0x12d901: 0x38, 0x12d902: 0x10 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1f48, flags: 0 } };
-      expect(adc_Direct_Long(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong(0x12d901, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -81,7 +81,7 @@ describe("ADC long,X", () => {
       state.memory = { 0x12d911: 0x05, 0x12d912: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
-      expect(adc_Direct_Long_X(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong_X(0x12d901, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -92,7 +92,7 @@ describe("ADC long,X", () => {
       state.memory = { 0x12e911: 0x05, 0x12e912: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Long_X(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong_X(0x12d901, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -104,7 +104,7 @@ describe("ADC long,X", () => {
       state.memory = { 0x12d911: 0x05, 0x12d912: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Long_X(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong_X(0x12d901, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -114,7 +114,7 @@ describe("ADC long,X", () => {
       state.memory = { 0x12f711: 0x05, 0x12f712: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Long_X(0x12d901, state, ctx)).toStrictEqual(output);
+      expect(adc_AbsoluteLong_X(0x12d901, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -130,7 +130,7 @@ describe("ADC addr,X", () => {
       state.memory = { 0x12200b: 0x05, 0x12200c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
-      expect(adc_Direct_Word_X(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_X(0x2001, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -142,7 +142,7 @@ describe("ADC addr,X", () => {
       state.memory = { 0x12300b: 0x05, 0x12300c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Word_X(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_X(0x2001, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -155,7 +155,7 @@ describe("ADC addr,X", () => {
       state.memory = { 0x12200b: 0x05, 0x12200c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Word_X(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_X(0x2001, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -166,7 +166,7 @@ describe("ADC addr,X", () => {
       state.memory = { 0x12300b: 0x05, 0x12300c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Word_X(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_X(0x2001, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -182,7 +182,7 @@ describe("ADC addr,Y", () => {
       state.memory = { 0x12200b: 0x05, 0x12200c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
-      expect(adc_Direct_Word_Y(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_Y(0x2001, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -194,7 +194,7 @@ describe("ADC addr,Y", () => {
       state.memory = { 0x12300b: 0x05, 0x12300c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Word_Y(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_Y(0x2001, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -207,7 +207,7 @@ describe("ADC addr,Y", () => {
       state.memory = { 0x12200b: 0x05, 0x12200c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Word_Y(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_Y(0x2001, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -218,7 +218,7 @@ describe("ADC addr,Y", () => {
       state.memory = { 0x12300b: 0x05, 0x12300c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Word_Y(0x2001, state, ctx)).toStrictEqual(output);
+      expect(adc_Absolute_Y(0x2001, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -232,7 +232,7 @@ describe("ADC dp", () => {
       state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0xf004, flags: Flag.M | Flag.C } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct(0x0a, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -243,7 +243,7 @@ describe("ADC dp", () => {
       state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct(0x0a, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with direct page set", () => {
@@ -253,7 +253,7 @@ describe("ADC dp", () => {
       state.memory = { 0x00123e: 0x05, 0x00123f: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0xf704, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte(0x0a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct(0x0a, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -268,7 +268,7 @@ describe("ADC (dp)", () => {
       state.memory = { 0x00106a: 0xff, 0x00106b: 0x1f, 0x001fff: 0xa0 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
-      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -285,7 +285,7 @@ describe("ADC (dp)", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -306,7 +306,7 @@ describe("ADC [dp]", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -324,7 +324,7 @@ describe("ADC [dp]", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_IndirectLong_Byte(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -346,7 +346,7 @@ describe("ADC [dp],y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -364,7 +364,7 @@ describe("ADC [dp],y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -383,7 +383,7 @@ describe("ADC [dp],y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -400,7 +400,7 @@ describe("ADC [dp],y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_IndirectLong_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_IndirectLong_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -421,7 +421,7 @@ describe("ADC (dp),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -438,7 +438,7 @@ describe("ADC (dp),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -456,7 +456,7 @@ describe("ADC (dp),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -472,7 +472,7 @@ describe("ADC (dp),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_Y(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_Indirect_Y(0x4a, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -488,7 +488,7 @@ describe("ADC dp,X", () => {
       state.memory = { 0x00012b: 0x05, 0x00012c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M | Flag.X } };
-      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X(0x01, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -500,7 +500,7 @@ describe("ADC dp,X", () => {
       state.memory = { 0x00112b: 0x05, 0x00112c: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f15, flags: Flag.M } };
-      expect(adc_Direct_Byte_X(0x01, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X(0x01, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -513,7 +513,7 @@ describe("ADC dp,X", () => {
       state.memory = { 0x0001d5: 0x05, 0x0001d6: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X(0xab, state, ctx)).toStrictEqual(output);
     });
 
     test("addition when X is 16-bit", () => {
@@ -524,7 +524,7 @@ describe("ADC dp,X", () => {
       state.memory = { 0x001fd5: 0x05, 0x001fd6: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x1515, flags: 0 } };
-      expect(adc_Direct_Byte_X(0xab, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X(0xab, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -545,7 +545,7 @@ describe("ADC (dp,x)", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.X | Flag.N } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X_Indirect(0x49, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -562,7 +562,7 @@ describe("ADC (dp,x)", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0fb0, flags: Flag.M | Flag.N } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X_Indirect(0x49, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -580,7 +580,7 @@ describe("ADC (dp,x)", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X_Indirect(0x49, state, ctx)).toStrictEqual(output);
     });
 
     test("addition with X 16-bit", () => {
@@ -596,7 +596,7 @@ describe("ADC (dp,x)", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x20b0, flags: 0 } };
-      expect(adc_Indirect_Byte_X(0x49, state, ctx)).toStrictEqual(output);
+      expect(adc_Direct_X_Indirect(0x49, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -756,7 +756,7 @@ describe("ADC sr,S", () => {
       state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f16, flags: Flag.M } };
-      expect(adc_Direct_Byte_S(0x01, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative(0x01, state, ctx)).toStrictEqual(output);
     });
   });
 
@@ -768,7 +768,7 @@ describe("ADC sr,S", () => {
       state.memory = { 0x00000a: 0x05, 0x00000b: 0x06 };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0xf61a, flags: Flag.N | Flag.V } };
-      expect(adc_Direct_Byte_S(0x00, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative(0x00, state, ctx)).toStrictEqual(output);
     });
   });
 });
@@ -789,7 +789,9 @@ describe("ADC (sr,s),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M | Flag.X } };
-      expect(adc_Indirect_Byte_SY(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative_Indirect_Y(0x4a, state, ctx)).toStrictEqual(
+        output,
+      );
     });
 
     test("addition with X 16-bit", () => {
@@ -806,7 +808,9 @@ describe("ADC (sr,s),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: Flag.M } };
-      expect(adc_Indirect_Byte_SY(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative_Indirect_Y(0x4a, state, ctx)).toStrictEqual(
+        output,
+      );
     });
   });
 
@@ -824,7 +828,9 @@ describe("ADC (sr,s),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_SY(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative_Indirect_Y(0x4a, state, ctx)).toStrictEqual(
+        output,
+      );
     });
 
     test("addition with X 16-bit", () => {
@@ -840,7 +846,9 @@ describe("ADC (sr,s),y", () => {
       };
       const ctx = ContextFromState(state);
       const output = { state: { a: 0x0f21, flags: 0 } };
-      expect(adc_Indirect_Byte_SY(0x4a, state, ctx)).toStrictEqual(output);
+      expect(adc_StackRelative_Indirect_Y(0x4a, state, ctx)).toStrictEqual(
+        output,
+      );
     });
   });
 });
