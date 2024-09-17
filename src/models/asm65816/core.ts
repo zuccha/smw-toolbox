@@ -19,7 +19,7 @@ export class Core {
       DB: this.DB,
       DP: this.DP,
       SP: this.SP,
-      PB: this._PC.high,
+      PB: this._PC.bank,
       PC: this._PC.w,
 
       flag: {
@@ -249,18 +249,18 @@ export class Core {
     if (int.w >= 0x8000) return this._rom.get(addr) ?? 0; // ROM
     if (int.bank >= 0x70) return this._ram.get(addr) ?? 0; // SRAM
     if (int.w >= 0x2000) return 0; // TODO: Handle out of bounds error.
-    if (int.bank < 0x40) return this._ram.get((0x7e << 16) & int.w) ?? 0; // WRAM mirror
+    if (int.bank < 0x40) return this._ram.get((0x7e << 16) | int.w) ?? 0; // WRAM mirror
     return 0; // TODO: Handle out of bounds error.
   }
 
   public load_word(addr: number): number {
-    return this.load_byte(addr) & (this.load_byte(addr + 1) << 8);
+    return this.load_byte(addr) | (this.load_byte(addr + 1) << 8);
   }
 
   public load_long(addr: number): number {
     return (
-      this.load_byte(addr) &
-      (this.load_byte(addr + 1) << 8) &
+      this.load_byte(addr) |
+      (this.load_byte(addr + 1) << 8) |
       (this.load_byte(addr + 1) << 16)
     );
   }
@@ -276,11 +276,11 @@ export class Core {
   public save_byte(addr: number, value: number): void {
     const int = new Integer(addr);
     if (int.bank >= 0x80) 0; // TODO: Handle out of bounds error.
-    else if (int.bank >= 0x7e) this._ram.set(addr, value); // WRAM
-    else if (int.w >= 0x8000) this._rom.set(addr, value); // ROM
-    else if (int.bank >= 0x70) this._ram.set(addr, value); // SRAM
+    else if (int.bank >= 0x7e) this._ram.set(addr, value & 0xff); // WRAM
+    else if (int.w >= 0x8000) this._rom.set(addr, value & 0xff); // ROM
+    else if (int.bank >= 0x70) this._ram.set(addr, value & 0xff); // SRAM
     else if (int.w >= 0x2000) 0; // TODO: Handle out of bounds error.
-    else if (int.bank < 0x40) this._ram.set((0x7e << 16) & int.w, value); // WRAM mirror
+    else if (int.bank < 0x40) this._ram.set((0x7e << 16) | int.w, value & 0xff); // WRAM mirror
     // TODO: Handle out of bounds error.
   }
 
