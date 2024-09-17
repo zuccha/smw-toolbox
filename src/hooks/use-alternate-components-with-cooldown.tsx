@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "preact/hooks";
 
-export default function useComponentsWithCooldown<T>(
+export default function useAlternateComponentsWithCooldown<T>(
   baseItem: T,
   cooldownItem: T,
   cooldown: number,

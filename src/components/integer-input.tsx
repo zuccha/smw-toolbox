@@ -1,7 +1,7 @@
 import { Copy, Check, ClipboardPaste } from "lucide-preact";
 import { ReactNode, Ref, RefObject, forwardRef } from "preact/compat";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
-import useComponentsWithCooldown from "../hooks/use-alternate-with-cooldown";
+import useAlternateComponentsWithCooldown from "../hooks/use-alternate-components-with-cooldown";
 import { Integer, IntegerUnit, IntegerEncoding } from "../models/integer";
 import {
   IntegerStringTypingDirection,
@@ -35,7 +35,7 @@ function IntegerInputRow({
   onCopy,
   onPaste,
 }: IntegerInputRowProps) {
-  const [CopyOrCheck, startCopyCooldown] = useComponentsWithCooldown(
+  const [CopyOrCheck, startCopyCooldown] = useAlternateComponentsWithCooldown(
     Copy,
     Check,
     1000,

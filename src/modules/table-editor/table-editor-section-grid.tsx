@@ -5,7 +5,7 @@ import IntegerGridEditor, {
   IntegerGridEditorRef,
 } from "../../components/integer-grid-editor";
 import SectionStatic from "../../components/section-static";
-import useComponentsWithCooldown from "../../hooks/use-alternate-with-cooldown";
+import useAlternateComponentsWithCooldown from "../../hooks/use-alternate-components-with-cooldown";
 import useHotkeys, { Hotkey } from "../../hooks/use-hotkeys";
 import {
   IntegerTable,
@@ -77,7 +77,7 @@ export default function TableEditorSectionGrid() {
     setBackgroundImageFileName("");
   }, [setBackgroundImage, setBackgroundImageFileName]);
 
-  const [CopyOrCheck, startCopyCooldown] = useComponentsWithCooldown(
+  const [CopyOrCheck, startCopyCooldown] = useAlternateComponentsWithCooldown(
     Copy,
     Check,
     1000,
@@ -119,7 +119,7 @@ export default function TableEditorSectionGrid() {
       { icon: CopyOrCheck, onClick: copyTable, tooltip: "Copy" },
       { icon: X, onClick: clearGrid, tooltip: "Clear" },
     ],
-    [clearGrid, copyTable, pasteTable],
+    [CopyOrCheck, clearGrid, copyTable, pasteTable],
   );
 
   return (
