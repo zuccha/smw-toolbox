@@ -2,6 +2,7 @@ import { ADC } from "./instructions/adc";
 import { AND } from "./instructions/and";
 import { ASL } from "./instructions/asl";
 import { BIT } from "./instructions/bit";
+import { BXX } from "./instructions/bxx";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -45,16 +46,16 @@ export const opcodeToInstruction = {
   [0x0e]: ASL.Absolute, // ASL addr
   [0x1e]: ASL.Absolute_X, // ASL addr,x
 
-  [0x90]: NOP, // BCC nearlabel
-  [0xb0]: NOP, // BCS nearlabel
-  [0xd0]: NOP, // BNE nearlabel
-  [0xf0]: NOP, // BEQ nearlabel
-  [0x10]: NOP, // BPL nearlabel
-  [0x30]: NOP, // BMI nearlabel
-  [0x50]: NOP, // BVC nearlabel
-  [0x70]: NOP, // BVS nearlabel
-  [0x80]: NOP, // BRA nearlabel
-  [0x82]: NOP, // BRL label
+  [0x90]: BXX.BCC, // BCC nearlabel
+  [0xb0]: BXX.BCS, // BCS nearlabel
+  [0xd0]: BXX.BNE, // BNE nearlabel
+  [0xf0]: BXX.BEQ, // BEQ nearlabel
+  [0x10]: BXX.BPL, // BPL nearlabel
+  [0x30]: BXX.BMI, // BMI nearlabel
+  [0x50]: BXX.BVC, // BVC nearlabel
+  [0x70]: BXX.BVS, // BVS nearlabel
+  [0x80]: BXX.BRA, // BRA nearlabel
+  [0x82]: BXX.BRL, // BRL label
 
   [0x89]: BIT.Immediate, // BIT #const
   [0x24]: BIT.Direct, // BIT dp

@@ -23,9 +23,8 @@ export class Emulator {
 
     console.log(`Instructions:`);
     for (const report of this._reports) console.log(report.format());
-    const length = this._reports.reduce((sum, r) => sum + r.length, 0);
     const cycles = this._reports.reduce((sum, r) => sum + r.cycles, 0);
-    console.log(`${cycles} cycles, ${length} bytes`);
+    console.log(`${cycles} cycles, ${bytes.length} bytes`);
   }
 
   public snapshot(): Core.Snapshot {
