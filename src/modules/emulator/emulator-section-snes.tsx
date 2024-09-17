@@ -5,26 +5,23 @@ import SnesMemory from "../../components/snes-memory";
 import SnesProcessorStatus from "../../components/snes-processor-status";
 import SnesRegister from "../../components/snes-register";
 import SnesRegisterGroup from "../../components/snes-register-group";
-import {
-  Asm65816Emulator,
-  Asm65816EmulatorFlag,
-} from "../../models/asm65816-emulator/_types";
+import { Core } from "../../models/asm65816/core";
 import { IntegerUnit } from "../../models/integer";
 import { useEmulatorTabSnesIsVisible } from "./store";
 
 type EmulatorSectionSnesProps = {
-  emulator: Asm65816Emulator;
+  snapshot: Core.Snapshot;
 };
 
 export default function EmulatorSectionSnes({
-  emulator,
+  snapshot,
 }: EmulatorSectionSnesProps) {
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
   const [memoryAddress, setMemoryAddress] = useState(0);
 
-  const isA8Bit = Boolean(emulator.state.flags & Asm65816EmulatorFlag.M);
-  const isX8Bit = Boolean(emulator.state.flags & Asm65816EmulatorFlag.X);
+  const isA8Bit = Boolean(snapshot.flag.m);
+  const isX8Bit = Boolean(snapshot.flag.x);
 
   return (
     <SectionCollapsible
@@ -40,21 +37,21 @@ export default function EmulatorSectionSnes({
                 <SnesRegister
                   label="A"
                   shouldDimHighByte={isA8Bit}
-                  value={emulator.state.a}
+                  value={snapshot.A}
                   tooltip="Accumulator"
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="X"
                   shouldDimHighByte={isX8Bit}
-                  value={emulator.state.x}
+                  value={snapshot.X}
                   tooltip="X Index"
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="Y"
                   shouldDimHighByte={isX8Bit}
-                  value={emulator.state.y}
+                  value={snapshot.Y}
                   tooltip="Y Index"
                   unit={IntegerUnit.Word}
                 />
@@ -64,13 +61,13 @@ export default function EmulatorSectionSnes({
                 <SnesRegister
                   label="PB"
                   tooltip="Program Bank"
-                  value={emulator.state.pb}
+                  value={snapshot.PB}
                   unit={IntegerUnit.Byte}
                 />
                 <SnesRegister
                   label="DB"
                   tooltip="Data Bank"
-                  value={emulator.state.db}
+                  value={snapshot.DB}
                   unit={IntegerUnit.Byte}
                 />
               </SnesRegisterGroup>
@@ -79,19 +76,19 @@ export default function EmulatorSectionSnes({
                 <SnesRegister
                   label="PC"
                   tooltip="Program Counter"
-                  value={emulator.state.pc}
+                  value={snapshot.PC}
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="DP"
                   tooltip="Direct Page"
-                  value={emulator.state.dp}
+                  value={snapshot.DP}
                   unit={IntegerUnit.Word}
                 />
                 <SnesRegister
                   label="SP"
                   tooltip="Stack Pointer"
-                  value={emulator.state.sp}
+                  value={snapshot.SP}
                   unit={IntegerUnit.Word}
                 />
               </SnesRegisterGroup>
@@ -99,14 +96,14 @@ export default function EmulatorSectionSnes({
           </Setting>
 
           <Setting label="Processor Status" size="md">
-            <SnesProcessorStatus status={emulator.state.flags} />
+            <SnesProcessorStatus status={snapshot.flags} />
           </Setting>
         </div>
 
         <Setting label="Memory" size="md">
           <SnesMemory
             address={memoryAddress}
-            memory={emulator.state.memory}
+            memory={snapshot.ram}
             onChangeAddress={setMemoryAddress}
             size={8 * 16}
           />
