@@ -11,6 +11,11 @@ import { CMP } from "./instructions/cmp";
 import { CPX } from "./instructions/cpx";
 import { CPY } from "./instructions/cpy";
 import { DEC } from "./instructions/dec";
+import { DEX } from "./instructions/dex";
+import { DEY } from "./instructions/dey";
+import { INC } from "./instructions/inc";
+import { INX } from "./instructions/inx";
+import { INY } from "./instructions/iny";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -109,8 +114,8 @@ export const opcodeToInstruction = {
   [0xce]: DEC.Absolute, // DEC addr
   [0xde]: DEC.Absolute_X, // DEC addr,x
 
-  [0xca]: NOP, // DEX
-  [0x88]: NOP, // DEY
+  [0xca]: DEX, // DEX
+  [0x88]: DEY, // DEY
 
   [0x49]: NOP, // EOR #const
   [0x45]: NOP, // EOR dp
@@ -128,14 +133,14 @@ export const opcodeToInstruction = {
   [0x43]: NOP, // EOR sr,s
   [0x53]: NOP, // EOR (sr,s),y
 
-  [0x1a]: NOP, // INC A
-  [0xe6]: NOP, // INC dp
-  [0xf6]: NOP, // INC dp,x
-  [0xee]: NOP, // INC addr
-  [0xfe]: NOP, // INC addr,x
+  [0x1a]: INC.Implied, // INC A
+  [0xe6]: INC.Direct, // INC dp
+  [0xf6]: INC.Direct_X, // INC dp,x
+  [0xee]: INC.Absolute, // INC addr
+  [0xfe]: INC.Absolute_X, // INC addr,x
 
-  [0xe8]: NOP, // INX
-  [0xc8]: NOP, // INY
+  [0xe8]: INX, // INX
+  [0xc8]: INY, // INY
 
   [0x4c]: NOP, // JMP addr
   [0x6c]: NOP, // JMP (addr)
