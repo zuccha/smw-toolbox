@@ -7,6 +7,7 @@ import { CLC } from "./instructions/clc";
 import { CLD } from "./instructions/cld";
 import { CLI } from "./instructions/cli";
 import { CLV } from "./instructions/clv";
+import { CMP } from "./instructions/cmp";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -75,21 +76,21 @@ export const opcodeToInstruction = {
   [0xd8]: CLD, // CLD
   [0xb8]: CLV, // CLV
 
-  [0xc9]: NOP, // CMP #const
-  [0xc5]: NOP, // CMP dp
-  [0xd5]: NOP, // CMP dp,x
-  [0xd2]: NOP, // CMP (dp)
-  [0xc1]: NOP, // CMP (dp,x)
-  [0xd1]: NOP, // CMP (dp),y
-  [0xc7]: NOP, // CMP [dp]
-  [0xd7]: NOP, // CMP [dp],y
-  [0xcd]: NOP, // CMP addr
-  [0xdd]: NOP, // CMP addr,x
-  [0xd9]: NOP, // CMP addr,y
-  [0xcf]: NOP, // CMP long
-  [0xdf]: NOP, // CMP long,x
-  [0xc3]: NOP, // CMP sr,s
-  [0xd3]: NOP, // CMP (sr,s),y
+  [0xc9]: CMP.Immediate, // CMP #const
+  [0xc5]: CMP.Direct, // CMP dp
+  [0xd5]: CMP.Direct_X, // CMP dp,x
+  [0xd2]: CMP.Direct_Indirect, // CMP (dp)
+  [0xc1]: CMP.Direct_X_Indirect, // CMP (dp,x)
+  [0xd1]: CMP.Direct_Indirect_Y, // CMP (dp),y
+  [0xc7]: CMP.Direct_IndirectLong, // CMP [dp]
+  [0xd7]: CMP.Direct_IndirectLong_Y, // CMP [dp],y
+  [0xcd]: CMP.Absolute, // CMP addr
+  [0xdd]: CMP.Absolute_X, // CMP addr,x
+  [0xd9]: CMP.Absolute_Y, // CMP addr,y
+  [0xcf]: CMP.AbsoluteLong, // CMP long
+  [0xdf]: CMP.AbsoluteLong_X, // CMP long,x
+  [0xc3]: CMP.StackRelative, // CMP sr,s
+  [0xd3]: CMP.StackRelative_Indirect_Y, // CMP (sr,s),y
 
   [0xe0]: NOP, // CPX #const
   [0xe4]: NOP, // CPX dp
