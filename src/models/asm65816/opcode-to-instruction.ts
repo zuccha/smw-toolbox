@@ -3,6 +3,10 @@ import { AND } from "./instructions/and";
 import { ASL } from "./instructions/asl";
 import { BIT } from "./instructions/bit";
 import { BXX } from "./instructions/bxx";
+import { CLC } from "./instructions/clc";
+import { CLD } from "./instructions/cld";
+import { CLI } from "./instructions/cli";
+import { CLV } from "./instructions/clv";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -66,10 +70,10 @@ export const opcodeToInstruction = {
   [0x00]: NOP, // BRK #const
   [0x02]: NOP, // COP #const
 
-  [0x18]: NOP, // CLC
-  [0x58]: NOP, // CLI
-  [0xd8]: NOP, // CLD
-  [0xb8]: NOP, // CLV
+  [0x18]: CLC, // CLC
+  [0x58]: CLI, // CLI
+  [0xd8]: CLD, // CLD
+  [0xb8]: CLV, // CLV
 
   [0xc9]: NOP, // CMP #const
   [0xc5]: NOP, // CMP dp
