@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import SectionCollapsible from "../../components/section-collapsible";
 import Setting from "../../components/setting";
 import SnesMemory from "../../components/snes-memory";
@@ -6,17 +6,25 @@ import SnesProcessorStatus from "../../components/snes-processor-status";
 import SnesRegister from "../../components/snes-register";
 import SnesRegisterGroup from "../../components/snes-register-group";
 import { IntegerUnit } from "../../models/integer";
-import { useEmulatorTabSnesIsVisible } from "./store";
+import { range } from "../../utils";
+import { emulator, useEmulatorTabSnesIsVisible } from "./store";
 import useEmulator from "./use-emulator";
+
+const memorySize = 8 * 16;
 
 export default function EmulatorSectionSnes() {
   const { snapshot } = useEmulator();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
-  const [memoryAddress, setMemoryAddress] = useState(0);
+  const [memoryAddress, setMemoryAddress] = useState(0x7e0000);
 
   const isA8Bit = Boolean(snapshot.flag.m);
   const isX8Bit = Boolean(snapshot.flag.x);
+
+  const memory = useMemo(
+    () => range(memorySize).map((i) => emulator.get_byte(memoryAddress + i)),
+    [memoryAddress, snapshot],
+  ); // Update when base address or snapshot changes.
 
   return (
     <SectionCollapsible
@@ -98,9 +106,8 @@ export default function EmulatorSectionSnes() {
         <Setting label="Memory" size="md">
           <SnesMemory
             address={memoryAddress}
-            memory={snapshot.ram}
+            memory={memory}
             onChangeAddress={setMemoryAddress}
-            size={8 * 16}
           />
         </Setting>
       </div>

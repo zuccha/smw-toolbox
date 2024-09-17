@@ -21,11 +21,11 @@ export abstract class Instruction {
 
   public report(): Instruction.Report {
     return new Instruction.Report(
-      this.cycles,
-      this.length,
-      this.text,
       this._core.snapshot(),
       this._PC,
+      this.text,
+      this.cycles,
+      this.length,
     );
   }
 
@@ -110,17 +110,17 @@ export namespace Instruction {
     public readonly PC: number;
 
     public constructor(
-      cycles: number,
-      length: number,
-      text: string,
       snapshot: Core.Snapshot,
       PC: number,
+      text: string,
+      cycles: number,
+      length: number,
     ) {
-      this.cycles = cycles;
-      this.length = length;
-      this.text = text;
       this.snapshot = snapshot;
       this.PC = PC;
+      this.text = text;
+      this.cycles = cycles;
+      this.length = length;
     }
 
     public format(): string {

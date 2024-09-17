@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "preact/hooks";
-import { IntegerEncoding, IntegerLength, IntegerUnit } from "../models/integer";
+import { useCallback } from "preact/hooks";
+import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { useIntegerState } from "../hooks/use-integer";
 import {
   IntegerStringTypingDirection,
@@ -14,30 +14,21 @@ import "./snes-memory.css";
 
 type SnesMemoryProps = {
   address: number;
-  memory: Record<string, number>;
+  columnCount?: number;
+  memory: number[];
   onChangeAddress: (address: number) => void;
-  size: number;
 };
-
-const valueLength = IntegerLength[IntegerUnit.Byte][IntegerEncoding.Hex];
 
 export default function SnesMemory({
   address,
+  columnCount = 16,
   memory,
   onChangeAddress,
-  size,
 }: SnesMemoryProps) {
   const [addressInteger, addressIntegerMethods] = useIntegerState(
     { value: address, valueRaw: address },
     { unit: IntegerUnit.Long },
   );
-
-  const values = useMemo(() => {
-    return range(size).map((index) => {
-      const byte = memory[`${address + index}`] ?? 0;
-      return toHex(byte, valueLength);
-    });
-  }, [address, memory, size]);
 
   const changeAddress = useCallback(
     (nextAddress: number) => {
@@ -66,21 +57,21 @@ export default function SnesMemory({
         </div>
 
         <div className="SnesMemory_RowIndex">
-          {range(values.length / 16).map((index) => (
-            <div>{toHex(address + 16 * index, 6)}</div>
+          {range(memory.length / columnCount).map((index) => (
+            <div>{toHex(address + columnCount * index, 6)}</div>
           ))}
         </div>
       </div>
 
       <div className="SnesMemory_Group flex_1">
         <div className="SnesMemory_ColIndex">
-          {range(16).map((index) => (
+          {range(columnCount).map((index) => (
             <div>{toHex(index, 1)}</div>
           ))}
         </div>
         <div className="SnesMemory_Grid">
-          {values.map((value) => (
-            <div>{value}</div>
+          {memory.map((byte) => (
+            <div>{toHex(byte, 2)}</div>
           ))}
         </div>
       </div>

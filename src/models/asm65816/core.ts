@@ -1,6 +1,12 @@
 import { Integer } from "./integer";
 
 export class Core {
+  public constructor(bytes: number[]) {
+    this._rom = new Map();
+    for (let i = 0; i < bytes.length; ++i)
+      this._rom.set(this.PC + i, bytes[i]!);
+  }
+
   //----------------------------------------------------------------------------
   // Snapshot
   //----------------------------------------------------------------------------
@@ -46,8 +52,6 @@ export class Core {
           (this._i << 2) |
           (this._z << 1) |
           (this._c << 0),
-
-      ram: Object.fromEntries(this._ram),
     };
   }
 
@@ -128,7 +132,7 @@ export class Core {
   // Stack Pointer
   //----------------------------------------------------------------------------
 
-  private _SP = new Integer(0);
+  private _SP = new Integer(0x01fc);
 
   public get SP(): number {
     return this._SP.w;
@@ -142,7 +146,7 @@ export class Core {
   // Program Counter
   //----------------------------------------------------------------------------
 
-  private _PC = new Integer(0);
+  private _PC = new Integer(0x008000);
 
   public get PC(): number {
     return this._PC.l;
@@ -171,14 +175,14 @@ export class Core {
   public set v(active: boolean | number) { this._v = active ? 1 : 0; }
 
   // Accumulator size (0 = 16-bit, 1 = 8-bit)
-  private _m: 0 | 1 = 0;
+  private _m: 0 | 1 = 1;
   // prettier-ignore
   public get m(): 0 | 1 { return this._m; }
   // prettier-ignore
   public set m(active: boolean | number) { this._m = active ? 1 : 0; }
 
   // X/Y indexes size (0 = 16-bit, 1 = 8-bit)
-  private _x: 0 | 1 = 0;
+  private _x: 0 | 1 = 1;
   // prettier-ignore
   public get x(): 0 | 1 { return this._x; }
   public set x(active: boolean | number) {
@@ -232,43 +236,58 @@ export class Core {
   public set b(active: boolean | number) { this._b = active ? 1 : 0; }
 
   //----------------------------------------------------------------------------
-  // RAM
+  // Memory
   //----------------------------------------------------------------------------
 
   private _ram: Map<number, number> = new Map();
+  private _rom: Map<number, number> = new Map();
 
-  private _load_byte(addr: number): number {
-    return this._ram.get(addr) ?? 0;
+  public load_byte(addr: number): number {
+    const int = new Integer(addr);
+    if (int.bank >= 0x80) return 0; // TODO: Handle out of bounds error.
+    if (int.bank >= 0x7e) return this._ram.get(addr) ?? 0; // WRAM
+    if (int.w >= 0x8000) return this._rom.get(addr) ?? 0; // ROM
+    if (int.bank >= 0x70) return this._ram.get(addr) ?? 0; // SRAM
+    if (int.w >= 0x2000) return 0; // TODO: Handle out of bounds error.
+    if (int.bank < 0x40) return this._ram.get((0x7e << 16) & int.w) ?? 0; // WRAM mirror
+    return 0; // TODO: Handle out of bounds error.
   }
 
-  private _load_word(addr: number): number {
-    return this._load_byte(addr) & (this._load_byte(addr + 1) << 8);
+  public load_word(addr: number): number {
+    return this.load_byte(addr) & (this.load_byte(addr + 1) << 8);
   }
 
-  private _load_long(addr: number): number {
+  public load_long(addr: number): number {
     return (
-      this._load_byte(addr) &
-      (this._load_byte(addr + 1) << 8) &
-      (this._load_byte(addr + 1) << 16)
+      this.load_byte(addr) &
+      (this.load_byte(addr + 1) << 8) &
+      (this.load_byte(addr + 1) << 16)
     );
   }
 
   public load(addr: number): number {
-    return this._m ? this._load_byte(addr) : this._load_word(addr);
+    return this._m ? this.load_byte(addr) : this.load_word(addr);
   }
 
-  private _save_byte(addr: number, value: number): void {
-    this._ram.set(addr, value & 0xff);
+  public save_byte(addr: number, value: number): void {
+    const int = new Integer(addr);
+    if (int.bank >= 0x80) 0; // TODO: Handle out of bounds error.
+    else if (int.bank >= 0x7e) this._ram.set(addr, value); // WRAM
+    else if (int.w >= 0x8000) this._rom.set(addr, value); // ROM
+    else if (int.bank >= 0x70) this._ram.set(addr, value); // SRAM
+    else if (int.w >= 0x2000) 0; // TODO: Handle out of bounds error.
+    else if (int.bank < 0x40) this._ram.set((0x7e << 16) & int.w, value); // WRAM mirror
+    // TODO: Handle out of bounds error.
   }
 
-  private _save_word(addr: number, value: number): void {
-    this._save_byte(addr, value);
-    this._save_byte(addr + 1, value >> 8);
+  public save_word(addr: number, value: number): void {
+    this.save_byte(addr, value);
+    this.save_byte(addr + 1, value >> 8);
   }
 
   public save(addr: number, value: number): void {
-    if (this._m) this._save_byte(addr, value);
-    else this._save_word(addr, value);
+    if (this._m) this.save_byte(addr, value);
+    else this.save_word(addr, value);
   }
 
   //----------------------------------------------------------------------------
@@ -288,23 +307,23 @@ export class Core {
   }
 
   public direct_indirect(val: Integer): number {
-    return this.DB + this._load_word(val.b + this.DP);
+    return this.DB + this.load_word(val.b + this.DP);
   }
 
   public direct_x_indirect(val: Integer): number {
-    return this.DB + this._load_word(val.b + this.DP + this.X);
+    return this.DB + this.load_word(val.b + this.DP + this.X);
   }
 
   public direct_indirect_y(val: Integer): number {
-    return this.DB + this._load_word(val.b + this.DP) + this.Y;
+    return this.DB + this.load_word(val.b + this.DP) + this.Y;
   }
 
   public direct_indirectLong(val: Integer): number {
-    return this._load_long(val.b + this.DP);
+    return this.load_long(val.b + this.DP);
   }
 
   public direct_indirectLong_y(val: Integer): number {
-    return this._load_long(val.b + this.DP) + this.Y;
+    return this.load_long(val.b + this.DP) + this.Y;
   }
 
   public absolute(val: Integer): number {
@@ -320,15 +339,15 @@ export class Core {
   }
 
   public absolute_indirect(val: Integer): number {
-    return this.DB + this._load_word(this.DB + val.w);
+    return this.DB + this.load_word(this.DB + val.w);
   }
 
   public absolute_indirectLong(val: Integer): number {
-    return this._load_long(this.DB + val.w);
+    return this.load_long(this.DB + val.w);
   }
 
   public absolute_x_indirect(val: Integer): number {
-    return this.DB + this._load_word(this.DB + val.w + this.X);
+    return this.DB + this.load_word(this.DB + val.w + this.X);
   }
 
   public absoluteLong(val: Integer): number {
@@ -344,7 +363,7 @@ export class Core {
   }
 
   public stackRelative_indirect_y(val: Integer): number {
-    return this.DB + this._load_word(this.SP + val.b) + this.Y;
+    return this.DB + this.load_word(this.SP + val.b) + this.Y;
   }
 
   //----------------------------------------------------------------------------
@@ -408,7 +427,5 @@ export namespace Core {
     };
 
     flags: number;
-
-    ram: Record<string, number>;
   };
 }
