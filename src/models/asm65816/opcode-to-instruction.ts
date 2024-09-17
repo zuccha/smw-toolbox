@@ -10,6 +10,7 @@ import { CLV } from "./instructions/clv";
 import { CMP } from "./instructions/cmp";
 import { CPX } from "./instructions/cpx";
 import { CPY } from "./instructions/cpy";
+import { DEC } from "./instructions/dec";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -102,11 +103,11 @@ export const opcodeToInstruction = {
   [0xc4]: CPY.Direct, // CPY dp
   [0xcc]: CPY.Absolute, // CPY addr
 
-  [0x3a]: NOP, // DEC A
-  [0xc6]: NOP, // DEC dp
-  [0xd6]: NOP, // DEC dp,x
-  [0xce]: NOP, // DEC addr
-  [0xde]: NOP, // DEC addr,x
+  [0x3a]: DEC.Implied, // DEC A
+  [0xc6]: DEC.Direct, // DEC dp
+  [0xd6]: DEC.Direct_X, // DEC dp,x
+  [0xce]: DEC.Absolute, // DEC addr
+  [0xde]: DEC.Absolute_X, // DEC addr,x
 
   [0xca]: NOP, // DEX
   [0x88]: NOP, // DEY
