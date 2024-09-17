@@ -269,6 +269,10 @@ export class Core {
     return this._m ? this.load_byte(addr) : this.load_word(addr);
   }
 
+  public load_x(addr: number): number {
+    return this._x ? this.load_byte(addr) : this.load_word(addr);
+  }
+
   public save_byte(addr: number, value: number): void {
     const int = new Integer(addr);
     if (int.bank >= 0x80) 0; // TODO: Handle out of bounds error.

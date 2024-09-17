@@ -8,6 +8,8 @@ import { CLD } from "./instructions/cld";
 import { CLI } from "./instructions/cli";
 import { CLV } from "./instructions/clv";
 import { CMP } from "./instructions/cmp";
+import { CPX } from "./instructions/cpx";
+import { CPY } from "./instructions/cpy";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -92,13 +94,13 @@ export const opcodeToInstruction = {
   [0xc3]: CMP.StackRelative, // CMP sr,s
   [0xd3]: CMP.StackRelative_Indirect_Y, // CMP (sr,s),y
 
-  [0xe0]: NOP, // CPX #const
-  [0xe4]: NOP, // CPX dp
-  [0xec]: NOP, // CPX addr
+  [0xe0]: CPX.Immediate, // CPX #const
+  [0xe4]: CPX.Direct, // CPX dp
+  [0xec]: CPX.Absolute, // CPX addr
 
-  [0xc0]: NOP, // CPY #const
-  [0xc4]: NOP, // CPY dp
-  [0xcc]: NOP, // CPY addr
+  [0xc0]: CPY.Immediate, // CPY #const
+  [0xc4]: CPY.Direct, // CPY dp
+  [0xcc]: CPY.Absolute, // CPY addr
 
   [0x3a]: NOP, // DEC A
   [0xc6]: NOP, // DEC dp
