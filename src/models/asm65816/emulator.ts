@@ -1,25 +1,24 @@
 import { Core } from "./core";
 import { Instruction } from "./instruction";
 import { Integer } from "./integer";
-import { opcodeToInstruction } from "./opcode-to-instruction";
-
-type Opcode = keyof typeof opcodeToInstruction;
+import { Opcode, opcodeToInstruction } from "./opcode-to-instruction";
 
 export class Emulator {
   private _bytes: number[] = [];
   private _core = new Core();
+  private _reports: Instruction.Report[] = [];
 
   public run(bytes: number[]) {
     this._bytes = bytes.map((byte) => byte & 0xff);
     this._core = new Core();
+    this._reports = [];
 
-    const reports: Instruction.Report[] = [];
     while (this._core.PC < this._bytes.length) {
       const arg = this._arg();
       const opcode = this._get(this._core.PC) as Opcode;
       const instruction = new opcodeToInstruction[opcode](this._core, arg);
       instruction.execute();
-      reports.push(instruction.report());
+      this._reports.push(instruction.report());
     }
   }
 

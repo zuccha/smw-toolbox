@@ -7,9 +7,9 @@ export class Core {
 
   public snapshot(): Core.Snapshot {
     return {
-      A: this.A,
-      X: this.X,
-      Y: this.Y,
+      A: this._A.w,
+      X: this._X.w,
+      Y: this._Y.w,
       DB: this.DB,
       DP: this.DP,
       SP: this.SP,
@@ -171,8 +171,13 @@ export class Core {
   private _x: 0 | 1 = 0;
   // prettier-ignore
   public get x(): 0 | 1 { return this._x; }
-  // prettier-ignore
-  public set x(active: boolean | number) { this._x = active ? 1 : 0; }
+  public set x(active: boolean | number) {
+    this._x = active ? 1 : 0;
+    if (active) {
+      this._X.high = 0;
+      this._Y.high = 0;
+    }
+  }
 
   // Decimal
   private _d: 0 | 1 = 0;
@@ -201,6 +206,20 @@ export class Core {
   public get c(): 0 | 1 { return this._c; }
   // prettier-ignore
   public set c(active: boolean | number) { this._c = active ? 1 : 0; }
+
+  // Emulation
+  private _e: 0 | 1 = 0;
+  // prettier-ignore
+  public get e(): 0 | 1 { return this._e; }
+  // prettier-ignore
+  public set e(active: boolean | number) { this._e = active ? 1 : 0; }
+
+  // Break
+  private _b: 0 | 1 = 0;
+  // prettier-ignore
+  public get b(): 0 | 1 { return this._b; }
+  // prettier-ignore
+  public set b(active: boolean | number) { this._b = active ? 1 : 0; }
 
   //----------------------------------------------------------------------------
   // RAM

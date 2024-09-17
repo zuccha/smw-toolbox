@@ -2,6 +2,8 @@ import { ADC } from "./instructions/adc";
 import { AND } from "./instructions/and";
 import { ASL } from "./instructions/asl";
 import { NOP } from "./instructions/nop";
+import { REP } from "./instructions/rep";
+import { SEP } from "./instructions/sep";
 
 export const opcodeToInstruction = {
   [0x69]: ADC.Immediate, // ADC #const
@@ -209,8 +211,8 @@ export const opcodeToInstruction = {
   [0x2b]: NOP, // PLD
   [0x28]: NOP, // PLP
 
-  [0xc2]: NOP, // REP #const
-  [0xe2]: NOP, // SEP #const
+  [0xc2]: REP, // REP #const
+  [0xe2]: SEP, // SEP #const
 
   [0x2a]: NOP, // ROL A
   [0x26]: NOP, // ROL dp
@@ -305,3 +307,5 @@ export const opcodeToInstruction = {
 
   [0xfb]: NOP, // XCE
 };
+
+export type Opcode = keyof typeof opcodeToInstruction;
