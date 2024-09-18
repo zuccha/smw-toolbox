@@ -1,10 +1,11 @@
 import { Integer } from "./integer";
+import { MemoryMapping } from "./memory-mapping";
 
 export class Core {
   public constructor(bytes: number[]) {
-    this._rom = new Map();
+    this._memory = new Map();
     for (let i = 0; i < bytes.length; ++i)
-      this._rom.set(this.PC + i, bytes[i]!);
+      this._memory.set(MemoryMapping.LoROM.getReadAddr(this.PC + i), bytes[i]!);
   }
 
   //----------------------------------------------------------------------------
@@ -108,6 +109,10 @@ export class Core {
 
   public get DB(): number {
     return this._DB.b;
+  }
+
+  public get DB_b(): number {
+    return this._DB.b << 16;
   }
 
   public set DB(DB: number) {
@@ -253,18 +258,11 @@ export class Core {
   // Memory
   //----------------------------------------------------------------------------
 
-  private _ram: Map<number, number> = new Map();
-  private _rom: Map<number, number> = new Map();
+  private _memory: Map<number, number> = new Map();
 
   public load_byte(addr: number): number {
-    const int = new Integer(addr);
-    if (int.bank >= 0x80) return 0; // TODO: Handle out of bounds error.
-    if (int.bank >= 0x7e) return this._ram.get(addr) ?? 0; // WRAM
-    if (int.w >= 0x8000) return this._rom.get(addr) ?? 0; // ROM
-    if (int.bank >= 0x70) return this._ram.get(addr) ?? 0; // SRAM
-    if (int.w >= 0x2000) return 0; // TODO: Handle out of bounds error.
-    if (int.bank < 0x40) return this._ram.get((0x7e << 16) | int.w) ?? 0; // WRAM mirror
-    return 0; // TODO: Handle out of bounds error.
+    const readAddr = MemoryMapping.LoROM.getReadAddr(addr);
+    return this._memory.get(readAddr) ?? 0;
   }
 
   public load_word(addr: number): number {
@@ -288,14 +286,8 @@ export class Core {
   }
 
   public save_byte(addr: number, value: number): void {
-    const int = new Integer(addr);
-    if (int.bank >= 0x80) 0; // TODO: Handle out of bounds error.
-    else if (int.bank >= 0x7e) this._ram.set(addr, value & 0xff); // WRAM
-    else if (int.w >= 0x8000) this._rom.set(addr, value & 0xff); // ROM
-    else if (int.bank >= 0x70) this._ram.set(addr, value & 0xff); // SRAM
-    else if (int.w >= 0x2000) 0; // TODO: Handle out of bounds error.
-    else if (int.bank < 0x40) this._ram.set((0x7e << 16) | int.w, value & 0xff); // WRAM mirror
-    // TODO: Handle out of bounds error.
+    const writeAddr = MemoryMapping.LoROM.getWriteAddr(addr);
+    this._memory.set(writeAddr, b(value));
   }
 
   public save_word(addr: number, value: number): void {
@@ -313,59 +305,59 @@ export class Core {
   //----------------------------------------------------------------------------
 
   public direct(val: Integer): number {
-    return val.b + this.DP;
+    return w(val.b + this.DP);
   }
 
   public direct_x(val: Integer): number {
-    return val.b + this.DP + this.X;
+    return w(val.b + this.DP + this.X);
   }
 
   public direct_y(val: Integer): number {
-    return val.b + this.DP + this.Y;
+    return w(val.b + this.DP + this.Y);
   }
 
   public direct_indirect(val: Integer): number {
-    return this.DB + this.load_word(val.b + this.DP);
+    return this.DB_b + this.load_word(w(val.b + this.DP));
   }
 
   public direct_x_indirect(val: Integer): number {
-    return this.DB + this.load_word(val.b + this.DP + this.X);
+    return this.DB_b + this.load_word(w(val.b + this.DP + this.X));
   }
 
   public direct_indirect_y(val: Integer): number {
-    return this.DB + this.load_word(val.b + this.DP) + this.Y;
+    return this.DB_b + w(this.load_word(w(val.b + this.DP)) + this.Y);
   }
 
   public direct_indirectLong(val: Integer): number {
-    return this.load_long(val.b + this.DP);
+    return this.load_long(w(val.b + this.DP));
   }
 
   public direct_indirectLong_y(val: Integer): number {
-    return this.load_long(val.b + this.DP) + this.Y;
+    return this.load_long(w(val.b + this.DP)) + this.Y;
   }
 
   public absolute(val: Integer): number {
-    return this.DB + val.w;
+    return this.DB_b + val.w;
   }
 
   public absolute_x(val: Integer): number {
-    return this.DB + val.w + this.X;
+    return this.DB_b + w(val.w + this.X);
   }
 
   public absolute_y(val: Integer): number {
-    return this.DB + val.w + this.Y;
+    return this.DB_b + w(val.w + this.Y);
   }
 
   public absolute_indirect(val: Integer): number {
-    return this.DB + this.load_word(this.DB + val.w);
+    return this.DB_b + this.load_word(this.DB_b + val.w);
   }
 
   public absolute_indirectLong(val: Integer): number {
-    return this.load_long(this.DB + val.w);
+    return this.load_long(this.DB_b + val.w);
   }
 
   public absolute_x_indirect(val: Integer): number {
-    return this.DB + this.load_word(this.DB + val.w + this.X);
+    return this.DB_b + this.load_word(this.DB_b + w(val.w + this.X));
   }
 
   public absoluteLong(val: Integer): number {
@@ -373,15 +365,15 @@ export class Core {
   }
 
   public absoluteLong_x(val: Integer): number {
-    return val.l + this.X;
+    return l(val.l + this.X);
   }
 
   public stackRelative(val: Integer): number {
-    return this.SP + val.b;
+    return w(this.SP + val.b);
   }
 
   public stackRelative_indirect_y(val: Integer): number {
-    return this.DB + this.load_word(this.SP + val.b) + this.Y;
+    return this.DB_b + w(this.load_word(w(this.SP + val.b)) + this.Y);
   }
 
   //----------------------------------------------------------------------------
@@ -447,3 +439,11 @@ export namespace Core {
     flags: number;
   };
 }
+
+//----------------------------------------------------------------------------
+// Utils
+//----------------------------------------------------------------------------
+
+const b = (value: number): number => value & 0xff;
+const w = (value: number): number => value & 0xffff;
+const l = (value: number): number => value & 0xffffff;

@@ -1,5 +1,6 @@
 import { Core } from "./core";
 import { Integer } from "./integer";
+import { padR, toHex } from "./utils";
 
 export abstract class Instruction {
   public abstract get name(): string;
@@ -12,6 +13,8 @@ export abstract class Instruction {
   protected _PB: number;
   protected _PC: number;
 
+  private _snapshot: Core.Snapshot | undefined;
+
   public constructor(core: Core, arg: Integer) {
     this._core = core;
     this._arg = arg;
@@ -20,6 +23,11 @@ export abstract class Instruction {
   }
 
   public abstract execute(): void;
+
+  public executeAndSnapshot() {
+    this.execute();
+    this._snapshot = this._core.snapshot();
+  }
 
   public get addr(): number {
     switch (this.type) {
@@ -51,6 +59,8 @@ export abstract class Instruction {
         return this._core.absolute_x(this._arg);
       case Instruction.Type.Absolute_Y:
         return this._core.absolute_y(this._arg);
+      case Instruction.Type.Absolute_Indirect:
+        return this._core.absolute_indirect(this._arg);
       case Instruction.Type.Absolute_X_Indirect:
         return this._core.absolute_x_indirect(this._arg);
       case Instruction.Type.Absolute_IndirectLong:
@@ -96,6 +106,8 @@ export abstract class Instruction {
         return `${this.name} ${this.formatted_arg},x`;
       case Instruction.Type.Absolute_Y:
         return `${this.name} ${this.formatted_arg},y`;
+      case Instruction.Type.Absolute_Indirect:
+        return `${this.name} (${this.formatted_arg})`;
       case Instruction.Type.Absolute_X_Indirect:
         return `${this.name} (${this.formatted_arg},x)`;
       case Instruction.Type.Absolute_IndirectLong:
@@ -112,20 +124,22 @@ export abstract class Instruction {
   }
 
   public format(): string {
-    const snapshot = this._core.snapshot();
     const pc = `${toHex(this._PB, 2)}:${toHex(this._PC, 4)}`;
     const text = `${padR(this.text, 13, " ")}`;
-    const a = `A:${toHex(snapshot.A, 4)}`;
-    const x = `X:${toHex(snapshot.X, 4)}`;
-    const y = `Y:${toHex(snapshot.Y, 4)}`;
-    const sp = `SP:${toHex(snapshot.SP, 4)}`;
-    const dp = `DP:${toHex(snapshot.DP, 4)}`;
-    const db = `DB:${toHex(snapshot.DB, 2)}`;
+
+    if (!this._snapshot) return `${pc} ${text}`;
+
+    const a = `A:${toHex(this._snapshot.A, 4)}`;
+    const x = `X:${toHex(this._snapshot.X, 4)}`;
+    const y = `Y:${toHex(this._snapshot.Y, 4)}`;
+    const sp = `SP:${toHex(this._snapshot.SP, 4)}`;
+    const dp = `DP:${toHex(this._snapshot.DP, 4)}`;
+    const db = `DB:${toHex(this._snapshot.DB, 2)}`;
     const addr = this.addr === -1 ? "        " : `[${toHex(this.addr, 6)}]`;
 
     const capitalize = (flag: string, i: number) =>
-      snapshot.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
-    const flags = snapshot.flag.e
+      this._snapshot!.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
+    const flags = this._snapshot.flag.e
       ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
       : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
 
@@ -162,6 +176,7 @@ export namespace Instruction {
     Absolute,
     Absolute_X,
     Absolute_Y,
+    Absolute_Indirect,
     Absolute_X_Indirect,
     Absolute_IndirectLong,
     AbsoluteLong,
@@ -169,17 +184,4 @@ export namespace Instruction {
     StackRelative,
     StackRelative_Indirect_Y,
   }
-}
-
-function padL(text: string, length: number, fill: string): string {
-  return `${fill.repeat(length - text.length)}${text}`;
-}
-
-function padR(text: string, length: number, fill: string): string {
-  return `${text}${fill.repeat(length - text.length)}`;
-}
-
-function toHex(n: number, minLength: number): string {
-  const hex = n.toString(16).toUpperCase();
-  return padL(hex, minLength, "0");
 }

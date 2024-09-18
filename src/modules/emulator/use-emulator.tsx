@@ -11,6 +11,7 @@ export default function useEmulator() {
     if (program.errors.length === 0) {
       emulator.run(program.bytes);
       setSnapshot(emulator.snapshot());
+      console.log(emulator.log());
     }
   }, [code]);
 
