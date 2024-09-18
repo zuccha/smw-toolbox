@@ -1,5 +1,5 @@
 import { Integer } from "./integer";
-import { toHex } from "./utils";
+import { format_addr } from "./utils";
 
 export class MemoryMappingArea {
   private _name: string;
@@ -39,8 +39,8 @@ export class MemoryMappingArea {
     if (this.contains(addr)) {
       if (!this._is_read_only) return this._mirror(addr);
 
-      const formattedAddr = toHex(addr.l, 6);
-      const message = `Writing to invalid address [${formattedAddr}]: Cannot write to ${this._name}.`;
+      const formatted_addr = format_addr(addr.l);
+      const message = `Writing to invalid address ${formatted_addr}: cannot write to ${this._name}.`;
       throw new Error(message);
     }
   }
@@ -86,8 +86,8 @@ export class MemoryMapping {
       if (readAddr !== undefined) return readAddr;
     }
 
-    const formattedAddr = toHex(addr, 6);
-    const message = `Reading from invalid address [${formattedAddr}]: Unsupported area.`;
+    const formatted_addr = format_addr(addr);
+    const message = `Reading from invalid address ${formatted_addr}: unsupported area.`;
     throw new Error(message);
   }
 
@@ -97,8 +97,8 @@ export class MemoryMapping {
       if (writeAddr !== undefined) return writeAddr;
     }
 
-    const formattedAddr = toHex(addr, 6);
-    const message = `Writing to invalid address [${formattedAddr}]: Unsupported area.`;
+    const formatted_addr = format_addr(addr);
+    const message = `Writing to invalid address ${formatted_addr}: unsupported area.`;
     throw new Error(message);
   }
 }

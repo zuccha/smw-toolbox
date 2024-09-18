@@ -2,7 +2,7 @@ import { Core } from "./core";
 import { Instruction } from "./instruction";
 import { Integer } from "./integer";
 import { Opcode, opcodeToInstruction } from "./opcode-to-instruction";
-import { toHex } from "./utils";
+import { format_addr } from "./utils";
 
 const max_instructions = 100;
 const PC_offset = 0x8000;
@@ -18,41 +18,42 @@ export class Emulator {
     this._core = new Core(this._bytes);
     this._instructions = [];
     this._errors = [];
-
-    let instruction_count = 0;
+    let instruction: Instruction | undefined;
 
     try {
       while (
         PC_offset <= this._core.PC &&
         this._core.PC < PC_offset + this._bytes.length &&
-        instruction_count < max_instructions
+        this._instructions.length < max_instructions
       ) {
         const arg = this._arg();
         const opcode = this._get(this._core.PC - PC_offset) as Opcode;
-        const instruction = new opcodeToInstruction[opcode](this._core, arg);
-        instruction.executeAndSnapshot();
+        instruction = new opcodeToInstruction[opcode](this._core, arg);
         this._instructions.push(instruction);
-        ++instruction_count;
+        instruction.executeAndSnapshot();
       }
     } catch (e) {
-      if (e instanceof Error) this._errors.push(e.message);
-      else this._errors.push("Execution failed: unknown error");
+      if (e instanceof Error) {
+        this._errors.push(e.message);
+      } else {
+        this._errors.push("Execution failed: unknown error");
+      }
     }
 
-    const PC = `${toHex(this._core.PB, 2)}${toHex(this._core.PC, 4)}`;
+    const PC = format_addr((this._core.PB << 16) | this._core.PC);
 
     if (this._core.PC < PC_offset)
       this._errors.push(
-        `Program Counter out of bounds [${PC}]: Only ROM ([XX:8000-XX:FFFF]) can be executed.`,
+        `Program Counter out of bounds ${PC}: Only ROM ([XX:8000-XX:FFFF]) can be executed.`,
       );
 
     if (this._core.PB > 0) {
       this._errors.push(
-        `Program Counter out of bounds [${PC}]: Only bank 00 is available.`,
+        `Program Counter out of bounds ${PC}: Only bank 00 is available.`,
       );
     }
 
-    if (instruction_count > max_instructions) {
+    if (this._instructions.length > max_instructions) {
       this._errors.push(
         `Reached the maximum amount of instructions (${max_instructions}).`,
       );
@@ -67,8 +68,10 @@ export class Emulator {
     const cycles = this._instructions.reduce((sum, i) => sum + i.cycles, 0);
     return [
       this._instructions.map((instruction) => instruction.format()).join("\n"),
-      this._errors.join("\n"),
-      `${cycles} cycles, ${this._bytes.length} bytes`,
+      this._errors.map((error) => `ERROR > ${error}`).join("\n"),
+      this._errors.length === 0
+        ? `${cycles} cycles, ${this._bytes.length} bytes`
+        : "Execution interrupted.",
     ]
       .filter((line) => line)
       .join("\n");
