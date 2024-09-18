@@ -5,11 +5,11 @@ export class SEP extends Instruction {
   // prettier-ignore
   public get name(): string { return "SEP"; }
   // prettier-ignore
+  public get type(): Instruction.Type { return Instruction.Type.Immediate; }
+  // prettier-ignore
   public get cycles(): number { return 3; }
   // prettier-ignore
   public get length(): number { return 2; }
-  // prettier-ignore
-  public get type(): Instruction.Type { return Instruction.Type.Immediate; }
 
   public execute(): void {
     this._core.PC = this._core.PC + this.length;

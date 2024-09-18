@@ -9,72 +9,140 @@ export abstract class Instruction {
 
   protected _core: Core;
   protected _arg: Integer;
+  protected _PB: number;
   protected _PC: number;
 
   public constructor(core: Core, arg: Integer) {
     this._core = core;
     this._arg = arg;
+    this._PB = core.PB;
     this._PC = core.PC;
   }
 
   public abstract execute(): void;
 
-  public report(): Instruction.Report {
-    return new Instruction.Report(
-      this._core.snapshot(),
-      this._PC,
-      this.text,
-      this.cycles,
-      this.length,
-    );
+  public get addr(): number {
+    switch (this.type) {
+      case Instruction.Type.Implied:
+        return -1;
+      case Instruction.Type.Accumulator:
+        return -1;
+      case Instruction.Type.Immediate:
+        return -1;
+      case Instruction.Type.Direct:
+        return this._core.direct(this._arg);
+      case Instruction.Type.Direct_X:
+        return this._core.direct_x(this._arg);
+      case Instruction.Type.Direct_Y:
+        return this._core.direct_y(this._arg);
+      case Instruction.Type.Direct_Indirect:
+        return this._core.direct_indirect(this._arg);
+      case Instruction.Type.Direct_X_Indirect:
+        return this._core.direct_x_indirect(this._arg);
+      case Instruction.Type.Direct_Indirect_Y:
+        return this._core.direct_indirect_y(this._arg);
+      case Instruction.Type.Direct_IndirectLong:
+        return this._core.direct_indirectLong(this._arg);
+      case Instruction.Type.Direct_IndirectLong_Y:
+        return this._core.direct_indirectLong_y(this._arg);
+      case Instruction.Type.Absolute:
+        return this._core.absolute(this._arg);
+      case Instruction.Type.Absolute_X:
+        return this._core.absolute_x(this._arg);
+      case Instruction.Type.Absolute_Y:
+        return this._core.absolute_y(this._arg);
+      case Instruction.Type.Absolute_X_Indirect:
+        return this._core.absolute_x_indirect(this._arg);
+      case Instruction.Type.Absolute_IndirectLong:
+        return this._core.absolute_indirectLong(this._arg);
+      case Instruction.Type.AbsoluteLong:
+        return this._core.absoluteLong(this._arg);
+      case Instruction.Type.AbsoluteLong_X:
+        return this._core.absoluteLong_x(this._arg);
+      case Instruction.Type.StackRelative:
+        return this._core.stackRelative(this._arg);
+      case Instruction.Type.StackRelative_Indirect_Y:
+        return this._core.stackRelative_indirect_y(this._arg);
+    }
   }
 
-  protected get text(): string {
-    const length = this.length - 1;
-    const value = { 1: this._arg.b, 2: this._arg.w, 3: this._arg.l }[length];
-    const arg = length >= 1 ? `$${toHex(value ?? 0, length * 2)}` : "";
+  public get text(): string {
     switch (this.type) {
       case Instruction.Type.Implied:
         return this.name;
       case Instruction.Type.Accumulator:
         return `${this.name} A`;
       case Instruction.Type.Immediate:
-        return `${this.name} #${arg}`;
+        return `${this.name} #${this.formatted_arg}`;
       case Instruction.Type.Direct:
-        return `${this.name} ${arg}`;
+        return `${this.name} ${this.formatted_arg}`;
       case Instruction.Type.Direct_X:
-        return `${this.name} ${arg},x`;
+        return `${this.name} ${this.formatted_arg},x`;
       case Instruction.Type.Direct_Y:
-        return `${this.name} ${arg},y`;
+        return `${this.name} ${this.formatted_arg},y`;
       case Instruction.Type.Direct_Indirect:
-        return `${this.name} (${arg})`;
+        return `${this.name} (${this.formatted_arg})`;
       case Instruction.Type.Direct_X_Indirect:
-        return `${this.name} (${arg},x)`;
+        return `${this.name} (${this.formatted_arg},x)`;
       case Instruction.Type.Direct_Indirect_Y:
-        return `${this.name} (${arg}),y`;
+        return `${this.name} (${this.formatted_arg}),y`;
       case Instruction.Type.Direct_IndirectLong:
-        return `${this.name} [${arg}]`;
+        return `${this.name} [${this.formatted_arg}]`;
       case Instruction.Type.Direct_IndirectLong_Y:
-        return `${this.name} [${arg}],y`;
+        return `${this.name} [${this.formatted_arg}],y`;
       case Instruction.Type.Absolute:
-        return `${this.name} ${arg}`;
+        return `${this.name} ${this.formatted_arg}`;
       case Instruction.Type.Absolute_X:
-        return `${this.name} ${arg},x`;
+        return `${this.name} ${this.formatted_arg},x`;
       case Instruction.Type.Absolute_Y:
-        return `${this.name} ${arg},y`;
+        return `${this.name} ${this.formatted_arg},y`;
       case Instruction.Type.Absolute_X_Indirect:
-        return `${this.name} (${arg},x)`;
+        return `${this.name} (${this.formatted_arg},x)`;
       case Instruction.Type.Absolute_IndirectLong:
-        return `${this.name} [${arg}]`;
+        return `${this.name} [${this.formatted_arg}]`;
       case Instruction.Type.AbsoluteLong:
-        return `${this.name} ${arg}`;
+        return `${this.name} ${this.formatted_arg}`;
       case Instruction.Type.AbsoluteLong_X:
-        return `${this.name} ${arg},x`;
+        return `${this.name} ${this.formatted_arg},x`;
       case Instruction.Type.StackRelative:
-        return `${this.name} ${arg},s`;
+        return `${this.name} ${this.formatted_arg},s`;
       case Instruction.Type.StackRelative_Indirect_Y:
-        return `${this.name} (${arg},s),y`;
+        return `${this.name} (${this.formatted_arg},s),y`;
     }
+  }
+
+  public format(): string {
+    const snapshot = this._core.snapshot();
+    const pc = `${toHex(this._PB, 2)}:${toHex(this._PC, 4)}`;
+    const text = `${padR(this.text, 13, " ")}`;
+    const a = `A:${toHex(snapshot.A, 4)}`;
+    const x = `X:${toHex(snapshot.X, 4)}`;
+    const y = `Y:${toHex(snapshot.Y, 4)}`;
+    const sp = `SP:${toHex(snapshot.SP, 4)}`;
+    const dp = `DP:${toHex(snapshot.DP, 4)}`;
+    const db = `DB:${toHex(snapshot.DB, 2)}`;
+    const addr = this.addr === -1 ? "        " : `[${toHex(this.addr, 6)}]`;
+
+    const capitalize = (flag: string, i: number) =>
+      snapshot.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
+    const flags = snapshot.flag.e
+      ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
+      : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
+
+    const cycles = `${this.cycles} cycles`;
+    const length = `${this.length} bytes`;
+
+    return [pc, text, addr, a, x, y, sp, dp, db, flags, cycles, length].join(
+      " ",
+    );
+  }
+
+  public get formatted_arg(): string {
+    const length = this.length - 1;
+    if (length === 3) return `$${toHex(this._arg.l, 6)}`;
+    if (length === 2) return `$${toHex(this._arg.w, 4)}`;
+    if (length === 1) return `$${toHex(this._arg.b, 2)}`;
+    return "";
   }
 }
 
@@ -100,50 +168,6 @@ export namespace Instruction {
     AbsoluteLong_X,
     StackRelative,
     StackRelative_Indirect_Y,
-  }
-
-  export class Report {
-    public readonly cycles: number;
-    public readonly length: number;
-    public readonly text: string;
-    public readonly snapshot: Core.Snapshot;
-    public readonly PC: number;
-
-    public constructor(
-      snapshot: Core.Snapshot,
-      PC: number,
-      text: string,
-      cycles: number,
-      length: number,
-    ) {
-      this.snapshot = snapshot;
-      this.PC = PC;
-      this.text = text;
-      this.cycles = cycles;
-      this.length = length;
-    }
-
-    public format(): string {
-      const pc = `${toHex(this.PC, 6)}`;
-      const text = `${padR(this.text, 13, " ")}`;
-      const a = `A:${toHex(this.snapshot.A, 4)}`;
-      const x = `X:${toHex(this.snapshot.X, 4)}`;
-      const y = `Y:${toHex(this.snapshot.Y, 4)}`;
-      const sp = `SP:${toHex(this.snapshot.SP, 4)}`;
-      const dp = `DP:${toHex(this.snapshot.DP, 4)}`;
-      const db = `DB:${toHex(this.snapshot.DB, 2)}`;
-
-      const capitalize = (flag: string, i: number) =>
-        this.snapshot.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
-      const flags = this.snapshot.flag.e
-        ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
-        : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
-
-      const cycles = `${this.cycles} cycles`;
-      const length = `${this.length} bytes`;
-
-      return [pc, text, a, x, y, sp, dp, db, flags, cycles, length].join(" ");
-    }
   }
 }
 

@@ -25,14 +25,20 @@ export abstract class BIT extends Instruction {
   }
 }
 
+export abstract class BIT_Addr extends BIT {
+  public execute(): void {
+    this.bit(this._core.load(this.addr));
+  }
+}
+
 export namespace BIT {
   export class Immediate extends BIT {
+    // prettier-ignore
+    public get type(): Instruction.Type { return Instruction.Type.Immediate; }
     // prettier-ignore
     public get cycles(): number { return 3 - this._core.m; }
     // prettier-ignore
     public get length(): number { return 3 - this._core.m; }
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Immediate; }
 
     public execute(): void {
       const result = this._core.A & (this._core.m ? this._arg.b : this._arg.w);
@@ -40,59 +46,39 @@ export namespace BIT {
     }
   }
 
-  export class Direct extends BIT {
+  export class Direct extends BIT_Addr {
+    // prettier-ignore
+    public get type(): Instruction.Type { return Instruction.Type.Direct; }
     // prettier-ignore
     public get cycles(): number { return 4 - this._core.m + this._core.DP_low; }
     // prettier-ignore
     public get length(): number { return 2; }
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Direct; }
-
-    public execute(): void {
-      const addr = this._core.direct(this._arg);
-      this.bit(this._core.load(addr));
-    }
   }
 
-  export class Direct_X extends BIT {
+  export class Direct_X extends BIT_Addr {
+    // prettier-ignore
+    public get type(): Instruction.Type { return Instruction.Type.Direct_X; }
     // prettier-ignore
     public get cycles(): number { return 5 - this._core.m * 2 + this._core.DP_low; }
     // prettier-ignore
     public get length(): number { return 2; }
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Direct_X; }
-
-    public execute(): void {
-      const addr = this._core.direct_x(this._arg);
-      this.bit(this._core.load(addr));
-    }
   }
 
-  export class Absolute extends BIT {
+  export class Absolute extends BIT_Addr {
+    // prettier-ignore
+    public get type(): Instruction.Type { return Instruction.Type.Absolute; }
     // prettier-ignore
     public get cycles(): number { return 5 - this._core.m; }
     // prettier-ignore
     public get length(): number { return 3; }
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Absolute; }
-
-    public execute(): void {
-      const addr = this._core.absolute(this._arg);
-      this.bit(this._core.load(addr));
-    }
   }
 
-  export class Absolute_X extends BIT {
+  export class Absolute_X extends BIT_Addr {
+    // prettier-ignore
+    public get type(): Instruction.Type { return Instruction.Type.Absolute_X; }
     // prettier-ignore
     public get cycles(): number { return 5 - this._core.m + this._core.X_cross(this._core.absolute_x(this._arg)); }
     // prettier-ignore
     public get length(): number { return 3; }
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Absolute_X; }
-
-    public execute(): void {
-      const addr = this._core.absolute_x(this._arg);
-      this.bit(this._core.load(addr));
-    }
   }
 }

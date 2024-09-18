@@ -19,8 +19,8 @@ export class Core {
       DB: this.DB,
       DP: this.DP,
       SP: this.SP,
-      PB: this._PC.bank,
-      PC: this._PC.w,
+      PB: this.PB,
+      PC: this.PC,
 
       flag: {
         n: this._n,
@@ -143,17 +143,31 @@ export class Core {
   }
 
   //----------------------------------------------------------------------------
+  // Program Bank
+  //----------------------------------------------------------------------------
+
+  private _PB = new Integer(0x00);
+
+  public get PB(): number {
+    return this._PB.b;
+  }
+
+  public set PB(PB: number) {
+    this._PB.b = PB;
+  }
+
+  //----------------------------------------------------------------------------
   // Program Counter
   //----------------------------------------------------------------------------
 
-  private _PC = new Integer(0x008000);
+  private _PC = new Integer(0x8000);
 
   public get PC(): number {
-    return this._PC.l;
+    return this._PC.w;
   }
 
   public set PC(PC: number) {
-    this._PC.l = PC;
+    this._PC.w = PC;
   }
 
   //----------------------------------------------------------------------------
