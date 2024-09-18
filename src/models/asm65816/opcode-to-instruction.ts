@@ -16,6 +16,7 @@ import { DEY } from "./instructions/dey";
 import { INC } from "./instructions/inc";
 import { INX } from "./instructions/inx";
 import { INY } from "./instructions/iny";
+import { JMP } from "./instructions/jmp";
 import { NOP } from "./instructions/nop";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
@@ -142,11 +143,11 @@ export const opcodeToInstruction = {
   [0xe8]: INX, // INX
   [0xc8]: INY, // INY
 
-  [0x4c]: NOP, // JMP addr
-  [0x6c]: NOP, // JMP (addr)
-  [0x7c]: NOP, // JMP (addr,x)
-  [0x5c]: NOP, // JML long
-  [0xdc]: NOP, // JML [addr]
+  [0x4c]: JMP.Absolute, // JMP addr
+  [0x6c]: JMP.Absolute_Indirect, // JMP (addr)
+  [0x7c]: JMP.Absolute_X_Indirect, // JMP (addr,x)
+  [0xdc]: JMP.Absolute_IndirectLong, // JML [addr]
+  [0x5c]: JMP.AbsoluteLong, // JML long
 
   [0x20]: NOP, // JSR addr
   [0xfc]: NOP, // JSR (addr,x))
