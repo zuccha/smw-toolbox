@@ -3,9 +3,8 @@ import { Instruction } from "../instruction";
 import { Integer } from "../integer";
 
 export abstract class AND extends Instruction {
-  public get name(): string {
-    return "AND";
-  }
+  // prettier-ignore
+  public get name(): string { return "AND"; }
 
   protected and(value: number): number {
     this._core.PC = this._core.PC + this.length;

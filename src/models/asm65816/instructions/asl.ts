@@ -3,9 +3,8 @@ import { Instruction } from "../instruction";
 import { Integer } from "../integer";
 
 export abstract class ASL extends Instruction {
-  public get name(): string {
-    return "ASL";
-  }
+  // prettier-ignore
+  public get name(): string { return "ASL"; }
 
   protected asl(value: number): number {
     this._core.PC = this._core.PC + this.length;

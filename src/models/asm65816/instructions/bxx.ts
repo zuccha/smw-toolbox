@@ -2,15 +2,12 @@ import { Core } from "../core";
 import { Instruction } from "../instruction";
 
 export abstract class BXX extends Instruction {
+  // prettier-ignore
+  public get addr(): number { return this._PB + this.addr_relative_to_bank; }
+  // prettier-ignore
+  public get text(): string { return `${this.name} ${this.formatted_arg}`; }
+
   public abstract get addr_relative_to_bank(): number;
-
-  public get addr(): number {
-    return this._PB + this.addr_relative_to_bank;
-  }
-
-  public get text(): string {
-    return `${this.name} ${this.formatted_arg}`;
-  }
 }
 
 export abstract class BXX_Near extends BXX {

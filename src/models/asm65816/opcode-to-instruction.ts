@@ -13,6 +13,7 @@ import { CPY } from "./instructions/cpy";
 import { DEC } from "./instructions/dec";
 import { DEX } from "./instructions/dex";
 import { DEY } from "./instructions/dey";
+import { EOR } from "./instructions/eor";
 import { INC } from "./instructions/inc";
 import { INX } from "./instructions/inx";
 import { INY } from "./instructions/iny";
@@ -118,21 +119,21 @@ export const opcodeToInstruction = {
   [0xca]: DEX, // DEX
   [0x88]: DEY, // DEY
 
-  [0x49]: NOP, // EOR #const
-  [0x45]: NOP, // EOR dp
-  [0x55]: NOP, // EOR dp,x
-  [0x52]: NOP, // EOR (dp)
-  [0x41]: NOP, // EOR (dp,x)
-  [0x51]: NOP, // EOR (dp),y
-  [0x47]: NOP, // EOR [dp]
-  [0x57]: NOP, // EOR [dp],y
-  [0x4d]: NOP, // EOR addr
-  [0x5d]: NOP, // EOR addr,x
-  [0x59]: NOP, // EOR addr,y
-  [0x4f]: NOP, // EOR long
-  [0x5f]: NOP, // EOR long,x
-  [0x43]: NOP, // EOR sr,s
-  [0x53]: NOP, // EOR (sr,s),y
+  [0x49]: EOR.Immediate, // EOR #const
+  [0x45]: EOR.Direct, // EOR dp
+  [0x55]: EOR.Direct_X, // EOR dp,x
+  [0x52]: EOR.Direct_Indirect, // EOR (dp)
+  [0x41]: EOR.Direct_X_Indirect, // EOR (dp,x)
+  [0x51]: EOR.Direct_Indirect_Y, // EOR (dp),y
+  [0x47]: EOR.Direct_IndirectLong, // EOR [dp]
+  [0x57]: EOR.Direct_IndirectLong_Y, // EOR [dp],y
+  [0x4d]: EOR.Absolute, // EOR addr
+  [0x5d]: EOR.Absolute_X, // EOR addr,x
+  [0x59]: EOR.Absolute_Y, // EOR addr,y
+  [0x4f]: EOR.AbsoluteLong, // EOR long
+  [0x5f]: EOR.AbsoluteLong_X, // EOR long,x
+  [0x43]: EOR.StackRelative, // EOR sr,s
+  [0x53]: EOR.StackRelative_Indirect_Y, // EOR (sr,s),y
 
   [0x1a]: INC.Implied, // INC A
   [0xe6]: INC.Direct, // INC dp

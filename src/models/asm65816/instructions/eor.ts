@@ -2,39 +2,35 @@ import { Core } from "../core";
 import { Instruction } from "../instruction";
 import { Integer } from "../integer";
 
-export abstract class ADC extends Instruction {
+export abstract class EOR extends Instruction {
   // prettier-ignore
-  public get name(): string { return "ADC"; }
+  public get name(): string { return "EOR"; }
 
-  protected adc(value: number): number {
+  protected eor(value: number): number {
     this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
-      const result = new Integer(value + this._core.A + this._core.c);
+      const result = new Integer(value ^ this._core.A);
       this._core.n = result.low & Core.Flag.N;
-      this._core.v = result.low & Core.Flag.V;
       this._core.z = result.b === 0;
-      this._core.c = result.w > Integer.Byte;
       return result.b;
     } else {
-      const result = new Integer(value + this._core.A + this._core.c);
+      const result = new Integer(value ^ this._core.A);
       this._core.n = result.high & Core.Flag.N;
-      this._core.v = result.high & Core.Flag.V;
       this._core.z = result.w === 0;
-      this._core.c = result.l > Integer.Word;
       return result.w;
     }
   }
 }
 
-export abstract class ADC_Addr extends ADC {
+export abstract class EOR_Addr extends EOR {
   public execute(): void {
-    const value = this._core.load(this.addr);
-    this._core.A = this.adc(value);
+    const value = this._core.m ? this._arg.b : this._arg.w;
+    this._core.A = this.eor(value);
   }
 }
 
-export namespace ADC {
-  export class Immediate extends ADC {
+export namespace EOR {
+  export class Immediate extends EOR {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Immediate; }
     // prettier-ignore
@@ -44,11 +40,11 @@ export namespace ADC {
 
     public execute(): void {
       const value = this._core.m ? this._arg.b : this._arg.w;
-      this._core.A = this.adc(value);
+      this._core.A = this.eor(value);
     }
   }
 
-  export class Direct extends ADC_Addr {
+  export class Direct extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct; }
     // prettier-ignore
@@ -57,7 +53,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_X extends ADC_Addr {
+  export class Direct_X extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_X; }
     // prettier-ignore
@@ -66,7 +62,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_Indirect extends ADC_Addr {
+  export class Direct_Indirect extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_Indirect; }
     // prettier-ignore
@@ -75,7 +71,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_X_Indirect extends ADC_Addr {
+  export class Direct_X_Indirect extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_X_Indirect; }
     // prettier-ignore
@@ -84,7 +80,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_Indirect_Y extends ADC_Addr {
+  export class Direct_Indirect_Y extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_Indirect_Y; }
     // prettier-ignore
@@ -93,7 +89,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_IndirectLong extends ADC_Addr {
+  export class Direct_IndirectLong extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_IndirectLong; }
     // prettier-ignore
@@ -102,7 +98,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Direct_IndirectLong_Y extends ADC_Addr {
+  export class Direct_IndirectLong_Y extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Direct_IndirectLong_Y; }
     // prettier-ignore
@@ -111,7 +107,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class Absolute extends ADC_Addr {
+  export class Absolute extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Absolute; }
     // prettier-ignore
@@ -120,7 +116,7 @@ export namespace ADC {
     public get length(): number { return 3; }
   }
 
-  export class Absolute_X extends ADC_Addr {
+  export class Absolute_X extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Absolute_X; }
     // prettier-ignore
@@ -129,7 +125,7 @@ export namespace ADC {
     public get length(): number { return 3; }
   }
 
-  export class Absolute_Y extends ADC_Addr {
+  export class Absolute_Y extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.Absolute_Y; }
     // prettier-ignore
@@ -138,7 +134,7 @@ export namespace ADC {
     public get length(): number { return 3; }
   }
 
-  export class AbsoluteLong extends ADC_Addr {
+  export class AbsoluteLong extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.AbsoluteLong; }
     // prettier-ignore
@@ -147,7 +143,7 @@ export namespace ADC {
     public get length(): number { return 4; }
   }
 
-  export class AbsoluteLong_X extends ADC_Addr {
+  export class AbsoluteLong_X extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.AbsoluteLong_X; }
     // prettier-ignore
@@ -156,7 +152,7 @@ export namespace ADC {
     public get length(): number { return 4; }
   }
 
-  export class StackRelative extends ADC_Addr {
+  export class StackRelative extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.StackRelative; }
     // prettier-ignore
@@ -165,7 +161,7 @@ export namespace ADC {
     public get length(): number { return 2; }
   }
 
-  export class StackRelative_Indirect_Y extends ADC_Addr {
+  export class StackRelative_Indirect_Y extends EOR_Addr {
     // prettier-ignore
     public get type(): Instruction.Type { return Instruction.Type.StackRelative_Indirect_Y; }
     // prettier-ignore

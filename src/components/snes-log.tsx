@@ -106,7 +106,7 @@ function Register({
   const highByteClassName = shouldDimHighByte ? "dim" : undefined;
   return (
     <span>
-      <span className={highByteClassName}>{toHex(value >> 8 && 0xff, 2)}</span>
+      <span className={highByteClassName}>{toHex((value >> 8) & 0xff, 2)}</span>
       <span>{toHex(value & 0xff, 2)}</span>
     </span>
   );

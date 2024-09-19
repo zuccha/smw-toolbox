@@ -3,9 +3,8 @@ import { Instruction } from "../instruction";
 import { Integer } from "../integer";
 
 export abstract class BIT extends Instruction {
-  public get name(): string {
-    return "BIT";
-  }
+  // prettier-ignore
+  public get name(): string { return "BIT"; }
 
   protected bit(value: number): number {
     this._core.PC = this._core.PC + this.length;
