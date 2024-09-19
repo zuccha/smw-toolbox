@@ -380,17 +380,17 @@ export class Core {
   // Modifiers
   //----------------------------------------------------------------------------
 
-  public get DP_low(): 0 | 1 {
+  public get DP_low_is_zero(): 0 | 1 {
     return this._DP.l ? 1 : 0;
   }
 
-  public X_cross(addr: number): 0 | 1 {
+  public X_crosses_page(addr: number): 0 | 1 {
     return this._x || ((addr + this.X) & 0xffff00) !== (addr & 0xffff00)
       ? 1
       : 0;
   }
 
-  public Y_cross(addr: number): 0 | 1 {
+  public Y_crosses_page(addr: number): 0 | 1 {
     return this._x || ((addr + this.Y) & 0xffff00) !== (addr & 0xffff00)
       ? 1
       : 0;

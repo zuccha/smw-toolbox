@@ -50,11 +50,12 @@ export abstract class Instruction {
     if (modifier & minus_m) cycles -= this._core.m;
     if (modifier & minus_2m) cycles -= 2 * this._core.m;
     if (modifier & minus_x) cycles -= this._core.x;
-    if (modifier & plus_1_if_dp_low_is_zero) cycles += this._core.DP_low;
+    if (modifier & plus_1_if_dp_low_is_zero)
+      cycles += this._core.DP_low_is_zero;
     if (modifier & plus_1_if_index_x_crosses_page)
-      cycles += this._core.X_cross(this.addr);
+      cycles += this._core.X_crosses_page(this.addr);
     if (modifier & plus_1_if_index_y_crosses_page)
-      cycles += this._core.Y_cross(this.addr);
+      cycles += this._core.Y_crosses_page(this.addr);
     return cycles;
   }
 
