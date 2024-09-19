@@ -33,7 +33,7 @@ export abstract class BXX_Near extends BXX {
     return this._PC + this.length + offset;
   }
 
-  public execute(): void {
+  public execute_effect(): void {
     this._core.PC = this._branch_taken
       ? this.addr_relative_to_bank
       : this._core.PC + this.length;
@@ -115,7 +115,7 @@ export namespace BXX {
       return this._PC + this.length + offset;
     }
 
-    public execute(): void {
+    public execute_effect(): void {
       this._core.PC = this.addr_relative_to_bank;
     }
   }

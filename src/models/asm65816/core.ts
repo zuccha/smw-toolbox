@@ -1,5 +1,6 @@
 import { Integer } from "./integer";
 import { MemoryMapping } from "./memory-mapping";
+import { b, l, w } from "./utils";
 
 export class Core {
   public constructor(bytes: number[]) {
@@ -439,11 +440,3 @@ export namespace Core {
     flags: number;
   };
 }
-
-//----------------------------------------------------------------------------
-// Utils
-//----------------------------------------------------------------------------
-
-const b = (value: number): number => value & 0xff;
-const w = (value: number): number => value & 0xffff;
-const l = (value: number): number => value & 0xffffff;

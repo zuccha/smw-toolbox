@@ -36,7 +36,7 @@ export class Emulator {
         const opcode = this._get(this._core.PC - PC_offset) as Opcode;
         const instruction = new opcodeToInstruction[opcode](this._core, arg);
         this._instructions.push(instruction);
-        instruction.executeAndSnapshot();
+        instruction.execute();
       }
     } catch (e) {
       if (e instanceof Error) {

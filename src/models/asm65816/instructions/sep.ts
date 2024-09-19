@@ -7,10 +7,9 @@ export class SEP extends Instruction {
   public static baseCycles = 3;
   public static baseLength = 2;
 
-  public execute(): void {
-    this._core.PC = this._core.PC + this.length;
-
+  public execute_effect(): void {
     const arg = this._arg.b;
+
     if (arg & Core.Flag.N) this._core.n = 1;
     if (arg & Core.Flag.V) this._core.v = 1;
     if (arg & Core.Flag.M) this._core.m = 1;

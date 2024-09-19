@@ -4,13 +4,12 @@ export abstract class CPX extends Instruction {
   public static mnemonic = "CPX";
 
   protected cpx(value: number): void {
-    this._core.PC = this._core.PC + this.length;
     this._core.n = this._core.X < value;
     this._core.z = this._core.X === value;
     this._core.c = this._core.X >= value;
   }
 
-  public execute(): void {
+  public execute_effect(): void {
     this.cpx(this._core.load_x(this.addr));
   }
 }
@@ -23,7 +22,7 @@ export namespace CPX {
     public static baseLength = 3;
     public static lengthModifier = minus_x;
 
-    public execute(): void {
+    public execute_effect(): void {
       this.cpx(this._core.x ? this._arg.b : this._arg.w);
     }
   }

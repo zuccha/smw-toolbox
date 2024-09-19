@@ -21,10 +21,11 @@ export abstract class Instruction {
     this._PC = core.PC;
   }
 
-  public abstract execute(): void;
+  public abstract execute_effect(): void;
 
-  public executeAndSnapshot() {
-    this.execute();
+  public execute() {
+    this._core.PC = this._core.PC + this.length;
+    this.execute_effect();
     this._snapshot = this._core.snapshot();
   }
 

@@ -4,7 +4,7 @@ import { Integer } from "../integer";
 export abstract class JMP extends Instruction {
   public static mnemonic = "JMP";
 
-  public execute(): void {
+  public execute_effect(): void {
     this._core.PC = this.addr;
   }
 }
@@ -12,7 +12,7 @@ export abstract class JMP extends Instruction {
 export abstract class JML extends Instruction {
   public static mnemonic = "JML";
 
-  public execute(): void {
+  public execute_effect(): void {
     const addr = new Integer(this.addr);
     this._core.PB = addr.bank;
     this._core.PC = addr.w;

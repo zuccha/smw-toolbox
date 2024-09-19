@@ -11,7 +11,6 @@ export abstract class BIT extends Instruction {
   public static mnemonic = "BIT";
 
   protected bit(value: number): number {
-    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(this._core.A & value).b;
       this._core.n = value | Core.Flag.Z;
@@ -29,7 +28,7 @@ export abstract class BIT extends Instruction {
 }
 
 export abstract class BIT_Addr extends BIT {
-  public execute(): void {
+  public execute_effect(): void {
     this.bit(this._core.load(this.addr));
   }
 }
@@ -42,7 +41,7 @@ export namespace BIT {
     public static baseLength = 3;
     public static lengthModifier = minus_m;
 
-    public execute(): void {
+    public execute_effect(): void {
       const result = this._core.A & (this._core.m ? this._arg.b : this._arg.w);
       this._core.z = result === 0;
     }

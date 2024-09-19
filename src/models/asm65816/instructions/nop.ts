@@ -6,7 +6,5 @@ export class NOP extends Instruction {
   public static baseCycles = 2;
   public static baseLength = 1;
 
-  public execute(): void {
-    this._core.PC = this._core.PC + this.length;
-  }
+  public execute_effect(): void {}
 }

@@ -10,7 +10,6 @@ export abstract class ASL extends Instruction {
   public static mnemonic = "ASL";
 
   protected asl(value: number): number {
-    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(value << 1);
       this._core.n = result.low & Core.Flag.N;
@@ -28,7 +27,7 @@ export abstract class ASL extends Instruction {
 }
 
 export abstract class ASL_Addr extends ASL {
-  public execute(): void {
+  public execute_effect(): void {
     const addr = this.addr;
     const value = this._core.load(addr);
     this._core.save(addr, this.asl(value));
@@ -41,7 +40,7 @@ export namespace ASL {
     public static baseCycles = 2;
     public static baseLength = 1;
 
-    public execute(): void {
+    public execute_effect(): void {
       const value = this._core.A;
       this._core.A = this.asl(value);
     }

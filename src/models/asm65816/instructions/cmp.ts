@@ -10,13 +10,12 @@ export abstract class CMP extends Instruction {
   public static mnemonic = "CMP";
 
   protected cmp(value: number): void {
-    this._core.PC = this._core.PC + this.length;
     this._core.n = this._core.A < value;
     this._core.z = this._core.A === value;
     this._core.c = this._core.A >= value;
   }
 
-  public execute(): void {
+  public execute_effect(): void {
     this.cmp(this._core.load(this.addr));
   }
 }
@@ -29,7 +28,7 @@ export namespace CMP {
     public static baseLength = 3;
     public static lengthModifier = minus_m;
 
-    public execute(): void {
+    public execute_effect(): void {
       this.cmp(this._core.m ? this._arg.b : this._arg.w);
     }
   }

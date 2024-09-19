@@ -7,9 +7,8 @@ import {
 export abstract class INC extends Instruction {
   public static mnemonic = "INC";
 
-  public execute(): void {
+  public execute_effect(): void {
     const addr = this.addr;
-    this._core.PC = this._core.PC + this.length;
     this._core.save(addr, this._core.load(addr) + 1);
   }
 }
@@ -20,8 +19,7 @@ export namespace INC {
     public static baseCycles = 2;
     public static baseLength = 1;
 
-    public execute(): void {
-      this._core.PC = this._core.PC + this.length;
+    public execute_effect(): void {
       this._core.A = this._core.A + 1;
     }
   }

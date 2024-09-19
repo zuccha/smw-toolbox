@@ -4,13 +4,12 @@ export abstract class CPY extends Instruction {
   public static mnemonic = "CPY";
 
   protected cpy(value: number): void {
-    this._core.PC = this._core.PC + this.length;
     this._core.n = this._core.Y < value;
     this._core.z = this._core.Y === value;
     this._core.c = this._core.Y >= value;
   }
 
-  public execute(): void {
+  public execute_effect(): void {
     this.cpy(this._core.load_x(this.addr));
   }
 }
@@ -23,7 +22,7 @@ export namespace CPY {
     public static baseLength = 3;
     public static lengthModifier = minus_x;
 
-    public execute(): void {
+    public execute_effect(): void {
       this.cpy(this._core.x ? this._arg.b : this._arg.w);
     }
   }

@@ -14,3 +14,7 @@ export function to_hex(n: number, minLength: number): string {
 export function format_addr(addr: number): string {
   return `[${to_hex((addr >> 16) & 0xff, 2)}:${to_hex(addr & 0xffff, 4)}]`;
 }
+
+export const b = (value: number): number => value & 0xff;
+export const w = (value: number): number => value & 0xffff;
+export const l = (value: number): number => value & 0xffffff;

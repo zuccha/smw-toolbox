@@ -12,7 +12,6 @@ export abstract class EOR extends Instruction {
   public static mnemonic = "EOR";
 
   protected eor(value: number): number {
-    this._core.PC = this._core.PC + this.length;
     if (this._core.m) {
       const result = new Integer(value ^ this._core.A);
       this._core.n = result.low & Core.Flag.N;
@@ -28,7 +27,7 @@ export abstract class EOR extends Instruction {
 }
 
 export abstract class EOR_Addr extends EOR {
-  public execute(): void {
+  public execute_effect(): void {
     const value = this._core.load(this.addr);
     this._core.A = this.eor(value);
   }
@@ -42,7 +41,7 @@ export namespace EOR {
     public static baseLength = 3;
     public static lengthModifier = minus_m;
 
-    public execute(): void {
+    public execute_effect(): void {
       const value = this._core.m ? this._arg.b : this._arg.w;
       this._core.A = this.eor(value);
     }
