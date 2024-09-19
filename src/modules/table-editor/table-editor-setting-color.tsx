@@ -29,6 +29,8 @@ const prefixes = {
   [IntegerEncoding.Hex]: "$",
 };
 
+const formatInputValue = (value: string): string => value.toUpperCase();
+
 export default function AppEditorSettingColor() {
   const [encoding] = useTableEditorEncoding();
   const [unit] = useTableEditorUnit();
@@ -67,6 +69,7 @@ export default function AppEditorSettingColor() {
           />
         ) : (
           <InputText
+            format={formatInputValue}
             onChange={handleChangeValueString}
             pattern={patterns[encoding]}
             placeholder="0"

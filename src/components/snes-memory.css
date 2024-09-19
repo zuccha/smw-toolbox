@@ -1,76 +1,107 @@
 .SnesMemory {
   display: flex;
-  border: 1px solid var(--color-neutral-2);
+  flex-direction: column;
+  flex: 1;
+  row-gap: 1em;
+}
+
+.SnesMemory_Table {
+  display: flex;
   font-family: monospace;
   flex: 1;
 }
 
-.SnesMemory_Group {
+.SnesMemory_Table_Group {
   display: flex;
   flex-direction: column;
 }
 
-.SnesMemory_ColIndex,
-.SnesMemory_RowIndex,
-.SnesMemory_Grid,
-.SnesMemory_Corner {
-  padding: 0.5em 0.75em;
+.SnesMemory_Table_ColIndex,
+.SnesMemory_Table_RowIndex,
+.SnesMemory_Table_Grid,
+.SnesMemory_Table_Corner {
   row-gap: 0.2em;
 }
 
-.SnesMemory_ColIndex,
-.SnesMemory_Grid {
+.SnesMemory_Table_Corner {
+  padding-bottom: 0.3em;
+  padding-right: 1.1em;
+}
+
+.SnesMemory_Table_RowIndex,
+.SnesMemory_Table_Grid {
+  padding-top: 0.5em;
+}
+
+.SnesMemory_Table_ColIndex,
+.SnesMemory_Table_Grid {
   display: grid;
   grid-template-columns: repeat(16, 1fr);
   flex: 1;
+  padding-left: 0.5em;
 }
 
-.SnesMemory_ColIndex > div,
-.SnesMemory_Grid > div {
+.SnesMemory_Table_ColIndex > div,
+.SnesMemory_Table_Grid > div {
   display: flex;
   justify-content: center;
 }
 
-.SnesMemory_ColIndex,
-.SnesMemory_RowIndex,
-.SnesMemory_Corner {
-  background-color: var(--color-background-1);
-  color: var(--color-neutral-2);
+.SnesMemory_Table_ColIndex,
+.SnesMemory_Table_RowIndex,
+.SnesMemory_Table_Corner {
+  font-weight: bold;
 }
 
-.SnesMemory_ColIndex {
+.SnesMemory_Table_ColIndex {
   border-bottom: 1px solid var(--color-neutral-2);
 }
 
-.SnesMemory_RowIndex {
+.SnesMemory_Table_RowIndex {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--color-neutral-2);
 }
 
-.SnesMemory_Corner {
+.SnesMemory_Table_Corner {
   display: flex;
   justify-content: flex-end;
   border-bottom: 1px solid var(--color-neutral-2);
   border-right: 1px solid var(--color-neutral-2);
+  white-space: pre;
 }
 
-.SnesMemory_Corner .IntegerStringInput_Char {
+.SnesMemory_Table_Corner .IntegerStringInput_Char {
   width: unset;
 }
 
-.SnesMemory_Corner
+.SnesMemory_Table_Corner
   .IntegerStringInput:not(.disabled):focus
   .IntegerStringInput_Char.solid {
   color: var(--color-primary-1);
 }
 
-.SnesMemory_Corner
+.SnesMemory_Table_Corner
   .IntegerStringInput:not(.disabled):focus
   .IntegerStringInput_Char.selected {
   color: var(--color-primary-2);
 }
 
-.SnesMemory_Corner .IntegerStringInput_Caret {
+.SnesMemory_Table_Corner .IntegerStringInput_Caret {
   display: none;
+}
+
+.SnesMemory_BaseAddress {
+  display: flex;
+  column-gap: 1em;
+  align-items: center;
+}
+
+.SnesMemory_BaseAddress > span {
+  font-variant: small-caps;
+}
+
+.SnesMemory_BaseAddress input {
+  font-family: monospace;
+  font-size: 1.2em;
 }

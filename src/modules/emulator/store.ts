@@ -1,5 +1,9 @@
 import createUseSharedState from "../../hooks/use-shared-state";
-import { useStoreBoolean, useStoreString } from "../../hooks/use-store";
+import {
+  useStoreBoolean,
+  useStoreNumber,
+  useStoreString,
+} from "../../hooks/use-store";
 import { Emulator } from "../../models/asm65816/emulator";
 
 export const emulatorId = "Emulator";
@@ -35,6 +39,9 @@ export const useEmulatorCode = () =>
   useStoreString(`${emulatorId}.code`, defaultCode);
 
 export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
+
+export const useEmulatorMemoryBaseAddress = () =>
+  useStoreNumber(`${emulatorId}.memory.baseAddress`, 0x7e0000);
 
 export const useEmulatorTabLogIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.log.isVisible`, true);

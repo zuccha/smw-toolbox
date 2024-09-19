@@ -2,6 +2,7 @@ import { useCallback, useRef } from "preact/hooks";
 import "./input.css";
 
 export type InputProps = {
+  format?: (value: string) => string;
   max?: number;
   min?: number;
   onChange: (value: string) => string | void;
@@ -14,6 +15,7 @@ export type InputProps = {
 };
 
 export default function Input({
+  format,
   max,
   min,
   onChange,
@@ -66,8 +68,9 @@ export default function Input({
       } else if (inputRef.current) {
         restoreValue();
       }
+      if (format) valueRef.current = format(valueRef.current);
     },
-    [onChange, pattern, restoreValue, size],
+    [format, onChange, pattern, restoreValue, size],
   );
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {

@@ -80,11 +80,11 @@ export function center(str: string, length: number, c: string = " "): string {
 }
 
 export function padL(text: string, length: number, fill: string): string {
-  return `${fill.repeat(length - text.length)}${text}`;
+  return `${fill.repeat(Math.max(length - text.length, 0))}${text}`;
 }
 
 export function padR(text: string, length: number, fill: string): string {
-  return `${text}${fill.repeat(length - text.length)}`;
+  return `${text}${fill.repeat(Math.max(length - text.length, 0))}`;
 }
 
 export function ok(_: unknown): true {

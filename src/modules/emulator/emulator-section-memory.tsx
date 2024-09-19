@@ -1,21 +1,33 @@
-import { useMemo, useState } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 import SectionCollapsible from "../../components/section-collapsible";
 import SnesMemory from "../../components/snes-memory";
 import { range } from "../../utils";
-import { emulator, useEmulatorTabSnesIsVisible } from "./store";
+import {
+  emulator,
+  useEmulatorMemoryBaseAddress,
+  useEmulatorTabSnesIsVisible,
+} from "./store";
 import useEmulator from "./use-emulator";
 
 const memorySize = 8 * 16;
 
 export default function EmulatorSectionMemory() {
   const { snapshot } = useEmulator();
+  const [baseAddress, setBaseAddress] = useEmulatorMemoryBaseAddress();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
-  const [memoryAddress, setMemoryAddress] = useState(0x7e0000);
+  const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 
   const memory = useMemo(
-    () => range(memorySize).map((i) => emulator.get_byte(memoryAddress + i)),
-    [memoryAddress, snapshot],
+    () =>
+      range(memorySize).map((i) => {
+        try {
+          return emulator.get_byte((safeBaseAddress + i) & 0xffffff);
+        } catch {
+          return 0;
+        }
+      }),
+    [safeBaseAddress, snapshot],
   ); // Update when base address or snapshot changes.
 
   return (
@@ -26,9 +38,9 @@ export default function EmulatorSectionMemory() {
     >
       <div className="App_SectionCol">
         <SnesMemory
-          address={memoryAddress}
+          baseAddress={baseAddress}
           memory={memory}
-          onChangeAddress={setMemoryAddress}
+          onChangeAddress={setBaseAddress}
         />
       </div>
     </SectionCollapsible>
