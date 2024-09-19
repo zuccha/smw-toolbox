@@ -19,6 +19,7 @@ import { INX } from "./instructions/inx";
 import { INY } from "./instructions/iny";
 import { JMP } from "./instructions/jmp";
 import { NOP } from "./instructions/nop";
+import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
 import { SEP } from "./instructions/sep";
 
@@ -193,21 +194,21 @@ export const opcodeToInstruction = {
 
   [0xea]: NOP, // NOP
 
-  [0x09]: NOP, // ORA #const
-  [0x05]: NOP, // ORA dp
-  [0x15]: NOP, // ORA dp,x
-  [0x12]: NOP, // ORA (dp)
-  [0x01]: NOP, // ORA (dp,x)
-  [0x11]: NOP, // ORA (dp),y
-  [0x07]: NOP, // ORA [dp]
-  [0x17]: NOP, // ORA [dp],y
-  [0x0d]: NOP, // ORA addr
-  [0x1d]: NOP, // ORA addr,x
-  [0x19]: NOP, // ORA addr,y
-  [0x0f]: NOP, // ORA long
-  [0x1f]: NOP, // ORA long,x
-  [0x03]: NOP, // ORA sr,s
-  [0x13]: NOP, // ORA (sr,s),y
+  [0x09]: ORA.Immediate, // ORA #const
+  [0x05]: ORA.Direct, // ORA dp
+  [0x15]: ORA.Direct_X, // ORA dp,x
+  [0x12]: ORA.Direct_Indirect, // ORA (dp)
+  [0x01]: ORA.Direct_X_Indirect, // ORA (dp,x)
+  [0x11]: ORA.Direct_Indirect_Y, // ORA (dp),y
+  [0x07]: ORA.Direct_IndirectLong, // ORA [dp]
+  [0x17]: ORA.Direct_IndirectLong_Y, // ORA [dp],y
+  [0x0d]: ORA.Absolute, // ORA addr
+  [0x1d]: ORA.Absolute_X, // ORA addr,x
+  [0x19]: ORA.Absolute_Y, // ORA addr,y
+  [0x0f]: ORA.AbsoluteLong, // ORA long
+  [0x1f]: ORA.AbsoluteLong_X, // ORA long,x
+  [0x03]: ORA.StackRelative, // ORA sr,s
+  [0x13]: ORA.StackRelative_Indirect_Y, // ORA (sr,s),y
 
   [0xf4]: NOP, // PEA addr
   [0xd4]: NOP, // PEI (dp)
