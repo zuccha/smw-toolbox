@@ -19,6 +19,8 @@ type CompilationError = {
   message: string;
 };
 
+export type Asm65816CompilationError = CompilationError;
+
 //==============================================================================
 // Instruction Builder
 //==============================================================================

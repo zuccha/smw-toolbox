@@ -30,6 +30,7 @@ export const Theme = {
     background2: "#242424",
     background3: "#141414",
     background4: "#4c4c4c",
+    error1: "#F56565",
     neutral1: "#f4f4f4",
     neutral2: "#a1a1a1",
     color: {
@@ -82,6 +83,7 @@ export const Theme = {
     background2: "#f9f9f9",
     background3: "#dddddd",
     background4: "#e0e0e0",
+    error1: "#C53030",
     neutral1: "#222222",
     neutral2: "#777777",
     color: {

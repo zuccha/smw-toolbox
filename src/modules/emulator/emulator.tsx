@@ -1,6 +1,7 @@
 import EmulatorHotkeys from "./emulator-hotkeys";
+import EmulatorSectionLog from "./emulator-section-log";
 import EmulatorSectionMain from "./emulator-section-main";
-import EmulatorSectionSnes from "./emulator-section-snes";
+import EmulatorSectionMemory from "./emulator-section-memory";
 
 export default function Emulator() {
   return (
@@ -12,7 +13,8 @@ export default function Emulator() {
       </div>
 
       <div class="App_ModuleBlock">
-        <EmulatorSectionSnes />
+        <EmulatorSectionLog />
+        <EmulatorSectionMemory />
       </div>
     </div>
   );

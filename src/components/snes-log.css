@@ -1,0 +1,47 @@
+.SnesLog {
+  display: flex;
+  flex-direction: column;
+}
+
+.SnesLog_TableHeader,
+.SnesLog_TableBody_Instructions {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(11, auto);
+
+  font-family: monospace;
+  white-space: pre;
+}
+
+.SnesLog_TableBody {
+  border-top: 1px solid var(--color-neutral-2);
+  border-bottom: 1px solid var(--color-neutral-2);
+  margin: 0.3em 0;
+  padding: 0.3em 0;
+}
+
+.SnesLog_TableBody_Instructions {
+  max-height: 30em;
+  overflow-y: auto;
+}
+
+.SnesLog_TableBody_Instructions .dim {
+  color: var(--color-neutral-2);
+}
+
+.SnesLog_TableBody_Instructions .error {
+  color: var(--color-error-1);
+  grid-column: 3 / 9;
+}
+
+.SnesLog_Errors,
+.SnesLog_Info {
+  font-size: 0.9em;
+}
+
+.SnesLog_Errors {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-error-1);
+}

@@ -1,43 +1,10 @@
-import { z } from "zod";
-import useStore, {
-  useStoreBoolean,
-  useStoreString,
-} from "../../hooks/use-store";
+import createUseSharedState from "../../hooks/use-shared-state";
+import { useStoreBoolean, useStoreString } from "../../hooks/use-store";
 import { Emulator } from "../../models/asm65816/emulator";
 
 export const emulatorId = "Emulator";
 
 export const emulator = new Emulator();
-
-const SnapshotSchema = z.object({
-  A: z.number(),
-  X: z.number(),
-  Y: z.number(),
-  DB: z.number(),
-  DP: z.number(),
-  SP: z.number(),
-  PB: z.number(),
-  PC: z.number(),
-
-  flag: z.object({
-    n: z.number(),
-    v: z.number(),
-    m: z.number(),
-    x: z.number(),
-    d: z.number(),
-    i: z.number(),
-    z: z.number(),
-    c: z.number(),
-    e: z.number(),
-    b: z.number(),
-  }),
-
-  flags: z.number(),
-
-  ram: z.record(z.string(), z.number()),
-});
-
-const defaultSnapshot = emulator.snapshot();
 
 const defaultCode = `\
 NOP           ; Implied
@@ -67,12 +34,10 @@ MVN $00,$00   ; Move`;
 export const useEmulatorCode = () =>
   useStoreString(`${emulatorId}.code`, defaultCode);
 
-export const useEmulatorCoreSnapshot = () =>
-  useStore(
-    `${emulatorId}.core.snapshot`,
-    defaultSnapshot,
-    SnapshotSchema.parse,
-  );
+export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
+
+export const useEmulatorTabLogIsVisible = () =>
+  useStoreBoolean(`${emulatorId}.tab.log.isVisible`, true);
 
 export const useEmulatorTabSnesIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.snes.isVisible`, true);

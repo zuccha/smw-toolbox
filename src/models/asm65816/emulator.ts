@@ -13,12 +13,18 @@ export class Emulator {
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
 
+  public clear() {
+    this._bytes = [];
+    this._core = new Core([]);
+    this._instructions = [];
+    this._errors = [];
+  }
+
   public run(bytes: number[]) {
     this._bytes = bytes.map((byte) => byte & 0xff);
     this._core = new Core(this._bytes);
     this._instructions = [];
     this._errors = [];
-    let instruction: Instruction | undefined;
 
     try {
       while (
@@ -28,7 +34,7 @@ export class Emulator {
       ) {
         const arg = this._arg();
         const opcode = this._get(this._core.PC - PC_offset) as Opcode;
-        instruction = new opcodeToInstruction[opcode](this._core, arg);
+        const instruction = new opcodeToInstruction[opcode](this._core, arg);
         this._instructions.push(instruction);
         instruction.executeAndSnapshot();
       }
@@ -60,12 +66,28 @@ export class Emulator {
     }
   }
 
+  public get instructions(): readonly Instruction[] {
+    return this._instructions;
+  }
+
+  public get errors(): readonly string[] {
+    return this._errors;
+  }
+
+  public get cycles(): number {
+    return this._instructions.reduce((sum, i) => sum + i.cycles, 0);
+  }
+
+  public get length(): number {
+    return this._bytes.length;
+  }
+
   public snapshot(): Core.Snapshot {
     return this._core.snapshot();
   }
 
   public log(): string {
-    const cycles = this._instructions.reduce((sum, i) => sum + i.cycles, 0);
+    const cycles = this.cycles;
     return [
       this._instructions.map((instruction) => instruction.format()).join("\n"),
       this._errors.map((error) => `ERROR > ${error}`).join("\n"),

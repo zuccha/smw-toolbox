@@ -107,8 +107,7 @@ export default function CodeEditor({
         basicSetup={basicSetup}
         extensions={extensions}
         indentWithTab={false}
-        maxHeight="50em"
-        minHeight="25em"
+        height="20em"
         onChange={onChange}
         theme={theme}
         value={value}

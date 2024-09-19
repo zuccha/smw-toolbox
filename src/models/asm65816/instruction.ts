@@ -29,6 +29,14 @@ export abstract class Instruction {
     this._snapshot = this._core.snapshot();
   }
 
+  public get PC(): number {
+    return this._PC;
+  }
+
+  public get snapshot(): Core.Snapshot | undefined {
+    return this._snapshot;
+  }
+
   public get addr(): number {
     switch (this.type) {
       case Instruction.Type.Implied:
@@ -135,11 +143,7 @@ export abstract class Instruction {
     const dp = `DP:${to_hex(this._snapshot.DP, 4)}`;
     const db = `DB:${to_hex(this._snapshot.DB, 2)}`;
 
-    const capitalize = (flag: string, i: number) =>
-      this._snapshot!.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
-    const flags = this._snapshot.flag.e
-      ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
-      : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
+    const flags = this.format_flags();
 
     const cycles = `${this.cycles} cycles`;
     const length = `${this.length} bytes`;
@@ -153,6 +157,16 @@ export abstract class Instruction {
     const addr = this.addr === -1 ? "         " : format_addr(this.addr);
 
     return `${pc} ${text} ${addr}`;
+  }
+
+  public format_flags(): string {
+    if (!this._snapshot) return "";
+
+    const capitalize = (flag: string, i: number) =>
+      this._snapshot!.flags & (1 << (7 - i)) ? flag.toUpperCase() : flag;
+    return this._snapshot.flag.e
+      ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
+      : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
   }
 
   public get formatted_arg(): string {

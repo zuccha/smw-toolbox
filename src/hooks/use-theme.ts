@@ -54,6 +54,7 @@ export function useThemeUpdate(id: string) {
     style.setProperty("--color-background-2", theme.background2);
     style.setProperty("--color-background-3", theme.background3);
     style.setProperty("--color-background-4", theme.background4);
+    style.setProperty("--color-error-1", theme.error1);
     style.setProperty("--color-neutral-1", theme.neutral1);
     style.setProperty("--color-neutral-2", theme.neutral2);
     if (color === ThemeColor.Disco) {
