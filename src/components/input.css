@@ -21,7 +21,9 @@
   background-color: transparent;
   border: none;
   color: var(--color-neutral-1);
+  font-family: var(--font-family-normal);
   font-size: 1em;
+  padding: 0;
 }
 
 .Input > input:focus {
@@ -34,4 +36,10 @@
 
 .Input_Prefix {
   color: var(--color-neutral-2);
+}
+
+.Input.monospace .Input_Prefix,
+.Input.monospace input {
+  font-family: monospace;
+  font-size: 1.15em;
 }

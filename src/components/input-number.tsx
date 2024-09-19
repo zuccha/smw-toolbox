@@ -4,7 +4,7 @@ import { clamp } from "../utils";
 
 export type InputNumberProps = Omit<
   InputProps,
-  "onChange" | "pattern" | "type" | "value"
+  "isMonospace" | "onChange" | "pattern" | "type" | "value"
 > & {
   isInteger?: boolean;
   onChange: (value: number) => number | void;
@@ -35,6 +35,7 @@ export default function InputNumber({
   return (
     <Input
       {...props}
+      isMonospace
       onChange={handleChange}
       type="number"
       pattern={isInteger ? integerPattern : undefined}

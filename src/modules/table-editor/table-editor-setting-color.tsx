@@ -25,8 +25,8 @@ const patterns = {
 };
 
 const prefixes = {
-  [IntegerEncoding.Bin]: "%",
-  [IntegerEncoding.Hex]: "$",
+  [IntegerEncoding.Bin]: "0b",
+  [IntegerEncoding.Hex]: "0x",
 };
 
 const formatInputValue = (value: string): string => value.toUpperCase();
@@ -70,6 +70,7 @@ export default function AppEditorSettingColor() {
         ) : (
           <InputText
             format={formatInputValue}
+            isMonospace
             onChange={handleChangeValueString}
             pattern={patterns[encoding]}
             placeholder="0"

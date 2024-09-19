@@ -1,11 +1,11 @@
-import { useCallback } from "preact/hooks";
+import { useCallback, useLayoutEffect, useState } from "preact/hooks";
 import {
   IntegerEncoding,
   IntegerLength,
   IntegerRadix,
   IntegerUnit,
 } from "../models/integer";
-import { range, toHex } from "../utils";
+import { range, toBin, toDec, toHex } from "../utils";
 import InputText from "./input-text";
 import "./snes-memory.css";
 
@@ -25,12 +25,15 @@ const formatAddress = (baseAddress: number): string =>
 
 const formatInputValue = (value: string): string => value.toUpperCase();
 
+type Selection = { address: number; byte: number; index: number };
+
 export default function SnesMemory({
   baseAddress,
   columnCount = 16,
   memory,
   onChangeAddress,
 }: SnesMemoryProps) {
+  const [selection, setSelection] = useState<Selection | undefined>();
   const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 
   const changeAddressString = useCallback(
@@ -41,6 +44,8 @@ export default function SnesMemory({
     },
     [onChangeAddress],
   );
+
+  useLayoutEffect(() => setSelection(undefined), [memory]);
 
   return (
     <div className="SnesMemory">
@@ -64,24 +69,56 @@ export default function SnesMemory({
             ))}
           </div>
           <div className="SnesMemory_Table_Grid">
-            {memory.map((byte) => (
-              <div>{toHex(byte, 2)}</div>
-            ))}
+            {memory.map((byte, index) => {
+              const isSelected = selection?.index === index;
+              const address = (safeBaseAddress + index) & 0xffffff;
+              return (
+                <div
+                  className={isSelected ? "selected" : undefined}
+                  onClick={() =>
+                    isSelected
+                      ? setSelection(undefined)
+                      : setSelection({ address, byte, index })
+                  }
+                >
+                  {toHex(byte, 2)}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      <div className="SnesMemory_BaseAddress">
-        <span>Base address:</span>
-        <InputText
-          format={formatInputValue}
-          onChange={changeAddressString}
-          pattern={longHexPattern}
-          placeholder="7E0000"
-          prefix="$"
-          size={IntegerLength[IntegerUnit.Long][IntegerEncoding.Hex]}
-          value={formatAddress(baseAddress)}
-        />
+      <div className="SnesMemory_Footer">
+        <div className="SnesMemory_Footer_Group">
+          <div className="SnesMemory_Footer_Label">Base address:</div>
+          <InputText
+            format={formatInputValue}
+            onChange={changeAddressString}
+            pattern={longHexPattern}
+            placeholder="7E0000"
+            prefix="0x"
+            size={IntegerLength[IntegerUnit.Long][IntegerEncoding.Hex]}
+            value={formatAddress(baseAddress)}
+          />
+        </div>
+        {selection && (
+          <div className="SnesMemory_Footer_Group align-items_flex-end">
+            <div className="SnesMemory_Footer_Label">Selected:</div>
+            <div className="SnesMemory_Footer_Selection">
+              <div>{toHex(selection.address, 6)}</div>→
+              <div>
+                <span className="dim">0b&#8203;</span>
+                {toBin(selection.byte, 8)}
+              </div>
+              /<div>{toDec(selection.byte)}</div>/
+              <div>
+                <span className="dim">0x&#8203;</span>
+                {toHex(selection.byte, 2)}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

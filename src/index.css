@@ -19,6 +19,8 @@
   --input-font-size: 0.8em;
   --input-height: 2.35em;
 
+  --font-family-normal: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -73,6 +75,10 @@ kbd {
 
 .align-items_flex-start {
   align-items: flex-start;
+}
+
+.align-items_flex-end {
+  align-items: flex-end;
 }
 
 .justify-content_center {

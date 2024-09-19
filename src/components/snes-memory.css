@@ -5,6 +5,10 @@
   row-gap: 1em;
 }
 
+.SnesMemory .dim {
+  color: var(--color-neutral-2);
+}
+
 .SnesMemory_Table {
   display: flex;
   font-family: monospace;
@@ -45,6 +49,18 @@
 .SnesMemory_Table_Grid > div {
   display: flex;
   justify-content: center;
+}
+
+.SnesMemory_Table_Grid {
+  cursor: pointer;
+}
+
+.SnesMemory_Table_Grid > div:hover {
+  background-color: var(--color-highlight-2);
+}
+
+.SnesMemory_Table_Grid > div.selected {
+  background-color: var(--color-highlight-1);
 }
 
 .SnesMemory_Table_ColIndex,
@@ -91,17 +107,33 @@
   display: none;
 }
 
-.SnesMemory_BaseAddress {
+.SnesMemory_Footer {
   display: flex;
   column-gap: 1em;
+  row-gap: 0.5em;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.SnesMemory_Footer_Group {
+  display: flex;
+  column-gap: 0.5em;
   align-items: center;
 }
 
-.SnesMemory_BaseAddress > span {
+.SnesMemory_Footer_Label {
   font-variant: small-caps;
 }
 
-.SnesMemory_BaseAddress input {
+.SnesMemory_Footer .Input,
+.SnesMemory_Footer .Input input {
   font-family: monospace;
-  font-size: 1.2em;
+  font-size: 1em;
+}
+
+.SnesMemory_Footer_Selection {
+  font-family: monospace;
+  display: flex;
+  align-items: flex-end;
+  column-gap: 0.5em;
 }
