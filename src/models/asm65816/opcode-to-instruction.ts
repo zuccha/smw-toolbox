@@ -18,6 +18,7 @@ import { INC } from "./instructions/inc";
 import { INX } from "./instructions/inx";
 import { INY } from "./instructions/iny";
 import { JMP } from "./instructions/jmp";
+import { JSR } from "./instructions/jsr";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
@@ -151,9 +152,9 @@ export const opcodeToInstruction = {
   [0xdc]: JMP.Absolute_IndirectLong, // JML [addr]
   [0x5c]: JMP.AbsoluteLong, // JML long
 
-  [0x20]: NOP, // JSR addr
-  [0xfc]: NOP, // JSR (addr,x))
-  [0x22]: NOP, // JSL long
+  [0x20]: JSR.Absolute, // JSR addr
+  [0xfc]: JSR.Absolute_X_Indirect, // JSR (addr,x))
+  [0x22]: JSR.AbsoluteLong, // JSL long
 
   [0xa9]: NOP, // LDA #const
   [0xa5]: NOP, // LDA dp
