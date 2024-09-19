@@ -1,12 +1,11 @@
 import { Core } from "./core";
 import { Integer } from "./integer";
+import { InstructionImpl } from "./opcode-to-instruction";
 import { format_addr, pad_r, to_hex } from "./utils";
 
 export abstract class Instruction {
-  public abstract get name(): string;
-  public abstract get cycles(): number;
-  public abstract get length(): number;
-  public abstract get type(): Instruction.Type;
+  public static cyclesModifier = 0;
+  public static lengthModifier = 0;
 
   protected _core: Core;
   protected _arg: Integer;
@@ -35,6 +34,36 @@ export abstract class Instruction {
 
   public get snapshot(): Core.Snapshot | undefined {
     return this._snapshot;
+  }
+
+  public get mnemonic(): string {
+    return (<InstructionImpl>this.constructor).mnemonic;
+  }
+
+  public get type(): Instruction.Type {
+    return (<InstructionImpl>this.constructor).type;
+  }
+
+  public get cycles(): number {
+    const modifier: number = (<InstructionImpl>this.constructor).cyclesModifier;
+    let cycles: number = (<InstructionImpl>this.constructor).baseCycles;
+    if (modifier & minus_m) cycles -= this._core.m;
+    if (modifier & minus_2m) cycles -= 2 * this._core.m;
+    if (modifier & minus_x) cycles -= this._core.x;
+    if (modifier & plus_1_if_dp_low_is_zero) cycles += this._core.DP_low;
+    if (modifier & plus_1_if_index_x_crosses_page)
+      cycles += this._core.X_cross(this.addr);
+    if (modifier & plus_1_if_index_y_crosses_page)
+      cycles += this._core.Y_cross(this.addr);
+    return cycles;
+  }
+
+  public get length(): number {
+    const modifier: number = (<InstructionImpl>this.constructor).lengthModifier;
+    let length: number = (<InstructionImpl>this.constructor).baseLength;
+    if (modifier & minus_m) length -= this._core.m;
+    if (modifier & minus_x) length -= this._core.x;
+    return length;
   }
 
   public get addr(): number {
@@ -87,47 +116,47 @@ export abstract class Instruction {
   public get text(): string {
     switch (this.type) {
       case Instruction.Type.Implied:
-        return this.name;
+        return this.mnemonic;
       case Instruction.Type.Accumulator:
-        return `${this.name} A`;
+        return `${this.mnemonic} A`;
       case Instruction.Type.Immediate:
-        return `${this.name} #${this.formatted_arg}`;
+        return `${this.mnemonic} #${this.formatted_arg}`;
       case Instruction.Type.Direct:
-        return `${this.name} ${this.formatted_arg}`;
+        return `${this.mnemonic} ${this.formatted_arg}`;
       case Instruction.Type.Direct_X:
-        return `${this.name} ${this.formatted_arg},x`;
+        return `${this.mnemonic} ${this.formatted_arg},x`;
       case Instruction.Type.Direct_Y:
-        return `${this.name} ${this.formatted_arg},y`;
+        return `${this.mnemonic} ${this.formatted_arg},y`;
       case Instruction.Type.Direct_Indirect:
-        return `${this.name} (${this.formatted_arg})`;
+        return `${this.mnemonic} (${this.formatted_arg})`;
       case Instruction.Type.Direct_X_Indirect:
-        return `${this.name} (${this.formatted_arg},x)`;
+        return `${this.mnemonic} (${this.formatted_arg},x)`;
       case Instruction.Type.Direct_Indirect_Y:
-        return `${this.name} (${this.formatted_arg}),y`;
+        return `${this.mnemonic} (${this.formatted_arg}),y`;
       case Instruction.Type.Direct_IndirectLong:
-        return `${this.name} [${this.formatted_arg}]`;
+        return `${this.mnemonic} [${this.formatted_arg}]`;
       case Instruction.Type.Direct_IndirectLong_Y:
-        return `${this.name} [${this.formatted_arg}],y`;
+        return `${this.mnemonic} [${this.formatted_arg}],y`;
       case Instruction.Type.Absolute:
-        return `${this.name} ${this.formatted_arg}`;
+        return `${this.mnemonic} ${this.formatted_arg}`;
       case Instruction.Type.Absolute_X:
-        return `${this.name} ${this.formatted_arg},x`;
+        return `${this.mnemonic} ${this.formatted_arg},x`;
       case Instruction.Type.Absolute_Y:
-        return `${this.name} ${this.formatted_arg},y`;
+        return `${this.mnemonic} ${this.formatted_arg},y`;
       case Instruction.Type.Absolute_Indirect:
-        return `${this.name} (${this.formatted_arg})`;
+        return `${this.mnemonic} (${this.formatted_arg})`;
       case Instruction.Type.Absolute_X_Indirect:
-        return `${this.name} (${this.formatted_arg},x)`;
+        return `${this.mnemonic} (${this.formatted_arg},x)`;
       case Instruction.Type.Absolute_IndirectLong:
-        return `${this.name} [${this.formatted_arg}]`;
+        return `${this.mnemonic} [${this.formatted_arg}]`;
       case Instruction.Type.AbsoluteLong:
-        return `${this.name} ${this.formatted_arg}`;
+        return `${this.mnemonic} ${this.formatted_arg}`;
       case Instruction.Type.AbsoluteLong_X:
-        return `${this.name} ${this.formatted_arg},x`;
+        return `${this.mnemonic} ${this.formatted_arg},x`;
       case Instruction.Type.StackRelative:
-        return `${this.name} ${this.formatted_arg},s`;
+        return `${this.mnemonic} ${this.formatted_arg},s`;
       case Instruction.Type.StackRelative_Indirect_Y:
-        return `${this.name} (${this.formatted_arg},s),y`;
+        return `${this.mnemonic} (${this.formatted_arg},s),y`;
     }
   }
 
@@ -203,3 +232,10 @@ export namespace Instruction {
     StackRelative_Indirect_Y,
   }
 }
+
+export const minus_m = 1;
+export const minus_2m = 2;
+export const minus_x = 4;
+export const plus_1_if_dp_low_is_zero = 8;
+export const plus_1_if_index_x_crosses_page = 16;
+export const plus_1_if_index_y_crosses_page = 32;

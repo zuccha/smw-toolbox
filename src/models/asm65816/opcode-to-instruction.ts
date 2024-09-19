@@ -111,7 +111,7 @@ export const opcodeToInstruction = {
   [0xc4]: CPY.Direct, // CPY dp
   [0xcc]: CPY.Absolute, // CPY addr
 
-  [0x3a]: DEC.Implied, // DEC A
+  [0x3a]: DEC.Accumulator, // DEC A
   [0xc6]: DEC.Direct, // DEC dp
   [0xd6]: DEC.Direct_X, // DEC dp,x
   [0xce]: DEC.Absolute, // DEC addr
@@ -136,7 +136,7 @@ export const opcodeToInstruction = {
   [0x43]: EOR.StackRelative, // EOR sr,s
   [0x53]: EOR.StackRelative_Indirect_Y, // EOR (sr,s),y
 
-  [0x1a]: INC.Implied, // INC A
+  [0x1a]: INC.Accumulator, // INC A
   [0xe6]: INC.Direct, // INC dp
   [0xf6]: INC.Direct_X, // INC dp,x
   [0xee]: INC.Absolute, // INC addr
@@ -327,3 +327,5 @@ export const opcodeToInstruction = {
 };
 
 export type Opcode = keyof typeof opcodeToInstruction;
+export type InstructionImpl =
+  (typeof opcodeToInstruction)[keyof typeof opcodeToInstruction];

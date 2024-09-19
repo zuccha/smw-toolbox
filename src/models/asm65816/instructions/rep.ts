@@ -2,14 +2,10 @@ import { Core } from "../core";
 import { Instruction } from "../instruction";
 
 export class REP extends Instruction {
-  // prettier-ignore
-  public get name(): string { return "REP"; }
-  // prettier-ignore
-  public get type(): Instruction.Type { return Instruction.Type.Immediate; }
-  // prettier-ignore
-  public get cycles(): number { return 3; }
-  // prettier-ignore
-  public get length(): number { return 2; }
+  public static mnemonic = "REP";
+  public static type = Instruction.Type.Immediate;
+  public static baseCycles = 3;
+  public static baseLength = 2;
 
   public execute(): void {
     this._core.PC = this._core.PC + this.length;

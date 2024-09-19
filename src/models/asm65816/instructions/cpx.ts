@@ -1,8 +1,7 @@
-import { Instruction } from "../instruction";
+import { Instruction, minus_x, plus_1_if_dp_low_is_zero } from "../instruction";
 
 export abstract class CPX extends Instruction {
-  // prettier-ignore
-  public get name(): string { return "CPX"; }
+  public static mnemonic = "CPX";
 
   protected cpx(value: number): void {
     this._core.PC = this._core.PC + this.length;
@@ -18,12 +17,11 @@ export abstract class CPX extends Instruction {
 
 export namespace CPX {
   export class Immediate extends CPX {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Implied; }
-    // prettier-ignore
-    public get cycles(): number { return 3 - this._core.x; }
-    // prettier-ignore
-    public get length(): number { return 3 - this._core.x; }
+    public static type = Instruction.Type.Immediate;
+    public static baseCycles = 3;
+    public static cyclesModifier = minus_x;
+    public static baseLength = 3;
+    public static lengthModifier = minus_x;
 
     public execute(): void {
       this.cpx(this._core.x ? this._arg.b : this._arg.w);
@@ -31,20 +29,16 @@ export namespace CPX {
   }
 
   export class Direct extends CPX {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Direct; }
-    // prettier-ignore
-    public get cycles(): number { return 4 - this._core.x + this._core.DP_low; }
-    // prettier-ignore
-    public get length(): number { return 2; }
+    public static type = Instruction.Type.Direct;
+    public static baseCycles = 4;
+    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static baseLength = 2;
   }
 
   export class Absolute extends CPX {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Absolute; }
-    // prettier-ignore
-    public get cycles(): number { return 5 - this._core.x; }
-    // prettier-ignore
-    public get length(): number { return 3; }
+    public static type = Instruction.Type.Absolute;
+    public static baseCycles = 5;
+    public static cyclesModifier = minus_x;
+    public static baseLength = 3;
   }
 }

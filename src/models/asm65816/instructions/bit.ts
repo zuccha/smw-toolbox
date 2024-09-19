@@ -1,10 +1,14 @@
 import { Core } from "../core";
-import { Instruction } from "../instruction";
+import {
+  Instruction,
+  minus_m,
+  plus_1_if_dp_low_is_zero,
+  plus_1_if_index_x_crosses_page,
+} from "../instruction";
 import { Integer } from "../integer";
 
 export abstract class BIT extends Instruction {
-  // prettier-ignore
-  public get name(): string { return "BIT"; }
+  public static mnemonic = "BIT";
 
   protected bit(value: number): number {
     this._core.PC = this._core.PC + this.length;
@@ -32,12 +36,11 @@ export abstract class BIT_Addr extends BIT {
 
 export namespace BIT {
   export class Immediate extends BIT {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Immediate; }
-    // prettier-ignore
-    public get cycles(): number { return 3 - this._core.m; }
-    // prettier-ignore
-    public get length(): number { return 3 - this._core.m; }
+    public static type = Instruction.Type.Immediate;
+    public static baseCycles = 3;
+    public static cyclesModifier = minus_m;
+    public static baseLength = 3;
+    public static lengthModifier = minus_m;
 
     public execute(): void {
       const result = this._core.A & (this._core.m ? this._arg.b : this._arg.w);
@@ -46,38 +49,30 @@ export namespace BIT {
   }
 
   export class Direct extends BIT_Addr {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Direct; }
-    // prettier-ignore
-    public get cycles(): number { return 4 - this._core.m + this._core.DP_low; }
-    // prettier-ignore
-    public get length(): number { return 2; }
+    public static type = Instruction.Type.Direct;
+    public static baseCycles = 4;
+    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static baseLength = 2;
   }
 
   export class Direct_X extends BIT_Addr {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Direct_X; }
-    // prettier-ignore
-    public get cycles(): number { return 5 - this._core.m * 2 + this._core.DP_low; }
-    // prettier-ignore
-    public get length(): number { return 2; }
+    public static type = Instruction.Type.Direct_X;
+    public static baseCycles = 5;
+    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static baseLength = 2;
   }
 
   export class Absolute extends BIT_Addr {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Absolute; }
-    // prettier-ignore
-    public get cycles(): number { return 5 - this._core.m; }
-    // prettier-ignore
-    public get length(): number { return 3; }
+    public static type = Instruction.Type.Absolute;
+    public static baseCycles = 5;
+    public static cyclesModifier = minus_m;
+    public static baseLength = 3;
   }
 
   export class Absolute_X extends BIT_Addr {
-    // prettier-ignore
-    public get type(): Instruction.Type { return Instruction.Type.Absolute_X; }
-    // prettier-ignore
-    public get cycles(): number { return 5 - this._core.m + this._core.X_cross(this._core.absolute_x(this._arg)); }
-    // prettier-ignore
-    public get length(): number { return 3; }
+    public static type = Instruction.Type.Absolute_X;
+    public static baseCycles = 5;
+    public static cyclesModifier = minus_m | plus_1_if_index_x_crosses_page;
+    public static baseLength = 3;
   }
 }
