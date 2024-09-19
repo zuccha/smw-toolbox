@@ -51,7 +51,7 @@ export default function SnesLog({
       <div className="SnesLog_TableBody">
         <div className="SnesLog_TableBody_Instructions">
           {instructions.map((instruction) => (
-            <>
+            <div className="SnesLog_TableBody_Instruction">
               <span>{toHex(instruction.PC, 6)}</span>
               <span>{padR(instruction.text, 15, " ")}</span>
               {instruction.snapshot ? (
@@ -78,7 +78,7 @@ export default function SnesLog({
               ) : (
                 <span class="error">*** Error ***</span>
               )}
-            </>
+            </div>
           ))}
         </div>
       </div>
