@@ -1,11 +1,13 @@
 import { useCallback } from "preact/hooks";
 import useSignal from "../../hooks/use-signal";
-import { Asm65168ProgramFromCode } from "../../models/asm65816-program";
 import {
   emulator,
   useEmulatorCode,
   useEmulatorCompilationErrors,
 } from "./store";
+import Assembler from "../../extra/asm65816/assembler/assembler";
+
+const assembler = new Assembler();
 
 export default function useEmulator() {
   const [code] = useEmulatorCode();
@@ -15,15 +17,18 @@ export default function useEmulator() {
   const [notifyEmulator, renderCount] = useSignal("emulator");
 
   const run = useCallback(() => {
-    const program = Asm65168ProgramFromCode(code.trimEnd());
-    emulator.reset(program.bytes);
-    if (program.errors.length === 0) {
+    assembler.code = code.trimEnd();
+    assembler.assemble();
+    emulator.reset(assembler.bytes);
+    if (assembler.errors.length === 0) {
       emulator.run();
       notifyEmulator();
       setCompilationErrors([]);
     } else {
       setCompilationErrors(
-        program.errors.map((error) => `Line ${error.line}: ${error.message}.`),
+        assembler.errors.map(
+          (error) => `Line ${error.range.line}: ${error.message}`,
+        ),
       );
     }
   }, [code, notifyEmulator, setCompilationErrors]);

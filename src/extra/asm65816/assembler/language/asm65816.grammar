@@ -37,6 +37,8 @@ Instruction { Opcode mode? }
   ConstByte { "#" byteBin | "#" byteHex | "#" byteDec }
   ConstWord { "#" wordBin | "#" wordHex | "#" wordDec }
 
+  MoveBanks { Byte "," Byte }
+
   A { $[aA] }
 
   X { "," $[xX] }
@@ -71,36 +73,38 @@ Instruction { Opcode mode? }
   }
 }
 
-Mode_Absolute                 { Word }
-Mode_AbsoluteLong             { Long }
-Mode_AbsoluteLong_X           { Long X }
-Mode_Absolute_Indirect        { "(" Word ")" }
-Mode_Absolute_IndirectLong    { "[" Word "]" }
-Mode_Absolute_X               { Word X }
-Mode_Absolute_X_Indirect      { "(" Word X ")" }
-Mode_Absolute_Y               { Word Y }
-Mode_Accumulator              { A }
-Mode_BlockMove                { Byte "," Byte }
-Mode_Direct                   { Byte }
-Mode_Direct_Indirect          { "(" Byte ")" }
-Mode_Direct_IndirectLong      { "[" Byte "]" }
-Mode_Direct_IndirectLong_Y    { "[" Byte "]" Y }
-Mode_Direct_Indirect_Y        { "(" Byte ")" Y }
-Mode_Direct_X                 { Byte X }
-Mode_Direct_X_Indirect        { "(" Byte X ")" }
-Mode_Direct_Y                 { Byte Y }
-Mode_Immediate                { ConstByte | ConstWord }
-Mode_StackRelative            { Byte S }
-Mode_StackRelative_Indirect_Y { "(" Byte S ")" Y }
+Mode_Accumulator               { A }
+Mode_Immediate_Byte            { ConstByte }
+Mode_Immediate_Word            { ConstWord }
+Mode_DirectPage                { Byte }
+Mode_DirectPage_X              { Byte X }
+Mode_DirectPage_Y              { Byte Y }
+Mode_DirectPage_Indirect       { "(" Byte ")" }
+Mode_DirectPage_X_Indirect     { "(" Byte X ")" }
+Mode_DirectPage_Indirect_Y     { "(" Byte ")" Y }
+Mode_DirectPage_IndirectLong   { "[" Byte "]" }
+Mode_DirectPage_IndirectLong_Y { "[" Byte "]" Y }
+Mode_Absolute                  { Word }
+Mode_Absolute_X                { Word X }
+Mode_Absolute_Y                { Word Y }
+Mode_Absolute_Indirect         { "(" Word ")" }
+Mode_Absolute_X_Indirect       { "(" Word X ")" }
+Mode_Absolute_IndirectLong     { "[" Word "]" }
+Mode_AbsoluteLong              { Long }
+Mode_AbsoluteLong_X            { Long X }
+Mode_StackRelative             { Byte S }
+Mode_StackRelative_Indirect_Y  { "(" Byte S ")" Y }
+Mode_BlockMove                 { MoveBanks }
 
 mode {
-  Mode_Absolute | Mode_AbsoluteLong | Mode_AbsoluteLong_X
-| Mode_Absolute_Indirect | Mode_Absolute_IndirectLong | Mode_Absolute_X
-| Mode_Absolute_X_Indirect | Mode_Absolute_Y | Mode_Accumulator | Mode_BlockMove
-| Mode_Direct | Mode_Direct_Indirect | Mode_Direct_IndirectLong
-| Mode_Direct_IndirectLong_Y | Mode_Direct_Indirect_Y | Mode_Direct_X
-| Mode_Direct_X_Indirect | Mode_Direct_Y | Mode_Immediate | Mode_StackRelative
-| Mode_StackRelative_Indirect_Y
+  Mode_Accumulator | Mode_Immediate_Byte | Mode_Immediate_Word | Mode_DirectPage
+| Mode_DirectPage_X | Mode_DirectPage_Y | Mode_DirectPage_Indirect
+| Mode_DirectPage_X_Indirect | Mode_DirectPage_Indirect_Y
+| Mode_DirectPage_IndirectLong | Mode_DirectPage_IndirectLong_Y | Mode_Absolute
+| Mode_Absolute_X | Mode_Absolute_Y | Mode_Absolute_Indirect
+| Mode_Absolute_X_Indirect | Mode_Absolute_IndirectLong | Mode_AbsoluteLong
+| Mode_AbsoluteLong_X | Mode_StackRelative | Mode_StackRelative_Indirect_Y
+| Mode_BlockMove
 }
 
 @detectDelim

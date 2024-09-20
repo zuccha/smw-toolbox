@@ -2,7 +2,8 @@ import { PlayIcon } from "lucide-preact";
 import { useMemo } from "preact/hooks";
 import CodeEditor from "../../components/code-editor";
 import SectionStatic from "../../components/section-static";
-import asm65816, { asm65816Linter } from "../../languages/asm65816";
+import asm65816 from "../../extra/asm65816/assembler/language/asm65816";
+import asm65816Linter from "../../extra/asm65816/assembler/language/asm65816-linter";
 import useEmulator from "./use-emulator";
 import { useEmulatorCode } from "./store";
 
