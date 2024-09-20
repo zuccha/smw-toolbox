@@ -2,8 +2,8 @@ import { useState, useLayoutEffect, useCallback } from "preact/hooks";
 
 const listeners = new Map<string, Set<() => void>>();
 
-export default function useSignal(id: string): () => void {
-  const [, setRenderCount] = useState(0);
+export default function useSignal(id: string): [() => void, number] {
+  const [renderCount, setRenderCount] = useState(0);
 
   useLayoutEffect(() => {
     const callback = () => setRenderCount((count) => count + 1);
@@ -22,5 +22,5 @@ export default function useSignal(id: string): () => void {
     listeners.get(id)?.forEach((callback) => callback());
   }, [id]);
 
-  return notify;
+  return [notify, renderCount];
 }

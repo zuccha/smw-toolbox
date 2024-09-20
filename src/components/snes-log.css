@@ -14,6 +14,11 @@
   white-space: pre;
 }
 
+.SnesLog_TableHeader > *,
+.SnesLog_TableBody_Instruction > * {
+  text-align: center;
+}
+
 .SnesLog_TableHeader {
   font-weight: bold;
 }

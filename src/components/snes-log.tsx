@@ -1,4 +1,4 @@
-import { Instruction } from "../models/asm65816/instruction";
+import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { padR, toHex } from "../utils";
 import Tooltip from "./tooltip";
 import "./snes-log.css";
@@ -36,7 +36,7 @@ export default function SnesLog({
     <div className="SnesLog">
       <div className="SnesLog_TableHeader">
         <Tooltip tooltip="Program Counter">{"PC    "}</Tooltip>
-        <div>{"Instruction    "}</div>
+        <div>{"Instruction  "}</div>
         <Tooltip tooltip="Accumulator">{"A   "}</Tooltip>
         <Tooltip tooltip="X index">{"X   "}</Tooltip>
         <Tooltip tooltip="Y index">{"Y   "}</Tooltip>
@@ -52,31 +52,31 @@ export default function SnesLog({
         <div className="SnesLog_TableBody_Instructions">
           {instructions.map((instruction) => (
             <div className="SnesLog_TableBody_Instruction">
-              <span>{toHex(instruction.PC, 6)}</span>
-              <span>{padR(instruction.text, 15, " ")}</span>
+              <div>{toHex(instruction.pc, 6)}</div>
+              <div>{padR(instruction.text_with_value, 13, " ")}</div>
               {instruction.snapshot ? (
                 <>
                   <Register
-                    shouldDimHighByte={!!instruction.snapshot.flag.m}
-                    value={instruction.snapshot.A}
+                    shouldDimHighByte={!!instruction.snapshot.flag_m}
+                    value={instruction.snapshot.a}
                   />
                   <Register
-                    shouldDimHighByte={!!instruction.snapshot.flag.x}
-                    value={instruction.snapshot.X}
+                    shouldDimHighByte={!!instruction.snapshot.flag_x}
+                    value={instruction.snapshot.x}
                   />
                   <Register
-                    shouldDimHighByte={!!instruction.snapshot.flag.x}
-                    value={instruction.snapshot.Y}
+                    shouldDimHighByte={!!instruction.snapshot.flag_x}
+                    value={instruction.snapshot.y}
                   />
-                  <span>{toHex(instruction.snapshot.SP, 4)}</span>
-                  <span>{toHex(instruction.snapshot.DP, 4)}</span>
-                  <span>{toHex(instruction.snapshot.DB, 2)}</span>
-                  <span>{instruction.format_flags()}</span>
-                  <span>{instruction.cycles}</span>
-                  <span>{instruction.length}</span>
+                  <div>{toHex(instruction.snapshot.sp, 4)}</div>
+                  <div>{toHex(instruction.snapshot.dp, 4)}</div>
+                  <div>{toHex(instruction.snapshot.db, 2)}</div>
+                  <div>{instruction.formatted_flags}</div>
+                  <div>{instruction.cycles}</div>
+                  <div>{instruction.length}</div>
                 </>
               ) : (
-                <span class="error">*** Error ***</span>
+                <div class="error">*** Error ***</div>
               )}
             </div>
           ))}

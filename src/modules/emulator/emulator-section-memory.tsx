@@ -3,7 +3,6 @@ import SectionCollapsible from "../../components/section-collapsible";
 import SnesMemory from "../../components/snes-memory";
 import { range } from "../../utils";
 import {
-  emulator,
   useEmulatorMemoryBaseAddress,
   useEmulatorTabSnesIsVisible,
 } from "./store";
@@ -12,23 +11,16 @@ import useEmulator from "./use-emulator";
 const memorySize = 8 * 16;
 
 export default function EmulatorSectionMemory() {
-  const { snapshot } = useEmulator();
+  const { readByte } = useEmulator();
   const [baseAddress, setBaseAddress] = useEmulatorMemoryBaseAddress();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
   const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 
   const memory = useMemo(
-    () =>
-      range(memorySize).map((i) => {
-        try {
-          return emulator.get_byte((safeBaseAddress + i) & 0xffffff);
-        } catch {
-          return 0;
-        }
-      }),
-    [safeBaseAddress, snapshot],
-  ); // Update when base address or snapshot changes.
+    () => range(memorySize).map((i) => readByte(safeBaseAddress + i)),
+    [safeBaseAddress, readByte],
+  );
 
   return (
     <SectionCollapsible

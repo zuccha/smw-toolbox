@@ -12,13 +12,13 @@ export default function useEmulator() {
   const [compilationErrors, setCompilationErrors] =
     useEmulatorCompilationErrors();
 
-  const notifyEmulator = useSignal("emulator");
+  const [notifyEmulator, renderCount] = useSignal("emulator");
 
   const run = useCallback(() => {
-    emulator.clear();
     const program = Asm65168ProgramFromCode(code.trimEnd());
+    emulator.reset(program.bytes);
     if (program.errors.length === 0) {
-      emulator.run(program.bytes);
+      emulator.run();
       notifyEmulator();
       setCompilationErrors([]);
     } else {
@@ -28,13 +28,18 @@ export default function useEmulator() {
     }
   }, [code, notifyEmulator, setCompilationErrors]);
 
+  const readByte = useCallback(
+    (addr: number) => emulator.read_byte(addr),
+    [renderCount],
+  );
+
   return {
     compilationErrors,
     cycles: emulator.cycles,
     executionErrors: emulator.errors,
     instructions: emulator.instructions,
     length: emulator.length,
+    readByte,
     run,
-    snapshot: emulator.snapshot(),
   };
 }
