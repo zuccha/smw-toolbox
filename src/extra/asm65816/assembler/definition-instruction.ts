@@ -57,7 +57,7 @@ export default class Definition_Instruction extends Definition {
           return new Instruction_Value_Long(opcode, range, this.arg!);
       }
 
-      return `Instruction has invalid size ${mode_info.size}.`;
+      return `Instruction has invalid size ${mode_info.size + 1}.`;
     }
 
     const label = this.label;

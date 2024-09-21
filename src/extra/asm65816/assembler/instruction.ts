@@ -114,7 +114,7 @@ export class Instruction_Label_Relative extends Instruction_Label {
   public bytes = (labels: Map<string, number>): number[] | string => {
     const addr = labels.get(this._label);
     if (addr === undefined) return `Label "${this._label}" is not defined.`;
-    const offset = addr - this._pc + 2;
+    const offset = addr - (this._pc + 2);
     if (offset < -128 || 127 < offset)
       return `Label "${this._label}" is out of reach.`;
     return [this.opcode, l(offset)];
@@ -133,7 +133,7 @@ export class Instruction_Label_RelativeLong extends Instruction_Label {
   public bytes = (labels: Map<string, number>): number[] | string => {
     const addr = labels.get(this._label);
     if (addr === undefined) return `Label "${this._label}" is not defined.`;
-    const offset = addr - this._pc + 3;
+    const offset = addr - (this._pc + 3);
     if (offset < -32768 || 32767 < offset)
       return `Label "${this._label}" is out of reach.`;
     return [this.opcode, l(offset & 0xffff), h(offset & 0xffff)];

@@ -3,8 +3,11 @@
 @skip { Comment | space }
 
 line {
-  Instruction (":" Instruction)* (newline | eof) | newline
+  (lineInstruction | lineLabelDefinition) (newline | eof) | newline
 }
+
+lineInstruction { Instruction (":" Instruction)* }
+lineLabelDefinition { LabelDefinition }
 
 Instruction { Opcode mode? }
 
@@ -29,6 +32,12 @@ Instruction { Opcode mode? }
   longBin { "%" b b b b b b b b b b b b b b b b b b b b b b b b }
   longDec { d d d d d d | d d d d d d d | d d d d d d d d }
   longHex { "$" h h h h h h }
+
+  label { "." $[_A-Za-z] ($[_A-Za-z0-9])* }
+
+  LabelDefinition { label ":" }
+
+  LabelUsage { label }
 
   Byte { byteBin | byteHex | byteDec }
   Word { wordBin | wordHex | wordDec }
@@ -95,6 +104,7 @@ Mode_AbsoluteLong_X            { Long X }
 Mode_StackRelative             { Byte S }
 Mode_StackRelative_Indirect_Y  { "(" Byte S ")" Y }
 Mode_BlockMove                 { MoveBanks }
+Mode_Label                     { LabelUsage }
 
 mode {
   Mode_Accumulator | Mode_Immediate_Byte | Mode_Immediate_Word | Mode_DirectPage
@@ -104,7 +114,7 @@ mode {
 | Mode_Absolute_X | Mode_Absolute_Y | Mode_Absolute_Indirect
 | Mode_Absolute_X_Indirect | Mode_Absolute_IndirectLong | Mode_AbsoluteLong
 | Mode_AbsoluteLong_X | Mode_StackRelative | Mode_StackRelative_Indirect_Y
-| Mode_BlockMove
+| Mode_BlockMove | Mode_Label
 }
 
 @detectDelim

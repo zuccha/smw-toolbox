@@ -10,17 +10,17 @@ export default class Processor {
   // Registers
   //----------------------------------------------------------------------------
 
-  public a = new Value(0);
-  public x = new Value(0);
-  public y = new Value(0);
+  public readonly a = new Value(0);
+  public readonly x = new Value(0);
+  public readonly y = new Value(0);
 
-  public db = new Value(0);
+  public readonly db = new Value(0);
 
-  public dp = new Value(0);
-  public sp = new Value(0x01fc);
+  public readonly dp = new Value(0);
+  public readonly sp = new Value(0x01fc);
 
-  public pb = new Value(0);
-  public pc = new Value(0x8000);
+  public readonly pb = new Value(0);
+  public readonly pc = new Value(0x8000);
 
   public get_a(): number {
     return this._flag_m ? this.a.byte : this.a.word;

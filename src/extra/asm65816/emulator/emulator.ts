@@ -84,7 +84,7 @@ export default class Emulator {
       this._errors.push(message);
     }
 
-    if (this._instructions.length > this._max_instructions) {
+    if (this._instructions.length >= this._max_instructions) {
       const message = `Reached the maximum amount of instructions (${this._max_instructions}).`;
       this._errors.push(message);
     }

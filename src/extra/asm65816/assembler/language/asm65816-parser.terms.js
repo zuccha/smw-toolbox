@@ -35,4 +35,7 @@ export const
   S = 37,
   Mode_StackRelative_Indirect_Y = 38,
   Mode_BlockMove = 39,
-  MoveBanks = 40
+  MoveBanks = 40,
+  Mode_Label = 41,
+  LabelUsage = 42,
+  LabelDefinition = 43

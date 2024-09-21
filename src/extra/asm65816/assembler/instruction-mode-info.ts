@@ -30,5 +30,5 @@ export const instruction_mode_to_instruction_mode_info: Record<
   StackRelative: /*              */ { size: 1, label: "sr,s" /*     */ },
   StackRelative_Indirect_Y: /*   */ { size: 1, label: "(sr,s),y" /* */ },
   BlockMove: /*                  */ { size: 2, label: "src:dest" /* */ },
-  Label: /*                      */ { size: 1, label: "src:dest" /* */ },
+  Label: /*                      */ { size: 1, label: "label" /*    */ },
 };

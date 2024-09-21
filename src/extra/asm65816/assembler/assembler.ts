@@ -34,6 +34,11 @@ export default class Assembler {
     let instruction: Definition_Instruction | undefined;
     const definitions: Definition[] = [];
 
+    const pushInstruction = () => {
+      if (instruction) definitions.push(instruction);
+      instruction = undefined;
+    };
+
     while (cursor.next()) {
       const line = text.lineAt(cursor.from).number;
       const value = this.code.slice(cursor.from, cursor.to);
@@ -50,7 +55,7 @@ export default class Assembler {
       }
 
       if (cursor.type.name === "Instruction") {
-        if (instruction) definitions.push(instruction);
+        pushInstruction();
         const range = { from: cursor.from, to: cursor.to, line };
         instruction = new Definition_Instruction(range);
         continue;
@@ -111,7 +116,7 @@ export default class Assembler {
         continue;
       }
 
-      if (cursor.type.name == "Label") {
+      if (cursor.type.name == "LabelUsage") {
         if (!instruction) error(`Arg (label): missing instruction builder.`);
         else if (instruction.arg) error(`Arg (label): arg is already defined.`);
         else instruction.label = value;
@@ -128,14 +133,15 @@ export default class Assembler {
       }
 
       if (cursor.type.name === "LabelDefinition") {
-        if (instruction) definitions.push(instruction);
+        pushInstruction();
         const range = { from: cursor.from, to: cursor.to, line };
-        definitions.push(new Definition_Label(value, range));
+        const label = value.substring(0, value.length - 1);
+        definitions.push(new Definition_Label(label, range));
         continue;
       }
     }
 
-    if (instruction) definitions.push(instruction);
+    pushInstruction();
 
     return definitions;
   }

@@ -98,7 +98,7 @@ export class Value {
   }
 
   public format_long(prefix = ""): string {
-    return to_hex(this.byte, 6, prefix);
+    return to_hex(this.long, 6, prefix);
   }
 
   public format_page(prefix = ""): string {

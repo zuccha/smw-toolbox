@@ -15,7 +15,6 @@ export abstract class BXX_Near extends BXX {
   public static mode = InstructionMode.Offset;
 
   public static base_cycles = 2;
-  public static baseLength = 2;
 
   public get cycles(): number {
     return this._branch_taken()
@@ -32,7 +31,7 @@ export abstract class BXX_Near extends BXX {
   }
 
   public execute_effect(): void {
-    if (this._branch_taken()) this.p.pc = this.addr_relative_to_bank;
+    if (this._branch_taken()) this.p.pc.word = this.addr_relative_to_bank.word;
   }
 }
 
