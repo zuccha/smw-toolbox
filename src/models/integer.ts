@@ -99,6 +99,12 @@ export function hexToDigit(hex: string): number {
 //==============================================================================
 
 export const IntegerPattern = {
+  [IntegerEncoding.Bin]: /^[0-1]*$/,
+  [IntegerEncoding.Dec]: /^[0-9]*$/,
+  [IntegerEncoding.Hex]: /^[0-9a-fA-F]*$/,
+} as const;
+
+export const IntegerDigitPattern = {
   [IntegerEncoding.Bin]: /^[0-1]$/,
   [IntegerEncoding.Dec]: /^[0-9]$/,
   [IntegerEncoding.Hex]: /^[0-9a-fA-F]$/,
@@ -108,7 +114,7 @@ export function isValidIntegerDigit(
   digit: string,
   encoding: IntegerEncoding,
 ): boolean {
-  return IntegerPattern[encoding].test(digit);
+  return IntegerDigitPattern[encoding].test(digit);
 }
 
 //==============================================================================
@@ -147,10 +153,16 @@ export const IntegerRadix = {
 // Prefix
 //==============================================================================
 
-export const IntegerPrefix = {
+export const IntegerPrefixCode = {
   [IntegerEncoding.Bin]: "%",
   [IntegerEncoding.Dec]: "",
   [IntegerEncoding.Hex]: "$",
+} as const;
+
+export const IntegerPrefixText = {
+  [IntegerEncoding.Bin]: "0b",
+  [IntegerEncoding.Dec]: "",
+  [IntegerEncoding.Hex]: "0x",
 } as const;
 
 //==============================================================================
@@ -192,9 +204,9 @@ const deps: Deps = methodDeps;
 //==============================================================================
 
 function extractEncoding(integerString: string): [IntegerEncoding, string] {
-  if (integerString.startsWith(IntegerPrefix[IntegerEncoding.Bin]))
+  if (integerString.startsWith(IntegerPrefixCode[IntegerEncoding.Bin]))
     return [IntegerEncoding.Bin, integerString.substring(1)];
-  if (integerString.startsWith(IntegerPrefix[IntegerEncoding.Hex]))
+  if (integerString.startsWith(IntegerPrefixCode[IntegerEncoding.Hex]))
     return [IntegerEncoding.Hex, integerString.substring(1)];
   return [IntegerEncoding.Dec, integerString];
 }
@@ -257,7 +269,7 @@ export function IntegerToString(
   const signedString = signed.toString(radix).toUpperCase();
   const paddedString = padL(signedString.replace("-", ""), length, "0");
   const prefixedString = shouldIncludePrefix
-    ? `${IntegerPrefix[encoding]}${paddedString}`
+    ? `${IntegerPrefixCode[encoding]}${paddedString}`
     : paddedString;
   return signed < 0 ? `-${prefixedString}` : prefixedString;
 }

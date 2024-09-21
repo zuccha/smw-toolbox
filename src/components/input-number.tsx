@@ -35,7 +35,7 @@ export default function InputNumber({
   return (
     <Input
       {...props}
-      isMonospace
+      monospace
       onChange={handleChange}
       type="number"
       pattern={isInteger ? integerPattern : undefined}

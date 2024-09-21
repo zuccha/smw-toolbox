@@ -5,7 +5,7 @@ import {
   IntegerEncoding,
   IntegerFromString,
   IntegerLength,
-  IntegerPrefix,
+  IntegerPrefixCode,
   IntegerRadix,
   IntegerToString,
   IntegerUnit,
@@ -119,7 +119,7 @@ export function IntegerStringToInteger(
   context: IntegerStringContext,
 ): Integer | undefined {
   const sign = obj.sign === IntegerStringSign.Negative ? "-" : "";
-  const prefix = IntegerPrefix[context.encoding];
+  const prefix = IntegerPrefixCode[context.encoding];
   const signedString = `${sign}${prefix}${obj.digits.join("")}`;
   return IntegerFromString(signedString, context);
 }

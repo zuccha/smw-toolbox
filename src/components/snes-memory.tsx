@@ -1,12 +1,7 @@
-import { useCallback, useLayoutEffect, useState } from "preact/hooks";
-import {
-  IntegerEncoding,
-  IntegerLength,
-  IntegerRadix,
-  IntegerUnit,
-} from "../models/integer";
+import { useLayoutEffect, useState } from "preact/hooks";
+import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { range, toBin, toDec, toHex } from "../utils";
-import InputText from "./input-text";
+import InputValue from "./input-value";
 import Setting from "./setting";
 import "./snes-memory.css";
 
@@ -16,15 +11,6 @@ type SnesMemoryProps = {
   memory: number[];
   onChangeAddress: (address: number) => void;
 };
-
-const longHexPattern = /^[0-9a-fA-F]{0,6}$/;
-
-const formatAddress = (baseAddress: number): string =>
-  isNaN(baseAddress)
-    ? ""
-    : baseAddress.toString(IntegerRadix[IntegerEncoding.Hex]).toUpperCase();
-
-const formatInputValue = (value: string): string => value.toUpperCase();
 
 type Selection = { address: number; byte: number; index: number };
 
@@ -36,15 +22,6 @@ export default function SnesMemory({
 }: SnesMemoryProps) {
   const [selection, setSelection] = useState<Selection | undefined>();
   const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
-
-  const changeAddressString = useCallback(
-    (nextValueString: string) => {
-      const radix = IntegerRadix[IntegerEncoding.Hex];
-      const nextAddress = Number.parseInt(nextValueString, radix);
-      onChangeAddress(nextAddress);
-    },
-    [onChangeAddress],
-  );
 
   useLayoutEffect(() => setSelection(undefined), [memory]);
 
@@ -92,17 +69,15 @@ export default function SnesMemory({
 
       <div className="SnesMemory_Footer">
         <Setting inline label="Base address" size="md">
-          <InputText
-            format={formatInputValue}
-            isMonospace
-            onChange={changeAddressString}
-            pattern={longHexPattern}
+          <InputValue
+            encoding={IntegerEncoding.Hex}
+            onChange={onChangeAddress}
             placeholder="7E0000"
-            prefix="0x"
-            size={IntegerLength[IntegerUnit.Long][IntegerEncoding.Hex]}
-            value={formatAddress(baseAddress)}
+            unit={IntegerUnit.Long}
+            value={baseAddress}
           />
         </Setting>
+
         {selection && (
           <Setting inline align="bottom" label="Selected" size="md">
             <div className="SnesMemory_Footer_Selection">

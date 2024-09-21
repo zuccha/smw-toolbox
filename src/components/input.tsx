@@ -3,9 +3,9 @@ import "./input.css";
 
 export type InputProps = {
   format?: (value: string) => string;
-  isMonospace?: boolean;
   max?: number;
   min?: number;
+  monospace?: boolean;
   onChange: (value: string) => string | void;
   pattern?: RegExp;
   placeholder: string;
@@ -17,9 +17,9 @@ export type InputProps = {
 
 export default function Input({
   format,
-  isMonospace,
   max,
   min,
+  monospace,
   onChange,
   pattern,
   placeholder,
@@ -80,7 +80,7 @@ export default function Input({
     e.stopPropagation();
   }, []);
 
-  const className = isMonospace ? "Input monospace" : "Input";
+  const className = monospace ? "Input monospace" : "Input";
 
   return (
     <div class={className} onMouseDown={handleMouseDown}>

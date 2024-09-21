@@ -11,7 +11,7 @@ import {
   Integer,
   IntegerEncoding,
   IntegerLength,
-  IntegerPrefix,
+  IntegerPrefixCode,
   IntegerSize,
   IntegerUnit,
 } from "./integer";
@@ -53,7 +53,7 @@ function computeColumnComment(
   unit: IntegerUnit,
 ): string {
   const columnWidth =
-    IntegerLength[unit][encoding] + IntegerPrefix[encoding].length;
+    IntegerLength[unit][encoding] + IntegerPrefixCode[encoding].length;
   const prefix = `;${" ".repeat(Math.max(0, indentation - 1) + 3)}`;
   const width = columnWidth * columnCount + columnGap * (columnCount - 1);
   const separator = `${prefix}${"-".repeat(width)}\n`;
