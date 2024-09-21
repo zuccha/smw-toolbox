@@ -24,6 +24,9 @@
 .SnesLog_TableHeader,
 .SnesLog_TableFooter {
   font-weight: bold;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .SnesLog_TableBody {
@@ -35,6 +38,7 @@
 .SnesLog_TableBody_Instructions {
   max-height: 30em;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .SnesLog_TableBody_Instructions .dim {
