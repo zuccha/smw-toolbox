@@ -116,21 +116,21 @@ export default function SnesLog({
                 {instruction.snapshot ? (
                   <>
                     <Register
-                      shouldDimHighByte={!!instruction.snapshot.flag_m}
+                      dimPage={!!instruction.snapshot.flag_m}
                       value={instruction.snapshot.a}
                     />
                     <Register
-                      shouldDimHighByte={!!instruction.snapshot.flag_x}
+                      dimPage={!!instruction.snapshot.flag_x}
                       value={instruction.snapshot.x}
                     />
                     <Register
-                      shouldDimHighByte={!!instruction.snapshot.flag_x}
+                      dimPage={!!instruction.snapshot.flag_x}
                       value={instruction.snapshot.y}
                     />
                     <div>{toHex(instruction.snapshot.sp, 4)}</div>
                     <div>{toHex(instruction.snapshot.dp, 4)}</div>
                     <div>{toHex(instruction.snapshot.db, 2)}</div>
-                    <div>{instruction.snapshot.flags}</div>
+                    <Flags flags={instruction.snapshot.flags} />
                     <div>
                       {padL(`${instruction.cycles}`, widths.cycles, fill)}
                     </div>
@@ -163,13 +163,13 @@ export default function SnesLog({
         </div>
         <div></div>
 
-        <Register shouldDimHighByte={!!snapshot.flag_m} value={snapshot.a} />
-        <Register shouldDimHighByte={!!snapshot.flag_x} value={snapshot.x} />
-        <Register shouldDimHighByte={!!snapshot.flag_x} value={snapshot.y} />
+        <Register dimPage={!!snapshot.flag_m} value={snapshot.a} />
+        <Register dimPage={!!snapshot.flag_x} value={snapshot.x} />
+        <Register dimPage={!!snapshot.flag_x} value={snapshot.y} />
         <div>{toHex(snapshot.sp, 4)}</div>
         <div>{toHex(snapshot.dp, 4)}</div>
         <div>{toHex(snapshot.db, 2)}</div>
-        <div>{snapshot.flags}</div>
+        <Flags flags={snapshot.flags} />
 
         <div>{cycles}</div>
         <div>{length}</div>
@@ -186,18 +186,27 @@ export default function SnesLog({
   );
 }
 
-function Register({
-  shouldDimHighByte,
-  value,
-}: {
-  shouldDimHighByte: boolean;
-  value: number;
-}) {
-  const highByteClassName = shouldDimHighByte ? "dim" : undefined;
-  return (
+function Register({ dimPage, value }: { dimPage: boolean; value: number }) {
+  return dimPage ? (
     <span>
-      <span className={highByteClassName}>{toHex((value >> 8) & 0xff, 2)}</span>
+      <dim>{toHex((value >> 8) & 0xff, 2)}</dim>
       <span>{toHex(value & 0xff, 2)}</span>
     </span>
+  ) : (
+    <span>{toHex(value, 4)}</span>
   );
+}
+
+function Flags({ flags }: { flags: string }) {
+  return (
+    <span>
+      {flags.split("").map((flag) => (
+        <Flag flag={flag} />
+      ))}
+    </span>
+  );
+}
+
+function Flag({ flag }: { flag: string }) {
+  return flag === flag.toUpperCase() ? <span>{flag}</span> : <dim>{flag}</dim>;
 }

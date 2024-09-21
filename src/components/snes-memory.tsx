@@ -7,6 +7,7 @@ import {
 } from "../models/integer";
 import { range, toBin, toDec, toHex } from "../utils";
 import InputText from "./input-text";
+import Setting from "./setting";
 import "./snes-memory.css";
 
 type SnesMemoryProps = {
@@ -90,10 +91,10 @@ export default function SnesMemory({
       </div>
 
       <div className="SnesMemory_Footer">
-        <div className="SnesMemory_Footer_Group">
-          <div className="SnesMemory_Footer_Label">Base address:</div>
+        <Setting inline label="Base address" size="md">
           <InputText
             format={formatInputValue}
+            isMonospace
             onChange={changeAddressString}
             pattern={longHexPattern}
             placeholder="7E0000"
@@ -101,23 +102,25 @@ export default function SnesMemory({
             size={IntegerLength[IntegerUnit.Long][IntegerEncoding.Hex]}
             value={formatAddress(baseAddress)}
           />
-        </div>
+        </Setting>
         {selection && (
-          <div className="SnesMemory_Footer_Group align-items_flex-end">
-            <div className="SnesMemory_Footer_Label">Selected:</div>
+          <Setting inline align="bottom" label="Selected" size="md">
             <div className="SnesMemory_Footer_Selection">
-              <div>{toHex(selection.address, 6)}</div>→
+              <div>{toHex(selection.address, 6)}</div>
+              {"→"}
               <div>
-                <span className="dim">0b&#8203;</span>
+                <dim>0b&#8203;</dim>
                 {toBin(selection.byte, 8)}
               </div>
-              /<div>{toDec(selection.byte)}</div>/
+              {"/"}
+              <div>{toDec(selection.byte)}</div>
+              {"/"}
               <div>
-                <span className="dim">0x&#8203;</span>
+                <dim>0x&#8203;</dim>
                 {toHex(selection.byte, 2)}
               </div>
             </div>
-          </div>
+          </Setting>
         )}
       </div>
     </div>
