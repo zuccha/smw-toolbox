@@ -79,7 +79,7 @@
 }
 
 .IntegerGridEditor_Cell.selected .IntegerGridEditor_Cell_Background {
-  background-color: var(--color-primary-3);
+  background-color: var(--color-highlight-1);
 }
 
 .IntegerGridEditor_Cell.selected > div > span:nth-child(2) {
