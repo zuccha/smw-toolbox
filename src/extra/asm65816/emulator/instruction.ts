@@ -68,18 +68,6 @@ export abstract class Instruction {
     return `${mnemonic} ${mode.format(this._arg, this.length - 1)}`;
   }
 
-  public get formatted_flags(): string {
-    if (!this._processor_snapshot) return "";
-
-    const capitalize = (flag: string, i: number) =>
-      this._processor_snapshot!.flags & (1 << (7 - i))
-        ? flag.toUpperCase()
-        : flag;
-    return this._processor_snapshot.flag_e
-      ? ["n", "v", "-", "b", "d", "i", "z", "c"].map(capitalize).join("")
-      : ["n", "v", "m", "x", "d", "i", "z", "c"].map(capitalize).join("");
-  }
-
   public get length(): number {
     const mode = this.mode;
     let length = mode.base_length;

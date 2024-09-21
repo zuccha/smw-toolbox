@@ -3,6 +3,7 @@ import Memory from "./memory";
 import MemoryMapping from "./memory-mapping";
 import { Opcode, opcode_to_instruction } from "./opcode-to-instruction";
 import Processor from "./processor";
+import { ProcessorSnapshot } from "./processor-snapshot";
 import { v, Value } from "./value";
 
 export default class Emulator {
@@ -29,6 +30,10 @@ export default class Emulator {
 
   public get length(): number {
     return this._bytes.length;
+  }
+
+  public get snapshot(): ProcessorSnapshot {
+    return this._processor.snapshot();
   }
 
   public read_byte(addr: number): number {

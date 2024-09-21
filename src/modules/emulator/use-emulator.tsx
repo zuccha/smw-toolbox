@@ -46,5 +46,6 @@ export default function useEmulator() {
     length: emulator.length,
     readByte,
     run,
+    snapshot: emulator.snapshot,
   };
 }

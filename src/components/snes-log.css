@@ -4,7 +4,8 @@
 }
 
 .SnesLog_TableHeader,
-.SnesLog_TableBody_Instructions {
+.SnesLog_TableBody_Instructions,
+.SnesLog_TableFooter {
   position: relative;
 
   display: grid;
@@ -15,17 +16,18 @@
 }
 
 .SnesLog_TableHeader > *,
-.SnesLog_TableBody_Instruction > * {
+.SnesLog_TableBody_Instruction > *,
+.SnesLog_TableFooter > * {
   text-align: center;
 }
 
-.SnesLog_TableHeader {
+.SnesLog_TableHeader,
+.SnesLog_TableFooter {
   font-weight: bold;
 }
 
 .SnesLog_TableBody {
-  border-top: 1px solid var(--color-neutral-2);
-  border-bottom: 1px solid var(--color-neutral-2);
+  border: 1px solid var(--color-neutral-2);
   margin: 0.3em 0;
   padding: 0.3em 0;
 }
@@ -41,7 +43,7 @@
 
 .SnesLog_TableBody_Instructions .error {
   color: var(--color-error-1);
-  grid-column: 3 / 12;
+  font-weight: bold;
 }
 
 .SnesLog_TableBody_Instruction {
@@ -53,13 +55,18 @@
   background-color: var(--color-highlight-2);
 }
 
-.SnesLog_Errors,
-.SnesLog_Info {
-  font-size: 0.9em;
-}
-
-.SnesLog_Errors {
+.SnesLog_CompilationErrors,
+.SnesLog_ExecutionErrors {
   display: flex;
   flex-direction: column;
   color: var(--color-error-1);
+}
+
+.SnesLog_CompilationErrors {
+  margin-top: 0;
+}
+
+.SnesLog_ExecutionErrors {
+  margin-top: 1em;
+  font-size: 0.9em;
 }

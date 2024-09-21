@@ -4,8 +4,14 @@ import { useEmulatorTabLogIsVisible } from "./store";
 import useEmulator from "./use-emulator";
 
 export default function EmulatorSectionLog() {
-  const { compilationErrors, cycles, executionErrors, instructions, length } =
-    useEmulator();
+  const {
+    compilationErrors,
+    cycles,
+    executionErrors,
+    instructions,
+    length,
+    snapshot,
+  } = useEmulator();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabLogIsVisible();
 
   const errors =
@@ -26,6 +32,7 @@ export default function EmulatorSectionLog() {
         errors={errors}
         instructions={instructions}
         length={length}
+        snapshot={snapshot}
       />
     </SectionCollapsible>
   );

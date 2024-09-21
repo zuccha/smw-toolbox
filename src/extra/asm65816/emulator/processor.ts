@@ -122,22 +122,26 @@ export default class Processor {
       flag_b: this._flag_b,
 
       flags: this._flag_e
-        ? (this._flag_n << 7) |
-          (this._flag_v << 6) |
-          (this._flag_m << 5) |
-          (this._flag_b << 4) |
-          (this._flag_d << 3) |
-          (this._flag_i << 2) |
-          (this._flag_z << 1) |
-          (this._flag_c << 0)
-        : (this._flag_n << 7) |
-          (this._flag_v << 6) |
-          (this._flag_m << 5) |
-          (this._flag_x << 4) |
-          (this._flag_d << 3) |
-          (this._flag_i << 2) |
-          (this._flag_z << 1) |
-          (this._flag_c << 0),
+        ? [
+            this._flag_n ? "N" : "n",
+            this._flag_v ? "V" : "v",
+            "-",
+            this._flag_b ? "B" : "b",
+            this._flag_d ? "D" : "d",
+            this._flag_i ? "I" : "i",
+            this._flag_z ? "Z" : "z",
+            this._flag_c ? "C" : "c",
+          ].join("")
+        : [
+            this._flag_n ? "N" : "n",
+            this._flag_v ? "V" : "v",
+            this._flag_m ? "M" : "m",
+            this._flag_x ? "X" : "x",
+            this._flag_d ? "D" : "d",
+            this._flag_i ? "I" : "i",
+            this._flag_z ? "Z" : "z",
+            this._flag_c ? "C" : "c",
+          ].join(""),
     };
   }
 }
