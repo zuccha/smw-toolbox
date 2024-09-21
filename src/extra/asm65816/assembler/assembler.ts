@@ -38,8 +38,16 @@ export default class Assembler {
       const line = text.lineAt(cursor.from).number;
       const value = this.code.slice(cursor.from, cursor.to);
 
-      const error = (message: string) =>
-        this.errors.push(new AssemblerError(message, { ...cursor, line }));
+      const error = (message: string) => {
+        const { from, to } =
+          cursor.from === cursor.to ? text.lineAt(cursor.from) : cursor;
+        this.errors.push(new AssemblerError(message, { from, to, line }));
+      };
+
+      if (cursor.type.isError) {
+        error("Invalid syntax.");
+        continue;
+      }
 
       if (cursor.type.name === "Instruction") {
         if (instruction) definitions.push(instruction);

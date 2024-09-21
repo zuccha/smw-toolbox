@@ -3,7 +3,7 @@
 @skip { Comment | space }
 
 line {
-  Instruction (newline | eof) | newline
+  Instruction (":" Instruction)* (newline | eof) | newline
 }
 
 Instruction { Opcode mode? }
