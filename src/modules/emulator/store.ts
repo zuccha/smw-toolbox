@@ -42,6 +42,9 @@ MVN $00,$00   ; Block Move`;
 export const useEmulatorCode = () =>
   useStoreString(`${emulatorId}.code`, defaultCode);
 
+export const useEmulatorMaxInstructions = () =>
+  useStoreNumber(`${emulatorId}.maxInstructions`, 100);
+
 export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
 export const useEmulatorSnapshot = createUseSharedState(emulator.snapshot);
 export const useEmulatorInstructionIndex = createUseSharedState(Infinity);

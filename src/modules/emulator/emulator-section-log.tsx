@@ -30,7 +30,7 @@ export default function EmulatorSectionLog() {
         cycles={emulator.cycles}
         errors={errors}
         instructions={emulator.instructions}
-        length={length}
+        length={emulator.length}
         onClickValidInstruction={clickValidInstruction}
         snapshot={emulator.snapshot}
       />

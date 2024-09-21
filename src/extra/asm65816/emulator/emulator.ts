@@ -47,7 +47,9 @@ export default class Emulator {
     this._bytes = bytes.map((byte) => v(byte).byte);
   }
 
-  public set_initial_sp = (sp: number) => (this._initial_sp = sp);
+  public set_max_instructions = (max_instructions: number) => {
+    this._max_instructions = Math.max(max_instructions, 1);
+  };
 
   public run() {
     this._reset_processor();
