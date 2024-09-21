@@ -51,12 +51,17 @@ export default class Emulator {
     this._errors = [];
 
     try {
-      while (
-        this._pc_offset <= this._processor.pc.word &&
-        this._processor.pc.word < this._pc_offset + this._bytes.length &&
-        this._instructions.length < this._max_instructions
-      ) {
-        const instruction = this._next_instruction;
+      while (true) {
+        const pc = v((this._processor.pb.byte << 16) | this._processor.pc.word);
+        const instruction = this._next_instruction(pc);
+        if (!instruction) break;
+
+        if (this._instructions.length >= this._max_instructions) {
+          const message = `Reached the maximum amount of instructions (${this._max_instructions}).`;
+          this._errors.push(message);
+          break;
+        }
+
         this._instructions.push(instruction);
         instruction.execute();
       }
@@ -66,24 +71,6 @@ export default class Emulator {
       } else {
         this._errors.push("Execution failed: unknown error.");
       }
-    }
-
-    const pc = v(this._processor.pb.byte << (16 + this._processor.pc.word));
-    const formatted_pc = pc.format_address();
-
-    if (this._processor.pc.word < this._pc_offset) {
-      const message = `Program Counter out of bounds ${formatted_pc}: Only ROM ([00:8000-7D:FFFF]) can be executed.`;
-      this._errors.push(message);
-    }
-
-    if (this._processor.pb.byte > 0) {
-      const message = `Program Counter out of bounds ${formatted_pc}: Only bank 00 is available.`;
-      this._errors.push(message);
-    }
-
-    if (this._instructions.length >= this._max_instructions) {
-      const message = `Reached the maximum amount of instructions (${this._max_instructions}).`;
-      this._errors.push(message);
     }
   }
 
@@ -108,21 +95,21 @@ export default class Emulator {
     }
   }
 
-  private get _opcode(): Opcode {
-    const index = this._processor.pc.word - this._pc_offset;
-    return (this._bytes[index] ?? 0) as Opcode;
+  private _opcode(addr: Value): Opcode | undefined {
+    return this._memory.load_byte_raw(addr) as Opcode | undefined;
   }
 
-  private get _arg(): Value {
-    const index = this._processor.pc.word - this._pc_offset;
-    const l = this._bytes[index + 1] ?? 0;
-    const h = (this._bytes[index + 2] ?? 0) << 8;
-    const b = (this._bytes[index + 3] ?? 0) << 16;
+  private _arg(addr: Value): Value {
+    const l = this._memory.load_byte_raw(v(addr.long + 1)) ?? 0;
+    const h = (this._memory.load_byte_raw(v(addr.long + 2)) ?? 0) << 8;
+    const b = (this._memory.load_byte_raw(v(addr.long + 3)) ?? 0) << 16;
     return v(b + h + l);
   }
 
-  private get _next_instruction(): Instruction {
-    const instruction_impl = opcode_to_instruction[this._opcode];
-    return new instruction_impl(this._arg, this._processor, this._memory);
+  private _next_instruction(addr: Value): Instruction | undefined {
+    const opcode = this._opcode(addr);
+    if (opcode === undefined) return undefined;
+    const instruction_impl = opcode_to_instruction[opcode];
+    return new instruction_impl(this._arg(addr), this._processor, this._memory);
   }
 }

@@ -25,7 +25,7 @@ export default function EmulatorSectionMemory() {
   const label =
     instructionIndex === Infinity
       ? "Memory"
-      : `Memory (instruction ${instructionIndex})`;
+      : `Memory (instruction ${instructionIndex + 1})`;
 
   return (
     <SectionCollapsible
