@@ -11,7 +11,7 @@ import useEmulator from "./use-emulator";
 const memorySize = 8 * 16;
 
 export default function EmulatorSectionMemory() {
-  const { readByte } = useEmulator();
+  const { instructionIndex, readByte } = useEmulator();
   const [baseAddress, setBaseAddress] = useEmulatorMemoryBaseAddress();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
@@ -22,10 +22,15 @@ export default function EmulatorSectionMemory() {
     [safeBaseAddress, readByte],
   );
 
+  const label =
+    instructionIndex === Infinity
+      ? "Memory"
+      : `Memory (instruction ${instructionIndex})`;
+
   return (
     <SectionCollapsible
       isVisible={isTabSnesVisible}
-      label="Memory"
+      label={label}
       onChange={setIsTabSnesVisible}
     >
       <div className="App_SectionCol">

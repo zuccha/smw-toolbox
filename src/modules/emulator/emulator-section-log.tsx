@@ -1,25 +1,24 @@
+import { useCallback } from "preact/hooks";
 import SectionCollapsible from "../../components/section-collapsible";
 import SnesLog from "../../components/snes-log";
 import { useEmulatorTabLogIsVisible } from "./store";
 import useEmulator from "./use-emulator";
 
 export default function EmulatorSectionLog() {
-  const {
-    compilationErrors,
-    cycles,
-    executionErrors,
-    instructions,
-    length,
-    snapshot,
-  } = useEmulator();
+  const emulator = useEmulator();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabLogIsVisible();
 
   const errors =
-    compilationErrors.length > 0
-      ? compilationErrors
-      : executionErrors.length > 0
-      ? executionErrors
+    emulator.compilationErrors.length > 0
+      ? emulator.compilationErrors
+      : emulator.executionErrors.length > 0
+      ? emulator.executionErrors
       : [];
+
+  const clickValidInstruction = useCallback(
+    (index: number) => emulator.runUntil(index === -1 ? Infinity : index),
+    [emulator.runUntil],
+  );
 
   return (
     <SectionCollapsible
@@ -28,11 +27,12 @@ export default function EmulatorSectionLog() {
       onChange={setIsTabSnesVisible}
     >
       <SnesLog
-        cycles={cycles}
+        cycles={emulator.cycles}
         errors={errors}
-        instructions={instructions}
+        instructions={emulator.instructions}
         length={length}
-        snapshot={snapshot}
+        onClickValidInstruction={clickValidInstruction}
+        snapshot={emulator.snapshot}
       />
     </SectionCollapsible>
   );

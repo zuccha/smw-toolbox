@@ -43,6 +43,8 @@ export const useEmulatorCode = () =>
   useStoreString(`${emulatorId}.code`, defaultCode);
 
 export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
+export const useEmulatorSnapshot = createUseSharedState(emulator.snapshot);
+export const useEmulatorInstructionIndex = createUseSharedState(Infinity);
 
 export const useEmulatorMemoryBaseAddress = () =>
   useStoreNumber(`${emulatorId}.memory.baseAddress`, 0x7e0000);

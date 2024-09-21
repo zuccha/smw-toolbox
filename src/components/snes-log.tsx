@@ -1,14 +1,16 @@
 import { Instruction } from "../extra/asm65816/emulator/instruction";
-import { padL, padR, toHex } from "../utils";
+import { classNames, padL, padR, toHex } from "../utils";
 import Tooltip from "./tooltip";
 import "./snes-log.css";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
+import { useLayoutEffect, useState } from "preact/hooks";
 
 export type SnesLogProps = {
   cycles: number;
   errors: readonly string[];
   instructions: readonly Instruction[];
   length: number;
+  onClickValidInstruction: (index: number) => void;
   snapshot: ProcessorSnapshot;
 };
 
@@ -19,8 +21,12 @@ export default function SnesLog({
   errors,
   instructions,
   length,
+  onClickValidInstruction,
   snapshot,
 }: SnesLogProps) {
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  useLayoutEffect(() => setSelectedIndex(-1), [instructions]);
+
   if (instructions.length === 0)
     return errors.length === 0 ? (
       <div className="SnesLog">Run emulator to see processor state.</div>
@@ -88,15 +94,26 @@ export default function SnesLog({
 
       <div className="SnesLog_TableBody">
         <div className="SnesLog_TableBody_Instructions">
-          {instructions.map((instruction) => {
-            const className = instruction.snapshot ? undefined : "error";
+          {instructions.map((instruction, index) => {
+            const className = classNames([
+              ["SnesLog_TableBody_Instruction", true],
+              ["selected", index === selectedIndex],
+              ["error", !instruction.snapshot],
+            ]);
+            const onClick = instruction.snapshot
+              ? () => {
+                  const newSelectedIndex = index === selectedIndex ? -1 : index;
+                  setSelectedIndex(newSelectedIndex);
+                  onClickValidInstruction(newSelectedIndex);
+                }
+              : undefined;
             return (
-              <div className="SnesLog_TableBody_Instruction">
-                <div className={className}>{toHex(instruction.pc, 6)}</div>
-                <div className={className}>
+              <div className={className} onClick={onClick}>
+                <div>{toHex(instruction.pc, 6)}</div>
+                <div>
                   {padR(instruction.text_with_value, widths.instruction, fill)}
                 </div>
-                {instruction.snapshot && (
+                {instruction.snapshot ? (
                   <>
                     <Register
                       shouldDimHighByte={!!instruction.snapshot.flag_m}
@@ -120,6 +137,18 @@ export default function SnesLog({
                     <div>
                       {padL(`${instruction.length}`, widths.length, fill)}
                     </div>
+                  </>
+                ) : (
+                  <>
+                    <div>{fill.repeat(widths.a)}</div>
+                    <div>{fill.repeat(widths.x)}</div>
+                    <div>{fill.repeat(widths.y)}</div>
+                    <div>{fill.repeat(widths.sp)}</div>
+                    <div>{fill.repeat(widths.dp)}</div>
+                    <div>{fill.repeat(widths.db)}</div>
+                    <div>{fill.repeat(widths.flags)}</div>
+                    <div>{fill.repeat(widths.cycles)}</div>
+                    <div>{fill.repeat(widths.length)}</div>
                   </>
                 )}
               </div>

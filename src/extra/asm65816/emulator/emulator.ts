@@ -44,20 +44,16 @@ export default class Emulator {
     }
   }
 
-  public reset(bytes: number[]) {
+  public set_bytes(bytes: number[]) {
     this._bytes = bytes.map((byte) => v(byte).byte);
-    this._processor = new Processor();
-    this._reset_memory();
-    this._instructions = [];
-    this._errors = [];
-  }
-
-  public reset_soft() {
-    this._processor = new Processor();
-    this._reset_memory();
   }
 
   public run() {
+    this._processor.reset();
+    this._reset_memory();
+    this._instructions = [];
+    this._errors = [];
+
     try {
       while (
         this._pc_offset <= this._processor.pc.word &&
@@ -92,6 +88,17 @@ export default class Emulator {
     if (this._instructions.length >= this._max_instructions) {
       const message = `Reached the maximum amount of instructions (${this._max_instructions}).`;
       this._errors.push(message);
+    }
+  }
+
+  public run_until(index: number) {
+    this._processor.reset();
+    this._reset_memory();
+    try {
+      for (let i = 0; i < this._instructions.length && i <= index; ++i)
+        this._instructions[i]?.execute();
+    } catch {
+      // Ignore.
     }
   }
 

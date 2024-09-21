@@ -96,6 +96,31 @@ export default class Processor {
   public set flag_b(active: boolean | number) { this._flag_b = active ? 1 : 0; }
 
   //----------------------------------------------------------------------------
+  // Reset
+  //----------------------------------------------------------------------------
+
+  public reset() {
+    this.a.long = 0;
+    this.x.long = 0;
+    this.y.long = 0;
+    this.db.long = 0;
+    this.dp.long = 0;
+    this.sp.long = 0x01fc;
+    this.pb.long = 0;
+    this.pc.long = 0x8000;
+    this._flag_n = 0;
+    this._flag_v = 0;
+    this._flag_m = 1;
+    this._flag_x = 1;
+    this._flag_d = 0;
+    this._flag_i = 0;
+    this._flag_z = 0;
+    this._flag_c = 0;
+    this._flag_e = 0;
+    this._flag_b = 0;
+  }
+
+  //----------------------------------------------------------------------------
   // Snapshot
   //----------------------------------------------------------------------------
 

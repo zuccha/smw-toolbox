@@ -41,18 +41,26 @@
   color: var(--color-neutral-2);
 }
 
-.SnesLog_TableBody_Instructions .error {
-  color: var(--color-error-1);
-  font-weight: bold;
-}
-
 .SnesLog_TableBody_Instruction {
   display: contents;
+  cursor: pointer;
+}
+
+.SnesLog_TableBody_Instruction.error {
   cursor: default;
 }
 
 .SnesLog_TableBody_Instruction:hover > * {
   background-color: var(--color-highlight-2);
+}
+
+.SnesLog_TableBody_Instruction.selected > * {
+  background-color: var(--color-highlight-1);
+}
+
+.SnesLog_TableBody_Instruction.error > * {
+  color: var(--color-error-1);
+  font-weight: bold;
 }
 
 .SnesLog_CompilationErrors,
