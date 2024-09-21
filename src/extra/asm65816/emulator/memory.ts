@@ -58,6 +58,14 @@ export default class Memory {
     this._save(this._map(v(addr.long + 2), !force), value.bank);
   }
 
+  public load_byte_raw(addr: Value): number | undefined {
+    try {
+      return this._memory.get(this._mapping.map(addr));
+    } catch {
+      return undefined;
+    }
+  }
+
   private _map(addr: Value, readonly: boolean): number {
     return readonly
       ? this._mapping.map_readonly(addr)

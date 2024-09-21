@@ -36,12 +36,8 @@ export default class Emulator {
     return this._processor.snapshot();
   }
 
-  public read_byte(addr: number): number {
-    try {
-      return this._memory.load_byte(v(addr)).long;
-    } catch {
-      return 0;
-    }
+  public read_byte(addr: number): number | undefined {
+    return this._memory.load_byte_raw(v(addr));
   }
 
   public set_bytes(bytes: number[]) {
