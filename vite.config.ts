@@ -1,4 +1,5 @@
 import preact from "@preact/preset-vite";
+import analyze from "rollup-plugin-analyzer";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -7,6 +8,7 @@ export default defineConfig({
   plugins: [preact()],
   build: {
     rollupOptions: {
+      // plugins: [analyze({ summaryOnly: true })],
       output: {
         manualChunks: {
           codemirror: ["@codemirror/language", "@codemirror/state"],

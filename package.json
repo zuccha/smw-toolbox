@@ -24,6 +24,7 @@
   "devDependencies": {
     "@lezer/generator": "^1.7.1",
     "@preact/preset-vite": "^2.9.0",
+    "rollup-plugin-analyzer": "^4.0.0",
     "typescript": "^5.6.2",
     "vite": "^5.4.3",
     "vitest": "^2.1.0"
