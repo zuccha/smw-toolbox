@@ -14,8 +14,9 @@ export default class Memory {
     this._mapping = mapping;
   }
 
-  public reset(): void {
+  public reset(mapping: MemoryMapping): void {
     this._memory = new Map();
+    this._mapping = mapping;
   }
 
   private _load(addr: number): number {

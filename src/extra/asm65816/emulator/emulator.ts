@@ -8,13 +8,16 @@ import { v, Value } from "./value";
 
 export default class Emulator {
   private _bytes: number[] = [];
-  private _processor: Processor = new Processor();
+  private _processor: Processor = new Processor(0, 0, 0);
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
 
-  private _pc_offset = 0x8000;
   private _max_instructions = 100;
+
+  private _memory_mapping = MemoryMapping.LoROM;
+
+  private _initial_sp = 0x1fc;
 
   public get instructions(): readonly Instruction[] {
     return this._instructions;
@@ -44,8 +47,10 @@ export default class Emulator {
     this._bytes = bytes.map((byte) => v(byte).byte);
   }
 
+  public set_initial_sp = (sp: number) => (this._initial_sp = sp);
+
   public run() {
-    this._processor.reset();
+    this._reset_processor();
     this._reset_memory();
     this._instructions = [];
     this._errors = [];
@@ -75,7 +80,7 @@ export default class Emulator {
   }
 
   public run_until(index: number) {
-    this._processor.reset();
+    this._reset_processor();
     this._reset_memory();
     try {
       for (let i = 0; i < this._instructions.length && i <= index; ++i)
@@ -85,10 +90,16 @@ export default class Emulator {
     }
   }
 
+  private _reset_processor() {
+    const pb = this._memory_mapping.rom_initial_address.bank;
+    const pc = this._memory_mapping.rom_initial_address.word;
+    this._processor.reset(pb, pc, this._initial_sp);
+  }
+
   private _reset_memory(): void {
     const pb = this._processor.pb.byte << 16;
     const pc = this._processor.pc.word;
-    this._memory.reset();
+    this._memory.reset(this._memory_mapping);
     for (let i = 0; i < this._bytes.length; ++i) {
       const addr = v(pb + v(pc + i).word);
       this._memory.save_byte(addr, v(this._bytes[i]!), true);

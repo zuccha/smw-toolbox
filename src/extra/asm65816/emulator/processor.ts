@@ -1,26 +1,36 @@
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { Value } from "./value";
+import { v } from "./value";
 
 //------------------------------------------------------------------------------
 // Processor
 //------------------------------------------------------------------------------
 
 export default class Processor {
+  public constructor(
+    initial_pb: number,
+    initial_pc: number,
+    initial_sp: number,
+  ) {
+    this.pb = v(initial_pb);
+    this.pc = v(initial_pc);
+    this.sp = v(initial_sp);
+  }
+
   //----------------------------------------------------------------------------
   // Registers
   //----------------------------------------------------------------------------
 
-  public readonly a = new Value(0);
-  public readonly x = new Value(0);
-  public readonly y = new Value(0);
+  public readonly a = v(0);
+  public readonly x = v(0);
+  public readonly y = v(0);
 
-  public readonly db = new Value(0);
+  public readonly db = v(0);
 
-  public readonly dp = new Value(0);
-  public readonly sp = new Value(0x01fc);
+  public readonly dp = v(0);
+  public readonly sp = v(0);
 
-  public readonly pb = new Value(0);
-  public readonly pc = new Value(0x8000);
+  public readonly pb = v(0);
+  public readonly pc = v(0);
 
   public get_a(): number {
     return this._flag_m ? this.a.byte : this.a.word;
@@ -99,15 +109,15 @@ export default class Processor {
   // Reset
   //----------------------------------------------------------------------------
 
-  public reset() {
+  public reset(pb: number, pc: number, sp: number) {
     this.a.long = 0;
     this.x.long = 0;
     this.y.long = 0;
     this.db.long = 0;
     this.dp.long = 0;
-    this.sp.long = 0x01fc;
-    this.pb.long = 0;
-    this.pc.long = 0x8000;
+    this.sp.long = sp;
+    this.pb.long = pb;
+    this.pc.long = pc;
     this._flag_n = 0;
     this._flag_v = 0;
     this._flag_m = 1;
