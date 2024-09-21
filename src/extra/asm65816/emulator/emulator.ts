@@ -75,7 +75,7 @@ export default class Emulator {
     const formatted_pc = pc.format_address();
 
     if (this._processor.pc.word < this._pc_offset) {
-      const message = `Program Counter out of bounds ${formatted_pc}: Only ROM ([XX:8000-XX:FFFF]) can be executed.`;
+      const message = `Program Counter out of bounds ${formatted_pc}: Only ROM ([00:8000-7D:FFFF]) can be executed.`;
       this._errors.push(message);
     }
 

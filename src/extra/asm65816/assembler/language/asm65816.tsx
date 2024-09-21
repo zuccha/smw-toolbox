@@ -9,7 +9,7 @@ const parserWithMetadata = parser.configure({
       Comment: t.lineComment,
       Opcode: t.keyword,
       "A ConstByte ConstWord": t.number,
-      "Byte Word Long": t.variableName,
+      "Byte Word Long MoveBanks": t.variableName,
       "X Y S ,": t.derefOperator,
       "( ) [ ]": t.paren,
     }),
