@@ -80,6 +80,46 @@ export class Instruction_Value_Long extends Instruction_Value {
 }
 
 //------------------------------------------------------------------------------
+// Data
+//------------------------------------------------------------------------------
+
+export abstract class Instruction_Data extends Instruction {
+  protected _values: number[];
+
+  constructor(range: Range, values: number[]) {
+    super(0, values.length, range);
+    this._values = values;
+  }
+
+  public abstract bytes(): number[];
+}
+
+//------------------------------------------------------------------------------
+// Data - Bytes
+//------------------------------------------------------------------------------
+
+export class Instruction_Data_Bytes extends Instruction_Data {
+  public bytes = () => this._values.flatMap((value) => [l(value)]);
+}
+
+//------------------------------------------------------------------------------
+// Data - Words
+//------------------------------------------------------------------------------
+
+export class Instruction_Data_Words extends Instruction_Data {
+  public bytes = () => this._values.flatMap((value) => [l(value), h(value)]);
+}
+
+//------------------------------------------------------------------------------
+// Data - Longs
+//------------------------------------------------------------------------------
+
+export class Instruction_Data_Longs extends Instruction_Data {
+  public bytes = () =>
+    this._values.flatMap((value) => [l(value), h(value), b(value)]);
+}
+
+//------------------------------------------------------------------------------
 // Label
 //------------------------------------------------------------------------------
 

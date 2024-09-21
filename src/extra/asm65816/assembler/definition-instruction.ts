@@ -8,6 +8,9 @@ import Instruction, {
   Instruction_Value_Byte,
   Instruction_Value_Long,
   Instruction_Value_Word,
+  Instruction_Data_Bytes,
+  Instruction_Data_Words,
+  Instruction_Data_Longs,
 } from "./instruction";
 import {
   instruction_id_to_instruction_info as instruction_info,
@@ -21,14 +24,27 @@ export default class Definition_Instruction extends Definition {
   public mode: string | undefined;
   public arg: number | undefined;
   public label: string | undefined;
+  public bytes: number[];
 
   public constructor(range: Range) {
     super(range);
+    this.bytes = [];
   }
 
   public build(pc: number): Instruction | string {
     if (!this.mnemonic)
       return `Invalid instruction: you must specify an opcode.`;
+
+    const range = this.range;
+
+    if (this.mnemonic === "DB")
+      return new Instruction_Data_Bytes(range, this.bytes);
+
+    if (this.mnemonic === "DW")
+      return new Instruction_Data_Words(range, this.bytes);
+
+    if (this.mnemonic === "DL")
+      return new Instruction_Data_Longs(range, this.bytes);
 
     if (!this.mode) this.mode = "Implied";
 
@@ -40,7 +56,6 @@ export default class Definition_Instruction extends Definition {
       return `Instruction "${this.mnemonic} ${mode_info.label}" doesn't exist.`;
 
     const opcode = info.opcode;
-    const range = this.range;
 
     if (info.label_type === LabelType.None) {
       if (mode_info.size > 0 && this.arg === undefined)

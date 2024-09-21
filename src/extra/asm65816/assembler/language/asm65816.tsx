@@ -7,9 +7,11 @@ const parserWithMetadata = parser.configure({
   props: [
     styleTags({
       Comment: t.lineComment,
+      LabelDefinition: t.labelName,
       Opcode: t.keyword,
       "A ConstByte ConstWord": t.number,
       "Byte Word Long MoveBanks": t.variableName,
+      "DB DW DL": t.keyword,
       "X Y S ,": t.derefOperator,
       "( ) [ ]": t.paren,
     }),

@@ -5,6 +5,7 @@ import Definition_Label from "./definition-label";
 import Definition from "./definition";
 import Definition_Instruction from "./definition-instruction";
 import Instruction, {
+  Instruction_Data,
   Instruction_Label,
   Instruction_Value,
 } from "./instruction";
@@ -39,45 +40,45 @@ export default class Assembler {
       instruction = undefined;
     };
 
-    while (cursor.next()) {
-      const line = text.lineAt(cursor.from).number;
-      const value = this.code.slice(cursor.from, cursor.to);
+    cursor.iterate((node) => {
+      const line = text.lineAt(node.from).number;
+      const value = this.code.slice(node.from, node.to);
 
       const error = (message: string) => {
         const { from, to } =
-          cursor.from === cursor.to ? text.lineAt(cursor.from) : cursor;
+          node.from === node.to ? text.lineAt(node.from) : node;
         this.errors.push(new AssemblerError(message, { from, to, line }));
       };
 
       if (cursor.type.isError) {
         error("Invalid syntax.");
-        continue;
+        return;
       }
 
-      if (cursor.type.name === "Instruction") {
+      if (node.name === "Instruction") {
         pushInstruction();
         const range = { from: cursor.from, to: cursor.to, line };
         instruction = new Definition_Instruction(range);
-        continue;
+        return;
       }
 
-      if (cursor.type.name === "Opcode") {
+      if (["Opcode", "DB", "DW", "DL"].includes(node.name)) {
         const mnemonic = value.toUpperCase();
         if (!instruction)
           error(`Mode (${mnemonic}): missing instruction builder.`);
         else if (instruction.mnemonic)
           error(`Mode (${mnemonic}): mode already present`);
         else instruction.mnemonic = mnemonic;
-        continue;
+        return;
       }
 
-      if (cursor.type.name.startsWith("Mode_")) {
-        const mode = cursor.type.name.substring("Mode_".length);
+      if (node.name.startsWith("Mode_")) {
+        const mode = node.name.substring("Mode_".length);
         if (!instruction) error(`Mode (${mode}): missing instruction builder.`);
         else if (instruction.mode)
           error(`Mode (${mode}): mode already present`);
         else instruction.mode = mode;
-        continue;
+        return;
       }
 
       const process_arg = (unit: string, is_const = false) => {
@@ -86,60 +87,87 @@ export default class Assembler {
           : [unit, value];
         if (!instruction)
           return error(`Arg (${name}): missing instruction builder.`);
+
+        if (!instruction.mnemonic)
+          return error(`Arg (${name}): missing instruction mnemonic.`);
+
+        if (instruction.mnemonic === "DB") {
+          if (unit !== "byte")
+            return error(`"db" requires bytes, but you provided a ${name}.`);
+          instruction.bytes.push(parse_arg(arg_value));
+          return;
+        }
+
+        if (instruction.mnemonic === "DW") {
+          if (unit !== "word")
+            return error(`"dw" requires words, but you provided a ${name}.`);
+          instruction.bytes.push(parse_arg(arg_value));
+          return;
+        }
+
+        if (instruction.mnemonic === "DL") {
+          if (unit !== "long")
+            return error(`"dl" requires longs, but you provided a ${name}.`);
+          instruction.bytes.push(parse_arg(arg_value));
+          return;
+        }
+
         if (instruction.arg)
           return error(`Arg (${name}): arg is already defined.`);
         instruction.arg = parse_arg(arg_value);
       };
 
-      if (cursor.type.name == "Byte") {
+      if (node.name == "Byte") {
         process_arg("byte");
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "Word") {
+      if (node.name == "Word") {
         process_arg("word");
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "Long") {
+      if (node.name == "Long") {
         process_arg("long");
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "ConstByte") {
+      if (node.name == "ConstByte") {
         process_arg("byte", true);
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "ConstWord") {
+      if (node.name == "ConstWord") {
         process_arg("word", true);
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "LabelUsage") {
+      if (node.name == "LabelUsage") {
         if (!instruction) error(`Arg (label): missing instruction builder.`);
         else if (instruction.arg) error(`Arg (label): arg is already defined.`);
         else instruction.label = value;
-        continue;
+        return;
       }
 
-      if (cursor.type.name == "MoveBanks") {
+      if (node.name == "MoveBanks") {
         if (!instruction)
           error(`Arg (block move): missing instruction builder.`);
         else if (instruction.arg)
           error(`Arg (block move): arg is already defined.`);
         else instruction.arg = parse_arg_move(value);
-        continue;
+        return;
       }
 
-      if (cursor.type.name === "LabelDefinition") {
+      if (node.name === "LabelDefinition") {
         pushInstruction();
         const range = { from: cursor.from, to: cursor.to, line };
         const label = value.substring(0, value.length - 1);
         definitions.push(new Definition_Label(label, range));
-        continue;
+        return;
       }
-    }
+    });
+
+    while (cursor.next()) {}
 
     pushInstruction();
 
@@ -184,7 +212,10 @@ export default class Assembler {
     const bytes: number[] = [];
 
     for (const instruction of instructions) {
-      if (instruction instanceof Instruction_Value) {
+      if (
+        instruction instanceof Instruction_Value ||
+        instruction instanceof Instruction_Data
+      ) {
         bytes.push(...instruction.bytes());
         continue;
       }

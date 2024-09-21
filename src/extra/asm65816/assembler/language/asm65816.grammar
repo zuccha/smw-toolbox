@@ -3,13 +3,18 @@
 @skip { Comment | space }
 
 line {
-  (lineInstruction | lineLabelDefinition) (newline | eof) | newline
+  (definition (":" definition)*) (newline | eof) | newline
 }
 
-lineInstruction { Instruction (":" Instruction)* }
-lineLabelDefinition { LabelDefinition }
+definition { LabelDefinition | Instruction }
 
-Instruction { Opcode mode? }
+Instruction { (Opcode mode?) | data }
+
+data { dataByte | dataWord | dataLong }
+
+dataByte { DB Byte ("," Byte)* }
+dataWord { DW Word ("," Word)* }
+dataLong { DL Long ("," Long)* }
 
 @tokens {
   space { $[ \t]+ }
@@ -24,14 +29,17 @@ Instruction { Opcode mode? }
   byteBin { "%" b b b b b b b b }
   byteDec { d | d d | d d d }
   byteHex { "$" h h }
+  byte { byteBin | byteHex | byteDec }
 
   wordBin { "%" b b b b b b b b b b b b b b b b }
   wordDec { d d d d | d d d d d }
   wordHex { "$" h h h h }
+  word { wordBin | wordHex | wordDec }
 
   longBin { "%" b b b b b b b b b b b b b b b b b b b b b b b b }
   longDec { d d d d d d | d d d d d d d | d d d d d d d d }
   longHex { "$" h h h h h h }
+  long { longBin | longHex | longDec }
 
   label { "." $[_A-Za-z] ($[_A-Za-z0-9])* }
 
@@ -39,12 +47,12 @@ Instruction { Opcode mode? }
 
   LabelUsage { label }
 
-  Byte { byteBin | byteHex | byteDec }
-  Word { wordBin | wordHex | wordDec }
-  Long { longBin | longHex | longDec }
+  Byte { byte }
+  Word { word }
+  Long { long }
 
-  ConstByte { "#" byteBin | "#" byteHex | "#" byteDec }
-  ConstWord { "#" wordBin | "#" wordHex | "#" wordDec }
+  ConstByte { "#" byte }
+  ConstWord { "#" word }
 
   MoveBanks { Byte "," Byte }
 
@@ -53,6 +61,10 @@ Instruction { Opcode mode? }
   X { "," $[xX] }
   Y { "," $[yY] }
   S { "," $[sS] }
+
+  DB { "db" }
+  DW { "dw" }
+  DL { "dl" }
 
   "(" ")" "[" "]" ","
 
