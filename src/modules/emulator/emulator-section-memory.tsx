@@ -39,6 +39,7 @@ export default function EmulatorSectionMemory() {
           initialRamAddress={emulator.initialRamAddress}
           initialRomAddress={emulator.initialRomAddress}
           memory={memory}
+          stackAddress={emulator.stackPointer}
           onChangeAddress={setBaseAddress}
         />
       </div>

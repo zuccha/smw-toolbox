@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useState } from "preact/hooks";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
-import { range, toHex } from "../utils";
+import { classNames, range, toHex } from "../utils";
 import Button from "./button";
 import InputValue from "./input-value";
 import Setting from "./setting";
@@ -12,6 +12,7 @@ type SnesMemoryProps = {
   columnCount?: number;
   initialRamAddress: number;
   initialRomAddress: number;
+  stackAddress: number;
   memory: (number | undefined)[];
   onChangeAddress: (address: number) => void;
 };
@@ -23,6 +24,7 @@ export default function SnesMemory({
   columnCount = 16,
   initialRamAddress,
   initialRomAddress,
+  stackAddress,
   memory,
   onChangeAddress,
 }: SnesMemoryProps) {
@@ -46,6 +48,10 @@ export default function SnesMemory({
   const setBaseAddressToRom = useCallback(() => {
     onChangeAddress(initialRomAddress);
   }, [baseAddress, initialRomAddress]);
+
+  const setBaseAddressToStack = useCallback(() => {
+    onChangeAddress(stackAddress & 0xfffff0);
+  }, [baseAddress, stackAddress]);
 
   return (
     <div className="SnesMemory">
@@ -72,9 +78,13 @@ export default function SnesMemory({
             {memory.map((byte, index) => {
               const isSelected = selection?.index === index;
               const address = (safeBaseAddress + index) & 0xffffff;
+              const className = classNames([
+                ["selected", isSelected],
+                ["stack", address === stackAddress],
+              ]);
               return (
                 <div
-                  className={isSelected ? "selected" : undefined}
+                  className={className}
                   onClick={() =>
                     isSelected
                       ? setSelection(undefined)
@@ -123,6 +133,8 @@ export default function SnesMemory({
             <Button label="RAM" onClick={setBaseAddressToRam} />
 
             <Button label="ROM" onClick={setBaseAddressToRom} />
+
+            <Button label="Stack" onClick={setBaseAddressToStack} />
           </div>
         </Setting>
       </div>

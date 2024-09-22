@@ -68,6 +68,11 @@
   background-color: var(--color-highlight-1);
 }
 
+.SnesMemory_Table_Grid > div.stack {
+  box-shadow: 0 0 1px 1px var(--color-primary-1);
+  box-sizing: border-box;
+}
+
 .SnesMemory_Table_ColIndex,
 .SnesMemory_Table_RowIndex,
 .SnesMemory_Table_Corner {
