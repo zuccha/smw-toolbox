@@ -39,7 +39,7 @@ const formatNumber = (
   const length = IntegerLength[unit][encoding];
   if (encoding === IntegerEncoding.Bin) return toBin(value, length);
   if (encoding === IntegerEncoding.Dec) return toDec(value, length);
-  return toHex(value, length).toUpperCase();
+  return toHex(value, length);
 };
 
 const toUpperCase = (value: string): string => value.toUpperCase();

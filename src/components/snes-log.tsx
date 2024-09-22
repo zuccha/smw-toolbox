@@ -2,7 +2,10 @@ import { useLayoutEffect, useState } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
 import useItemsWindow from "../hooks/use-items-window";
+import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { classNames, padL, toHex } from "../utils";
+import Tooltip from "./tooltip";
+import { formatValue } from "./value";
 import "./snes-log.css";
 
 export type SnesLogProps = {
@@ -24,11 +27,11 @@ export default function SnesLog({
   snapshot,
   windowSize = 16,
 }: SnesLogProps) {
-  const [selectedId, setSelectedId] = useState(-1);
+  const [selected, setSelected] = useState<Instruction | undefined>(undefined);
   const instructionsWindow = useItemsWindow(instructions, windowSize);
 
   useLayoutEffect(() => {
-    setSelectedId(-1);
+    setSelected(undefined);
     instructionsWindow.resetScroll();
   }, [instructions, instructionsWindow.resetScroll]);
 
@@ -79,40 +82,40 @@ export default function SnesLog({
           <tbody onWheel={instructionsWindow.handleScroll}>
             {instructionsWindow.items.map((instruction) => {
               const className = classNames([
-                ["selected", instruction.id === selectedId],
+                ["selected", instruction.id === selected?.id],
                 ["error", !instruction.snapshot],
               ]);
               const onClick = instruction.snapshot
                 ? () => {
-                    const newSelectedId =
-                      instruction.id === selectedId ? -1 : instruction.id;
-                    setSelectedId(newSelectedId);
-                    onClickValidInstruction(newSelectedId);
+                    const newSelected =
+                      instruction.id === selected?.id ? undefined : instruction;
+                    setSelected(newSelected);
+                    onClickValidInstruction(newSelected?.id ?? -1);
                   }
                 : undefined;
               return (
                 <tr className={className} onClick={onClick}>
                   <td>{padL(`${instruction.id}`, idLength, " ")}</td>
-                  <td>{toHex(instruction.pc, 6)}</td>
-                  <td>{instruction.text_with_value}</td>
+                  <td>{instruction.pc.format_address()}</td>
+                  <TdInstruction instruction={instruction} />
                   {instruction.snapshot ? (
                     <>
-                      <Register
+                      <TdRegister
                         dimPage={!!instruction.snapshot.flag_m}
                         value={instruction.snapshot.a}
                       />
-                      <Register
+                      <TdRegister
                         dimPage={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.x}
                       />
-                      <Register
+                      <TdRegister
                         dimPage={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.y}
                       />
                       <td>{toHex(instruction.snapshot.sp, 4)}</td>
                       <td>{toHex(instruction.snapshot.dp, 4)}</td>
                       <td>{toHex(instruction.snapshot.db, 2)}</td>
-                      <Flags flags={instruction.snapshot.flags} />
+                      <TdFlags flags={instruction.snapshot.flags} />
                       <td className="right">{instruction.cycles}</td>
                       <td className="right space-left">{instruction.length}</td>
                     </>
@@ -127,13 +130,13 @@ export default function SnesLog({
           <tfoot>
             <tr>
               <td colSpan={3}>{instructionCount}</td>
-              <Register dimPage={!!snapshot.flag_m} value={snapshot.a} />
-              <Register dimPage={!!snapshot.flag_x} value={snapshot.x} />
-              <Register dimPage={!!snapshot.flag_x} value={snapshot.y} />
+              <TdRegister dimPage={!!snapshot.flag_m} value={snapshot.a} />
+              <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.x} />
+              <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.y} />
               <td>{toHex(snapshot.sp, 4)}</td>
               <td>{toHex(snapshot.dp, 4)}</td>
               <td className="space-right">{toHex(snapshot.db, 2)}</td>
-              <Flags flags={snapshot.flags} />
+              <TdFlags flags={snapshot.flags} />
               <td className="right">{cycles}</td>
               <td className="right space-left">{length}</td>
             </tr>
@@ -152,27 +155,50 @@ export default function SnesLog({
   );
 }
 
-function Register({ dimPage, value }: { dimPage: boolean; value: number }) {
-  return dimPage ? (
-    <td>
-      <dim>{toHex((value >> 8) & 0xff, 2)}</dim>
-      <span>{toHex(value & 0xff, 2)}</span>
-    </td>
-  ) : (
-    <td>{toHex(value, 4)}</td>
-  );
-}
-
-function Flags({ flags }: { flags: string }) {
+function TdRegister({ dimPage, value }: { dimPage: boolean; value: number }) {
+  const byte = formatValue(value & 0xff, IntegerEncoding.Hex, IntegerUnit.Byte);
+  const word = formatValue(value, IntegerEncoding.Hex, IntegerUnit.Word);
+  const tooltip = `8-bit: ${byte.tooltip}\n16-bit: ${word.tooltip}`;
   return (
     <td>
-      {flags.split("").map((flag) => (
-        <Flag flag={flag} />
-      ))}
+      <Tooltip monospace tooltip={tooltip}>
+        {dimPage ? (
+          <>
+            <dim>{toHex((value >> 8) & 0xff, 2)}</dim>
+            <span>{byte.formatted}</span>
+          </>
+        ) : (
+          <span>{word.formatted}</span>
+        )}
+      </Tooltip>
     </td>
   );
 }
 
-function Flag({ flag }: { flag: string }) {
-  return flag === flag.toUpperCase() ? <span>{flag}</span> : <dim>{flag}</dim>;
+function TdFlags({ flags }: { flags: string }) {
+  return (
+    <td>
+      {flags
+        .split("")
+        .map((flag) =>
+          flag === flag.toUpperCase() ? <span>{flag}</span> : <dim>{flag}</dim>,
+        )}
+    </td>
+  );
+}
+
+function TdInstruction({ instruction }: { instruction: Instruction }) {
+  const bytes = instruction.bytes.map((byte) => toHex(byte, 2)).join(" ");
+  const tooltip = instruction.has_addr
+    ? `${bytes} ${instruction.addr.format_address()}`
+    : bytes;
+  return (
+    <td>
+      <span className="flex">
+        <Tooltip monospace tooltip={tooltip}>
+          {instruction.text_with_value}
+        </Tooltip>
+      </span>
+    </td>
+  );
 }

@@ -1,10 +1,11 @@
 import { useCallback, useLayoutEffect, useState } from "preact/hooks";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
-import { range, toBin, toDec, toHex } from "../utils";
+import { range, toHex } from "../utils";
+import Button from "./button";
 import InputValue from "./input-value";
 import Setting from "./setting";
+import Value from "./value";
 import "./snes-memory.css";
-import Button from "./button";
 
 type SnesMemoryProps = {
   baseAddress: number;
@@ -16,8 +17,6 @@ type SnesMemoryProps = {
 };
 
 type Selection = { address: number; byte: number; index: number };
-
-const zeroWidthSpace = "\u200b";
 
 export default function SnesMemory({
   baseAddress,
@@ -82,7 +81,21 @@ export default function SnesMemory({
                       : setSelection({ address, byte: byte ?? 0, index })
                   }
                 >
-                  {byte === undefined ? <dim>00</dim> : toHex(byte, 2)}
+                  {byte === undefined ? (
+                    <dim>
+                      <Value
+                        encoding={IntegerEncoding.Hex}
+                        unit={IntegerUnit.Byte}
+                        value={0}
+                      />
+                    </dim>
+                  ) : (
+                    <Value
+                      encoding={IntegerEncoding.Hex}
+                      unit={IntegerUnit.Byte}
+                      value={byte}
+                    />
+                  )}
                 </div>
               );
             })}
@@ -112,26 +125,6 @@ export default function SnesMemory({
             <Button label="ROM" onClick={setBaseAddressToRom} />
           </div>
         </Setting>
-
-        {selection && (
-          <Setting inline align="bottom" label="Selected" size="md">
-            <div className="SnesMemory_Footer_Selection">
-              <div>{toHex(selection.address, 6)}</div>
-              {"→"}
-              <div>
-                <dim>{`0b${zeroWidthSpace}`}</dim>
-                {toBin(selection.byte, 8)}
-              </div>
-              {"/"}
-              <div>{toDec(selection.byte)}</div>
-              {"/"}
-              <div>
-                <dim>{`0x${zeroWidthSpace}`}</dim>
-                {toHex(selection.byte, 2)}
-              </div>
-            </div>
-          </Setting>
-        )}
       </div>
     </div>
   );

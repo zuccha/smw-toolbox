@@ -13,10 +13,15 @@
   padding: 0.2em 0.4em;
   border-radius: 0.2em;
   pointer-events: none;
+  font-family: var(--font-family-normal);
   font-size: 0.8rem;
   font-variant: normal;
   font-weight: normal;
   opacity: 0;
+}
+
+.Tooltip_Content.monospace::before {
+  font-family: monospace;
 }
 
 .Tooltip_Content.bottom:hover::before,
