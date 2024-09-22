@@ -22,6 +22,8 @@ import { JSR } from "./instructions/jsr";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
+import { RTL } from "./instructions/rtl";
+import { RTS } from "./instructions/rts";
 import { SEP } from "./instructions/sep";
 
 export const opcode_to_instruction = {
@@ -245,8 +247,8 @@ export const opcode_to_instruction = {
   [0x6e]: NOP, // ROR addr
   [0x7e]: NOP, // ROR addr,x
 
-  [0x60]: NOP, // RTS
-  [0x6b]: NOP, // RTL
+  [0x60]: RTS, // RTS
+  [0x6b]: RTL, // RTL
   [0x40]: NOP, // RTI
 
   [0xe9]: NOP, // SBC #const
