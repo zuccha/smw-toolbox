@@ -55,7 +55,7 @@ export abstract class Instruction {
   }
 
   public get addr(): Value {
-    return this.mode.addr(this._arg, this._processor, this._memory);
+    return this.mode.addr(this._mode_context);
   }
 
   public indexed_addr_crosses_boundary(index: Value): boolean {
@@ -72,7 +72,7 @@ export abstract class Instruction {
   public get text_with_value(): string {
     const mnemonic = (<InstructionImpl>this.constructor).mnemonic;
     const mode = (<InstructionImpl>this.constructor).mode;
-    return `${mnemonic} ${mode.format(this._arg, this.length - 1)}`;
+    return `${mnemonic} ${mode.format(this._mode_context)}`;
   }
 
   public get length(): number {
@@ -139,6 +139,17 @@ export abstract class Instruction {
 
   protected get m() {
     return this._memory;
+  }
+
+  private get _mode_context() {
+    return {
+      arg: this._arg,
+      arg_size: this.length - 1,
+      p: this._processor,
+      m: this._memory,
+      pc: this._pc,
+      length: this.length,
+    };
   }
 }
 
