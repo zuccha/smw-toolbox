@@ -23,6 +23,8 @@ import { LDA } from "./instructions/lda";
 import { LDX } from "./instructions/ldx";
 import { LDY } from "./instructions/ldy";
 import { LSR } from "./instructions/lsr";
+import { MVN } from "./instructions/mvn";
+import { MVP } from "./instructions/mvp";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
@@ -196,8 +198,8 @@ export const opcode_to_instruction = {
   [0x4e]: LSR.Absolute, // LSR addr
   [0x5e]: LSR.Absolute_X, // LSR addr,x
 
-  [0x54]: NOP, // MVN srcbk,destbk
-  [0x44]: NOP, // MVP srcbk,destbk
+  [0x54]: MVN, // MVN srcBank,destBank
+  [0x44]: MVP, // MVP srcBank,destBank
 
   [0xea]: NOP, // NOP
 
