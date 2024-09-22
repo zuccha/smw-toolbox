@@ -1,6 +1,7 @@
-import { useCallback, useLayoutEffect, useState } from "preact/hooks";
+import { useLayoutEffect, useState } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
+import useItemsWindow from "../hooks/use-items-window";
 import { classNames, padL, toHex } from "../utils";
 import "./snes-log.css";
 
@@ -24,24 +25,12 @@ export default function SnesLog({
   windowSize = 16,
 }: SnesLogProps) {
   const [selectedId, setSelectedId] = useState(-1);
-  const [scrollIndex, setScrollIndex] = useState(0);
+  const instructionsWindow = useItemsWindow(instructions, windowSize);
 
   useLayoutEffect(() => {
     setSelectedId(-1);
-    setScrollIndex(0);
-  }, [instructions]);
-
-  const scroll = useCallback(
-    (e: WheelEvent) => {
-      const nextScrollIndex = scrollIndex + e.deltaY / 30;
-      const lastIndex = instructions.length - windowSize + 1;
-      if (nextScrollIndex < 0 || lastIndex <= nextScrollIndex) return;
-
-      e.preventDefault();
-      setScrollIndex(nextScrollIndex);
-    },
-    [instructions.length, scrollIndex, windowSize],
-  );
+    instructionsWindow.resetScroll();
+  }, [instructions, instructionsWindow.resetScroll]);
 
   if (instructions.length === 0)
     return errors.length === 0 ? (
@@ -65,7 +54,6 @@ export default function SnesLog({
       : `${instructions.length} instructions`;
 
   const idLength = `${instructions.length}`.length;
-  const roundedScrollIndex = Math.floor(scrollIndex);
 
   return (
     <div className="SnesLog">
@@ -88,56 +76,52 @@ export default function SnesLog({
             </tr>
           </thead>
 
-          <tbody onWheel={scroll}>
-            {instructions
-              .slice(roundedScrollIndex, roundedScrollIndex + windowSize)
-              .map((instruction) => {
-                const className = classNames([
-                  ["selected", instruction.id === selectedId],
-                  ["error", !instruction.snapshot],
-                ]);
-                const onClick = instruction.snapshot
-                  ? () => {
-                      const newSelectedId =
-                        instruction.id === selectedId ? -1 : instruction.id;
-                      setSelectedId(newSelectedId);
-                      onClickValidInstruction(newSelectedId);
-                    }
-                  : undefined;
-                return (
-                  <tr className={className} onClick={onClick}>
-                    <td>{padL(`${instruction.id}`, idLength, " ")}</td>
-                    <td>{toHex(instruction.pc, 6)}</td>
-                    <td>{instruction.text_with_value}</td>
-                    {instruction.snapshot ? (
-                      <>
-                        <Register
-                          dimPage={!!instruction.snapshot.flag_m}
-                          value={instruction.snapshot.a}
-                        />
-                        <Register
-                          dimPage={!!instruction.snapshot.flag_x}
-                          value={instruction.snapshot.x}
-                        />
-                        <Register
-                          dimPage={!!instruction.snapshot.flag_x}
-                          value={instruction.snapshot.y}
-                        />
-                        <td>{toHex(instruction.snapshot.sp, 4)}</td>
-                        <td>{toHex(instruction.snapshot.dp, 4)}</td>
-                        <td>{toHex(instruction.snapshot.db, 2)}</td>
-                        <Flags flags={instruction.snapshot.flags} />
-                        <td className="right">{instruction.cycles}</td>
-                        <td className="right space-left">
-                          {instruction.length}
-                        </td>
-                      </>
-                    ) : (
-                      <td colSpan={10}>*** Error ***</td>
-                    )}
-                  </tr>
-                );
-              })}
+          <tbody onWheel={instructionsWindow.handleScroll}>
+            {instructionsWindow.items.map((instruction) => {
+              const className = classNames([
+                ["selected", instruction.id === selectedId],
+                ["error", !instruction.snapshot],
+              ]);
+              const onClick = instruction.snapshot
+                ? () => {
+                    const newSelectedId =
+                      instruction.id === selectedId ? -1 : instruction.id;
+                    setSelectedId(newSelectedId);
+                    onClickValidInstruction(newSelectedId);
+                  }
+                : undefined;
+              return (
+                <tr className={className} onClick={onClick}>
+                  <td>{padL(`${instruction.id}`, idLength, " ")}</td>
+                  <td>{toHex(instruction.pc, 6)}</td>
+                  <td>{instruction.text_with_value}</td>
+                  {instruction.snapshot ? (
+                    <>
+                      <Register
+                        dimPage={!!instruction.snapshot.flag_m}
+                        value={instruction.snapshot.a}
+                      />
+                      <Register
+                        dimPage={!!instruction.snapshot.flag_x}
+                        value={instruction.snapshot.x}
+                      />
+                      <Register
+                        dimPage={!!instruction.snapshot.flag_x}
+                        value={instruction.snapshot.y}
+                      />
+                      <td>{toHex(instruction.snapshot.sp, 4)}</td>
+                      <td>{toHex(instruction.snapshot.dp, 4)}</td>
+                      <td>{toHex(instruction.snapshot.db, 2)}</td>
+                      <Flags flags={instruction.snapshot.flags} />
+                      <td className="right">{instruction.cycles}</td>
+                      <td className="right space-left">{instruction.length}</td>
+                    </>
+                  ) : (
+                    <td colSpan={10}>*** Error ***</td>
+                  )}
+                </tr>
+              );
+            })}
           </tbody>
 
           <tfoot>

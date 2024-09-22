@@ -54,7 +54,7 @@
   background-color: var(--color-highlight-1);
 }
 
-.SnesLog_Table > table > tbody > tr:hover {
+.SnesLog_Table > table > tbody > tr:hover:not(.selected) {
   background-color: var(--color-highlight-2);
 }
 
