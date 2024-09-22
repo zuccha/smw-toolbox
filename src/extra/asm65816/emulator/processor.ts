@@ -41,6 +41,24 @@ export default class Processor {
     else this.a.word = value;
   }
 
+  public get_x(): number {
+    return this._flag_x ? this.x.byte : this.x.word;
+  }
+
+  public set_x(value: number): void {
+    if (this._flag_x) this.x.byte = value;
+    else this.x.word = value;
+  }
+
+  public get_y(): number {
+    return this._flag_x ? this.y.byte : this.y.word;
+  }
+
+  public set_y(value: number): void {
+    if (this._flag_x) this.y.byte = value;
+    else this.y.word = value;
+  }
+
   //----------------------------------------------------------------------------
   // Flags
   //----------------------------------------------------------------------------

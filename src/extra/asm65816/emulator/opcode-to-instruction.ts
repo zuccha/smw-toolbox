@@ -20,6 +20,8 @@ import { INY } from "./instructions/iny";
 import { JMP } from "./instructions/jmp";
 import { JSR } from "./instructions/jsr";
 import { LDA } from "./instructions/lda";
+import { LDX } from "./instructions/ldx";
+import { LDY } from "./instructions/ldy";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
@@ -175,17 +177,17 @@ export const opcode_to_instruction = {
   [0xa3]: LDA.StackRelative, // LDA sr,s
   [0xb3]: LDA.StackRelative_Indirect_Y, // LDA (sr,s),y
 
-  [0xa2]: NOP, // LDX #const
-  [0xa6]: NOP, // LDX dp
-  [0xb6]: NOP, // LDX dp,y
-  [0xae]: NOP, // LDX addr
-  [0xbe]: NOP, // LDX addr,y
+  [0xa2]: LDX.Immediate_VariableX, // LDX #const
+  [0xa6]: LDX.DirectPage, // LDX dp
+  [0xb6]: LDX.DirectPage_Y, // LDX dp,y
+  [0xae]: LDX.Absolute, // LDX addr
+  [0xbe]: LDX.Absolute_Y, // LDX addr,y
 
-  [0xa0]: NOP, // LDY #const
-  [0xa4]: NOP, // LDY dp
-  [0xb4]: NOP, // LDY dp,x
-  [0xac]: NOP, // LDY addr
-  [0xbc]: NOP, // LDY addr,x
+  [0xa0]: LDY.Immediate_VariableX, // LDY #const
+  [0xa4]: LDY.DirectPage, // LDY dp
+  [0xb4]: LDY.DirectPage_X, // LDY dp,x
+  [0xac]: LDY.Absolute, // LDY addr
+  [0xbc]: LDY.Absolute_X, // LDY addr,x
 
   [0x4a]: NOP, // LSR A
   [0x46]: NOP, // LSR dp
