@@ -65,6 +65,7 @@ export default function SnesLog({
       : `${instructions.length} instructions`;
 
   const idLength = `${instructions.length}`.length;
+  const roundedScrollIndex = Math.floor(scrollIndex);
 
   return (
     <div className="SnesLog">
@@ -89,7 +90,7 @@ export default function SnesLog({
 
           <tbody onWheel={scroll}>
             {instructions
-              .slice(scrollIndex, scrollIndex + windowSize)
+              .slice(roundedScrollIndex, roundedScrollIndex + windowSize)
               .map((instruction) => {
                 const className = classNames([
                   ["selected", instruction.id === selectedId],
