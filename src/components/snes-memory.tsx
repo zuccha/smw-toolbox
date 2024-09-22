@@ -1,9 +1,10 @@
-import { useLayoutEffect, useState } from "preact/hooks";
+import { useCallback, useLayoutEffect, useState } from "preact/hooks";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { range, toBin, toDec, toHex } from "../utils";
 import InputValue from "./input-value";
 import Setting from "./setting";
 import "./snes-memory.css";
+import Button from "./button";
 
 type SnesMemoryProps = {
   baseAddress: number;
@@ -26,6 +27,14 @@ export default function SnesMemory({
   const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 
   useLayoutEffect(() => setSelection(undefined), [memory]);
+
+  const increaseBaseAddress = useCallback(() => {
+    onChangeAddress((baseAddress + 0x000010) & 0xffffff);
+  }, [baseAddress]);
+
+  const decreaseBaseAddress = useCallback(() => {
+    onChangeAddress((baseAddress - 0x000010) & 0xffffff);
+  }, [baseAddress]);
 
   return (
     <div className="SnesMemory">
@@ -71,13 +80,19 @@ export default function SnesMemory({
 
       <div className="SnesMemory_Footer">
         <Setting inline label="Base address" size="md">
-          <InputValue
-            encoding={IntegerEncoding.Hex}
-            onChange={onChangeAddress}
-            placeholder="7E0000"
-            unit={IntegerUnit.Long}
-            value={baseAddress}
-          />
+          <div className="App_SectionCluster">
+            <Button label="-10" onClick={decreaseBaseAddress} />
+
+            <InputValue
+              encoding={IntegerEncoding.Hex}
+              onChange={onChangeAddress}
+              placeholder="7E0000"
+              unit={IntegerUnit.Long}
+              value={baseAddress}
+            />
+
+            <Button label="+10" onClick={increaseBaseAddress} />
+          </div>
         </Setting>
 
         {selection && (
