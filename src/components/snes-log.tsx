@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
+import { v } from "../extra/asm65816/emulator/value";
 import useItemsWindow from "../hooks/use-items-window";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { classNames, padL, toHex } from "../utils";
@@ -50,11 +51,6 @@ export default function SnesLog({
         </ul>
       </div>
     );
-
-  const instructionCount =
-    instructions.length === 1
-      ? `${instructions.length} instruction`
-      : `${instructions.length} instructions`;
 
   const idLength = `${instructions.length}`.length;
 
@@ -129,7 +125,9 @@ export default function SnesLog({
 
           <tfoot>
             <tr>
-              <td colSpan={3}>{instructionCount}</td>
+              <td>{instructions.length}</td>
+              <td>{v((snapshot.pb << 16) + snapshot.pc).format_address()}</td>
+              <td></td>
               <TdRegister dimPage={!!snapshot.flag_m} value={snapshot.a} />
               <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.x} />
               <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.y} />

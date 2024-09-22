@@ -230,7 +230,7 @@ export default class InstructionMode {
       const db = p.db.byte << 16;
       const byte = arg.byte;
       const offset = byte & flag_n_mask ? byte - 0x100 : byte;
-      return v(db + v(pc.word + length + offset).word);
+      return v(db + v(pc + length + offset).word);
     },
     format: ({ arg }) => arg.format_byte("$"),
     base_length: 2,
@@ -241,7 +241,7 @@ export default class InstructionMode {
     addr: ({ arg, pc, length }) => {
       const word = arg.word;
       const offset = arg.page & flag_n_mask ? word - 0x10000 : word;
-      return v(pc.word + length + offset, word_mask);
+      return v(pc + length + offset, word_mask);
     },
     format: ({ arg }) => arg.format_word("$"),
     base_length: 3,
@@ -290,6 +290,6 @@ type InstructionModeContext = {
   arg_size: number;
   p: Processor;
   m: Memory;
-  pc: Value;
+  pc: number;
   length: number;
 };

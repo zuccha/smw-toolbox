@@ -22,10 +22,9 @@ export abstract class Instruction {
   public readonly id: number;
   protected _arg: Value;
   protected _processor: Processor;
-  protected _processor_snapshot: ProcessorSnapshot | undefined;
+  protected _snapshot_before: ProcessorSnapshot;
+  protected _snapshot_after: ProcessorSnapshot | undefined;
   protected _memory: Memory;
-  protected _pb: Value;
-  protected _pc: Value;
 
   public constructor(
     id: number,
@@ -36,10 +35,9 @@ export abstract class Instruction {
     this.id = id;
     this._arg = arg;
     this._processor = processor;
-    this._processor_snapshot = undefined;
+    this._snapshot_before = processor.snapshot();
+    this._snapshot_after = undefined;
     this._memory = memory;
-    this._pb = v(processor.pb.byte);
-    this._pc = v(processor.pc.word);
   }
 
   protected abstract execute_effect(): void;
@@ -47,7 +45,7 @@ export abstract class Instruction {
   public execute() {
     this._processor.pc.add_word(this.length);
     this.execute_effect();
-    this._processor_snapshot = this._processor.snapshot();
+    this._snapshot_after = this._processor.snapshot();
   }
 
   public get mode(): InstructionMode {
@@ -60,11 +58,6 @@ export abstract class Instruction {
 
   public get addr(): Value {
     return this.mode.addr(this._mode_context);
-  }
-
-  public indexed_addr_crosses_boundary(index: Value): boolean {
-    const addr = this.addr;
-    return addr ? v(addr.long + index.word).page !== addr.page : false;
   }
 
   public get text(): string {
@@ -82,26 +75,26 @@ export abstract class Instruction {
   public get length(): number {
     const mode = this.mode;
     let length = mode.base_length;
-    if (mode.length_modifier & minus_m) length -= this._processor.flag_m;
-    if (mode.length_modifier & minus_x) length -= this._processor.flag_x;
+    if (mode.length_modifier & minus_m) length -= this._snapshot_before.flag_m;
+    if (mode.length_modifier & minus_x) length -= this._snapshot_before.flag_x;
     return length;
   }
 
   public get cycles(): number {
     const modifier = (<InstructionImpl>this.constructor).cycles_modifier;
     let cycles = (<InstructionImpl>this.constructor).base_cycles;
-    if (modifier & minus_m) cycles -= this._processor.flag_m;
-    if (modifier & minus_x) cycles -= this._processor.flag_x;
+    if (modifier & minus_m) cycles -= this._snapshot_before.flag_m;
+    if (modifier & minus_x) cycles -= this._snapshot_before.flag_x;
     if (modifier & plus_1_if_dp_low_is_zero)
-      cycles -= bool_to_number(this._processor.dp.byte === 0);
-    if (modifier & plus_1_if_index_x_crosses_page)
-      cycles -=
-        this._processor.flag_x ||
-        bool_to_number(this.indexed_addr_crosses_boundary(this._processor.x));
-    if (modifier & plus_1_if_index_y_crosses_page)
-      cycles -=
-        this._processor.flag_x ||
-        bool_to_number(this.indexed_addr_crosses_boundary(this._processor.y));
+      cycles -= this._snapshot_before.dp === 0 ? 1 : 0;
+    if (modifier & plus_1_if_index_x_crosses_page) {
+      const x = v(this._snapshot_before.x);
+      cycles -= this._snapshot_before.flag_x || this._cross_boundary(x);
+    }
+    if (modifier & plus_1_if_index_y_crosses_page) {
+      const y = v(this._snapshot_before.y);
+      cycles -= this._snapshot_before.flag_x || this._cross_boundary(y);
+    }
     return cycles;
   }
 
@@ -119,11 +112,11 @@ export abstract class Instruction {
   }
 
   public get pc(): Value {
-    return v((this._pb.byte << 16) + this._pc.word);
+    return v((this._snapshot_before.pb << 16) + this._snapshot_before.pc);
   }
 
   public get snapshot(): ProcessorSnapshot | undefined {
-    return this._processor_snapshot;
+    return this._snapshot_after;
   }
 
   public load_m(addr: Value): Value {
@@ -158,20 +151,19 @@ export abstract class Instruction {
     return this._memory;
   }
 
+  private _cross_boundary(index: Value): 0 | 1 {
+    const addr = this.addr;
+    return v(addr.long + index.word).page === addr.page ? 0 : 1;
+  }
+
   private get _mode_context() {
     return {
       arg: this._arg,
       arg_size: this.length - 1,
       p: this._processor,
       m: this._memory,
-      pc: this._pc,
+      pc: this._snapshot_before.pc,
       length: this.length,
     };
   }
 }
-
-//------------------------------------------------------------------------------
-// Utils
-//------------------------------------------------------------------------------
-
-const bool_to_number = (value: boolean): 0 | 1 => (value ? 1 : 0);
