@@ -30,16 +30,19 @@ export abstract class JSL extends Instruction {
 
 export namespace JSR {
   export class Absolute extends JSR {
+    public static opcode = 0x20;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 6;
   }
 
   export class Absolute_X_Indirect extends JSR {
+    public static opcode = 0xfc;
     public static mode = InstructionMode.Absolute_X_Indirect;
     public static base_cycles = 8;
   }
 
   export class AbsoluteLong extends JSL {
+    public static opcode = 0x22;
     public static mode = InstructionMode.AbsoluteLong;
     public static base_cycles = 8;
   }

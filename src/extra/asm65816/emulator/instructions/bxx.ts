@@ -22,51 +22,61 @@ export abstract class BXX_Near extends Instruction {
 export namespace BXX {
   export class BCC extends BXX_Near {
     public static mnemonic = "BCC";
+    public static opcode = 0x90;
     protected _branch_taken = () => this.p.flag_c === 0;
   }
 
   export class BCS extends BXX_Near {
     public static mnemonic = "BCS";
+    public static opcode = 0xb0;
     protected _branch_taken = () => this.p.flag_c === 1;
   }
 
   export class BNE extends BXX_Near {
     public static mnemonic = "BNE";
+    public static opcode = 0xd0;
     protected _branch_taken = () => this.p.flag_z === 0;
   }
 
   export class BEQ extends BXX_Near {
     public static mnemonic = "BEQ";
+    public static opcode = 0xf0;
     protected _branch_taken = () => this.p.flag_z === 1;
   }
 
   export class BPL extends BXX_Near {
     public static mnemonic = "BPL";
+    public static opcode = 0x10;
     protected _branch_taken = () => this.p.flag_n === 0;
   }
 
   export class BMI extends BXX_Near {
     public static mnemonic = "BMI";
+    public static opcode = 0x30;
     protected _branch_taken = () => this.p.flag_n === 1;
   }
 
   export class BVC extends BXX_Near {
     public static mnemonic = "BVC";
+    public static opcode = 0x50;
     protected _branch_taken = () => this.p.flag_v === 0;
   }
 
   export class BVS extends BXX_Near {
     public static mnemonic = "BVS";
+    public static opcode = 0x70;
     protected _branch_taken = () => this.p.flag_v === 1;
   }
 
   export class BRA extends BXX_Near {
     public static mnemonic = "BRA";
+    public static opcode = 0x80;
     protected _branch_taken = () => true;
   }
 
   export class BRL extends Instruction {
     public static mnemonic = "BRL";
+    public static opcode = 0x82;
     public static mode = InstructionMode.OffsetLong;
     public static base_cycles = 4;
 

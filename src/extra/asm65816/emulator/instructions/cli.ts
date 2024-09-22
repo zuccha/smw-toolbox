@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class CLI extends Instruction {
   public static mnemonic = "CLI";
+  public static opcode = 0x58;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
 

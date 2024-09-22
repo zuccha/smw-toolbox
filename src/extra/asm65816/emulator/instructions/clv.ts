@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class CLV extends Instruction {
   public static mnemonic = "CLV";
+  public static opcode = 0xb8;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
   public static baseLength = 1;

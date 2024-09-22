@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class INY extends Instruction {
   public static mnemonic = "INY";
+  public static opcode = 0xc8;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
   public static baseLength = 1;

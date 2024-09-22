@@ -15,7 +15,7 @@ export default class InstructionMode {
   public static Implied = new InstructionMode({
     addr: () => v(-1),
     format: () => "",
-    is_address: false,
+    has_address: false,
     base_length: 1,
     text: "",
   });
@@ -23,7 +23,7 @@ export default class InstructionMode {
   public static Accumulator = new InstructionMode({
     addr: () => v(-1),
     format: () => "A",
-    is_address: false,
+    has_address: false,
     base_length: 1,
     text: "",
   });
@@ -31,7 +31,7 @@ export default class InstructionMode {
   public static Immediate = new InstructionMode({
     addr: () => v(-1),
     format: ({ arg }) => `#${arg.format_byte("$")}`,
-    is_address: false,
+    has_address: false,
     base_length: 2,
     text: "#const",
   });
@@ -40,7 +40,7 @@ export default class InstructionMode {
     addr: () => v(-1),
     format: ({ arg, arg_size }) =>
       `#${arg_size === 1 ? arg.format_byte("$") : arg.format_word("$")}`,
-    is_address: false,
+    has_address: false,
     base_length: 3,
     length_modifier: minus_m,
     text: "#const",
@@ -50,7 +50,7 @@ export default class InstructionMode {
     addr: () => v(-1),
     format: ({ arg, arg_size }) =>
       `#${arg_size === 1 ? arg.format_byte("$") : arg.format_word("$")}`,
-    is_address: false,
+    has_address: false,
     base_length: 3,
     length_modifier: minus_x,
     text: "#const",
@@ -252,7 +252,7 @@ export default class InstructionMode {
     addr: ({ arg }) => arg,
     format: ({ arg }) =>
       `${v(arg.byte).format_byte("$")},${v(arg.page).format_byte("$")}`,
-    is_address: false,
+    has_address: false,
     base_length: 3,
     text: "srcBank,destBank",
   });
@@ -263,24 +263,24 @@ export default class InstructionMode {
 
   public addr: (args: InstructionModeContext) => Value;
   public format: (args: InstructionModeContext) => string;
-  public readonly is_address: boolean;
   public readonly base_length: number;
   public readonly length_modifier: number;
+  public readonly has_address: boolean;
   public readonly text: string;
 
   public constructor(args: {
     addr: (context: InstructionModeContext) => Value;
     format: (context: InstructionModeContext) => string;
-    is_address?: boolean;
     base_length: number;
     length_modifier?: number;
+    has_address?: boolean;
     text: string;
   }) {
     this.addr = args.addr;
     this.format = args.format;
-    this.is_address = args.is_address ?? true;
     this.base_length = args.base_length;
     this.length_modifier = args.length_modifier ?? 0;
+    this.has_address = args.has_address ?? true;
     this.text = args.text;
   }
 }

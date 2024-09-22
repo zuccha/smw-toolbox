@@ -30,6 +30,7 @@ export abstract class CMP extends Instruction {
 
 export namespace CMP {
   export class Immediate_VariableA extends CMP {
+    public static opcode = 0xc9;
     public static mode = InstructionMode.Immediate_VariableA;
     public static base_cycles = 3;
     public static cyclesModifier = minus_m;
@@ -40,30 +41,35 @@ export namespace CMP {
   }
 
   export class DirectPage extends CMP {
+    public static opcode = 0xc5;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends CMP {
+    public static opcode = 0xd5;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect extends CMP {
+    public static opcode = 0xd2;
     public static mode = InstructionMode.DirectPage_Indirect;
     public static base_cycles = 6;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X_Indirect extends CMP {
+    public static opcode = 0xc1;
     public static mode = InstructionMode.DirectPage_X_Indirect;
     public static base_cycles = 7;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect_Y extends CMP {
+    public static opcode = 0xd1;
     public static mode = InstructionMode.DirectPage_Indirect_Y;
     public static base_cycles = 6;
     public static cyclesModifier =
@@ -71,54 +77,63 @@ export namespace CMP {
   }
 
   export class DirectPage_IndirectLong extends CMP {
+    public static opcode = 0xc7;
     public static mode = InstructionMode.DirectPage_IndirectLong;
     public static base_cycles = 7;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_IndirectLong_Y extends CMP {
+    public static opcode = 0xd7;
     public static mode = InstructionMode.DirectPage_IndirectLong_Y;
     public static base_cycles = 7;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends CMP {
+    public static opcode = 0xcd;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m;
   }
 
   export class Absolute_X extends CMP {
+    public static opcode = 0xdd;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m | plus_1_if_index_x_crosses_page;
   }
 
   export class Absolute_Y extends CMP {
+    public static opcode = 0xd9;
     public static mode = InstructionMode.Absolute_Y;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m | plus_1_if_index_y_crosses_page;
   }
 
   export class AbsoluteLong extends CMP {
+    public static opcode = 0xcf;
     public static mode = InstructionMode.AbsoluteLong;
     public static base_cycles = 6;
     public static cyclesModifier = minus_m;
   }
 
   export class AbsoluteLong_X extends CMP {
+    public static opcode = 0xdf;
     public static mode = InstructionMode.AbsoluteLong_X;
     public static base_cycles = 6;
     public static cyclesModifier = minus_m;
   }
 
   export class StackRelative extends CMP {
+    public static opcode = 0xc3;
     public static mode = InstructionMode.StackRelative;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m;
   }
 
   export class StackRelative_Indirect_Y extends CMP {
+    public static opcode = 0xd3;
     public static mode = InstructionMode.StackRelative_Indirect_Y;
     public static base_cycles = 8;
     public static cyclesModifier = minus_m;

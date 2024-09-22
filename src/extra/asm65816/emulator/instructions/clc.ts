@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class CLC extends Instruction {
   public static mnemonic = "CLC";
+  public static opcode = 0x18;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
 

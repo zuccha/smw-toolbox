@@ -25,6 +25,7 @@ export abstract class CPY extends Instruction {
 
 export namespace CPY {
   export class Immediate_VariableX extends CPY {
+    public static opcode = 0xc0;
     public static mode = InstructionMode.Immediate_VariableX;
     public static base_cycles = 3;
     public static cyclesModifier = minus_x;
@@ -35,6 +36,7 @@ export namespace CPY {
   }
 
   export class DirectPage extends CPY {
+    public static opcode = 0xc4;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
     public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
@@ -42,6 +44,7 @@ export namespace CPY {
   }
 
   export class Absolute extends CPY {
+    public static opcode = 0xcc;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
     public static cyclesModifier = minus_x;

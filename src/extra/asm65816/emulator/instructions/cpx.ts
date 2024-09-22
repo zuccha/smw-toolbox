@@ -25,6 +25,7 @@ export abstract class CPX extends Instruction {
 
 export namespace CPX {
   export class Immediate_VariableX extends CPX {
+    public static opcode = 0xe0;
     public static mode = InstructionMode.Immediate_VariableX;
     public static base_cycles = 3;
     public static cyclesModifier = minus_x;
@@ -35,12 +36,14 @@ export namespace CPX {
   }
 
   export class DirectPage extends CPX {
+    public static opcode = 0xe4;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
     public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends CPX {
+    public static opcode = 0xec;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
     public static cyclesModifier = minus_x;

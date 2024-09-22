@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class DEX extends Instruction {
   public static mnemonic = "DEX";
+  public static opcode = 0xca;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
 

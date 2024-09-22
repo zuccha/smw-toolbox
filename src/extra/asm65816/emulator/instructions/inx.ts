@@ -3,6 +3,7 @@ import InstructionMode from "../instruction-mode";
 
 export class INX extends Instruction {
   public static mnemonic = "INX";
+  public static opcode = 0xe8;
   public static mode = InstructionMode.Implied;
   public static base_cycles = 2;
   public static baseLength = 1;

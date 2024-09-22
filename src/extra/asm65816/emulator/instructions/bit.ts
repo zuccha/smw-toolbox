@@ -35,6 +35,7 @@ export abstract class BIT_Addr extends BIT {
 
 export namespace BIT {
   export class Immediate_VariableA extends BIT {
+    public static opcode = 0x89;
     public static mode = InstructionMode.Immediate_VariableA;
     public static base_cycles = 3;
     public static cyclesModifier = minus_m;
@@ -48,24 +49,28 @@ export namespace BIT {
   }
 
   export class DirectPage extends BIT_Addr {
+    public static opcode = 0x24;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends BIT_Addr {
+    public static opcode = 0x34;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends BIT_Addr {
+    public static opcode = 0x2c;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m;
   }
 
   export class Absolute_X extends BIT_Addr {
+    public static opcode = 0x3c;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 5;
     public static cyclesModifier = minus_m | plus_1_if_index_x_crosses_page;

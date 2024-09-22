@@ -54,6 +54,10 @@ export abstract class Instruction {
     return (<InstructionImpl>this.constructor).mode;
   }
 
+  public get has_addr(): boolean {
+    return this.mode.has_address;
+  }
+
   public get addr(): Value {
     return this.mode.addr(this._mode_context);
   }
@@ -101,8 +105,21 @@ export abstract class Instruction {
     return cycles;
   }
 
-  public get pc(): number {
-    return (this._pb.byte << 16) + this._pc.word;
+  public get opcode(): number {
+    return (<InstructionImpl>this.constructor).opcode;
+  }
+
+  public get bytes(): number[] {
+    const bytes = [this.opcode];
+    const length = this.length;
+    if (length > 1) bytes.push(this._arg.byte);
+    if (length > 2) bytes.push(this._arg.page);
+    if (length > 3) bytes.push(this._arg.bank);
+    return bytes;
+  }
+
+  public get pc(): Value {
+    return v((this._pb.byte << 16) + this._pc.word);
   }
 
   public get snapshot(): ProcessorSnapshot | undefined {

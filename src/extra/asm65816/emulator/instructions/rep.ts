@@ -13,6 +13,7 @@ import InstructionMode from "../instruction-mode";
 
 export class REP extends Instruction {
   public static mnemonic = "REP";
+  public static opcode = 0xc2;
   public static mode = InstructionMode.Immediate;
   public static base_cycles = 3;
   public static baseLength = 2;
