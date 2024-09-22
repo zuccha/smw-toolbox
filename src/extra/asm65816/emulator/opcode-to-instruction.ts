@@ -19,6 +19,7 @@ import { INX } from "./instructions/inx";
 import { INY } from "./instructions/iny";
 import { JMP } from "./instructions/jmp";
 import { JSR } from "./instructions/jsr";
+import { LDA } from "./instructions/lda";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
@@ -158,21 +159,21 @@ export const opcode_to_instruction = {
   [0xfc]: JSR.Absolute_X_Indirect, // JSR (addr,x))
   [0x22]: JSR.AbsoluteLong, // JSL long
 
-  [0xa9]: NOP, // LDA #const
-  [0xa5]: NOP, // LDA dp
-  [0xb5]: NOP, // LDA dp,x
-  [0xb2]: NOP, // LDA (dp)
-  [0xa1]: NOP, // LDA (dp,x)
-  [0xb1]: NOP, // LDA (dp),y
-  [0xa7]: NOP, // LDA [dp]
-  [0xb7]: NOP, // LDA [dp],y
-  [0xad]: NOP, // LDA addr
-  [0xbd]: NOP, // LDA addr,x
-  [0xb9]: NOP, // LDA addr,y
-  [0xaf]: NOP, // LDA long
-  [0xbf]: NOP, // LDA long,x
-  [0xa3]: NOP, // LDA sr,s
-  [0xb3]: NOP, // LDA (sr,s),y
+  [0xa9]: LDA.Immediate_VariableA, // LDA #const
+  [0xa5]: LDA.DirectPage, // LDA dp
+  [0xb5]: LDA.DirectPage_X, // LDA dp,x
+  [0xb2]: LDA.DirectPage_Indirect, // LDA (dp)
+  [0xa1]: LDA.DirectPage_X_Indirect, // LDA (dp,x)
+  [0xb1]: LDA.DirectPage_Indirect_Y, // LDA (dp),y
+  [0xa7]: LDA.DirectPage_IndirectLong, // LDA [dp]
+  [0xb7]: LDA.DirectPage_IndirectLong_Y, // LDA [dp],y
+  [0xad]: LDA.Absolute, // LDA addr
+  [0xbd]: LDA.Absolute_X, // LDA addr,x
+  [0xb9]: LDA.Absolute_Y, // LDA addr,y
+  [0xaf]: LDA.AbsoluteLong, // LDA long
+  [0xbf]: LDA.AbsoluteLong_X, // LDA long,x
+  [0xa3]: LDA.StackRelative, // LDA sr,s
+  [0xb3]: LDA.StackRelative_Indirect_Y, // LDA (sr,s),y
 
   [0xa2]: NOP, // LDX #const
   [0xa6]: NOP, // LDX dp
