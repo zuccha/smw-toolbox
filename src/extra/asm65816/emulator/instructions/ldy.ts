@@ -37,7 +37,7 @@ export namespace LDY {
     public static cyclesModifier = minus_x;
 
     public execute_effect(): void {
-      this.p.set_x(this.ldy(this._arg).word);
+      this.p.set_y(this.ldy(this._arg).word);
     }
   }
 
