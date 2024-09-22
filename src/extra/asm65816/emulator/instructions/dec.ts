@@ -1,7 +1,7 @@
 import { minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v } from "../value";
+import { w } from "../value";
 
 export abstract class DEC extends Instruction {
   public static mnemonic = "DEC";
@@ -10,7 +10,7 @@ export abstract class DEC extends Instruction {
 export abstract class DEC_Addr extends DEC {
   public execute_effect(): void {
     const addr = this.addr;
-    this.save_m(addr, v(this.load_m(addr).word - 1));
+    this.save_m(addr, w(this.load_m(addr).word - 1));
   }
 }
 

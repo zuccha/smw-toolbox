@@ -7,19 +7,19 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v, Value } from "../value";
+import { b, Value, w } from "../value";
 
 export abstract class BIT extends Instruction {
   public static mnemonic = "BIT";
 
   protected bit(value: Value): void {
     if (this.p.flag_m) {
-      const result = v(this.p.a.byte & value.byte);
+      const result = b(this.p.a.byte & value.byte);
       this.p.flag_n = value.byte & flag_z_mask;
       this.p.flag_v = value.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
     } else {
-      const result = v(this.p.a.word & value.word);
+      const result = w(this.p.a.word & value.word);
       this.p.flag_n = value.page & flag_z_mask;
       this.p.flag_v = value.page & flag_v_mask;
       this.p.flag_z = result.word === 0;

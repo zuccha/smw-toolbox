@@ -10,7 +10,7 @@ import Memory from "./memory";
 import { InstructionImpl } from "./opcode-to-instruction";
 import Processor from "./processor";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { v, Value } from "./value";
+import { l, Value } from "./value";
 
 //------------------------------------------------------------------------------
 // Instruction
@@ -88,11 +88,11 @@ export abstract class Instruction {
     if (modifier & plus_1_if_dp_low_is_zero)
       cycles -= this._snapshot_before.dp === 0 ? 1 : 0;
     if (modifier & plus_1_if_index_x_crosses_page) {
-      const x = v(this._snapshot_before.x);
+      const x = this._snapshot_before.x;
       cycles -= this._snapshot_before.flag_x || this._cross_boundary(x);
     }
     if (modifier & plus_1_if_index_y_crosses_page) {
-      const y = v(this._snapshot_before.y);
+      const y = this._snapshot_before.y;
       cycles -= this._snapshot_before.flag_x || this._cross_boundary(y);
     }
     return cycles;
@@ -112,7 +112,7 @@ export abstract class Instruction {
   }
 
   public get pc(): Value {
-    return v((this._snapshot_before.pb << 16) + this._snapshot_before.pc);
+    return l((this._snapshot_before.pb << 16) + this._snapshot_before.pc);
   }
 
   public get snapshot(): ProcessorSnapshot | undefined {
@@ -151,9 +151,9 @@ export abstract class Instruction {
     return this._memory;
   }
 
-  private _cross_boundary(index: Value): 0 | 1 {
+  private _cross_boundary(index: number): 0 | 1 {
     const addr = this.addr;
-    return v(addr.long + index.word).page === addr.page ? 0 : 1;
+    return l(addr.long + index).page === addr.page ? 0 : 1;
   }
 
   private get _mode_context() {

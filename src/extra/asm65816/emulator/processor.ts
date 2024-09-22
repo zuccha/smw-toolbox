@@ -1,5 +1,5 @@
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { v } from "./value";
+import { b, l, w } from "./value";
 
 //------------------------------------------------------------------------------
 // Processor
@@ -11,26 +11,26 @@ export default class Processor {
     initial_pc: number,
     initial_sp: number,
   ) {
-    this.pb = v(initial_pb);
-    this.pc = v(initial_pc);
-    this.sp = v(initial_sp);
+    this.pb = b(initial_pb);
+    this.pc = w(initial_pc);
+    this.sp = w(initial_sp);
   }
 
   //----------------------------------------------------------------------------
   // Registers
   //----------------------------------------------------------------------------
 
-  public readonly a = v(0);
-  public readonly x = v(0);
-  public readonly y = v(0);
+  public readonly a = l(0);
+  public readonly x = l(0);
+  public readonly y = l(0);
 
-  public readonly db = v(0);
+  public readonly db = l(0);
 
-  public readonly dp = v(0);
-  public readonly sp = v(0);
+  public readonly dp = l(0);
+  public readonly sp = l(0);
 
-  public readonly pb = v(0);
-  public readonly pc = v(0);
+  public readonly pb = l(0);
+  public readonly pc = l(0);
 
   public get_a(): number {
     return this._flag_m ? this.a.byte : this.a.word;

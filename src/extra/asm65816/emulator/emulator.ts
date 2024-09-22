@@ -4,7 +4,7 @@ import MemoryMapping from "./memory-mapping";
 import { Opcode, opcode_to_instruction } from "./opcode-to-instruction";
 import Processor from "./processor";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { v, Value } from "./value";
+import { b, l, Value, w } from "./value";
 
 export default class Emulator {
   private _bytes: number[] = [];
@@ -52,11 +52,11 @@ export default class Emulator {
   }
 
   public read_byte(addr: number): number | undefined {
-    return this._memory.load_byte_raw(v(addr));
+    return this._memory.load_byte_raw(l(addr));
   }
 
   public set_bytes(bytes: number[]) {
-    this._bytes = bytes.map((byte) => v(byte).byte);
+    this._bytes = bytes.map((byte) => b(byte).byte);
   }
 
   public set_max_instructions = (max_instructions: number) => {
@@ -72,7 +72,7 @@ export default class Emulator {
     try {
       while (true) {
         const id = this._instructions.length + 1;
-        const pc = v((this._processor.pb.byte << 16) | this._processor.pc.word);
+        const pc = l((this._processor.pb.byte << 16) | this._processor.pc.word);
         const instruction = this._next_instruction(id, pc);
         if (!instruction) break;
 
@@ -118,8 +118,8 @@ export default class Emulator {
     const pc = this._processor.pc.word;
     this._memory.reset(this._memory_mapping);
     for (let i = 0; i < this._bytes.length; ++i) {
-      const addr = v(pb + v(pc + i).word);
-      this._memory.save_byte(addr, v(this._bytes[i]!), true);
+      const addr = l(pb + w(pc + i).word);
+      this._memory.save_byte(addr, b(this._bytes[i]!), true);
     }
   }
 
@@ -128,10 +128,10 @@ export default class Emulator {
   }
 
   private _arg(addr: Value): Value {
-    const l = this._memory.load_byte_raw(v(addr.long + 1)) ?? 0;
-    const h = (this._memory.load_byte_raw(v(addr.long + 2)) ?? 0) << 8;
-    const b = (this._memory.load_byte_raw(v(addr.long + 3)) ?? 0) << 16;
-    return v(b + h + l);
+    const bank = this._memory.load_byte_raw(l(addr.long + 1)) ?? 0;
+    const page = (this._memory.load_byte_raw(l(addr.long + 2)) ?? 0) << 8;
+    const byte = (this._memory.load_byte_raw(l(addr.long + 3)) ?? 0) << 16;
+    return l(bank + page + byte);
   }
 
   private _next_instruction(id: number, addr: Value): Instruction | undefined {

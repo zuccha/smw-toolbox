@@ -1,5 +1,5 @@
 import MemoryMappingArea from "./memory-mapping-area";
-import { v, Value } from "./value";
+import { b, l, Value } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory Mapping
@@ -9,9 +9,9 @@ export default class MemoryMapping {
   public static LoROM = new MemoryMapping(
     [MemoryMappingArea.WRAM, MemoryMappingArea.WRAM_Mirror],
     [
-      new MemoryMappingArea([{ min: v(0x808000), max: v(0xffffff) }]),
-      new MemoryMappingArea([{ min: v(0x008000), max: v(0x7dffff) }], (addr) =>
-        v((v(addr.bank + 0x80).byte << 16) | addr.word),
+      new MemoryMappingArea([{ min: l(0x808000), max: l(0xffffff) }]),
+      new MemoryMappingArea([{ min: l(0x008000), max: l(0x7dffff) }], (addr) =>
+        l((b(addr.bank + 0x80).byte << 16) | addr.word),
       ),
     ],
   );

@@ -8,21 +8,21 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v, Value } from "../value";
+import { b, Value, w } from "../value";
 
 export abstract class ADC extends Instruction {
   public static mnemonic = "ADC";
 
   protected adc(value: Value): Value {
     if (this.p.flag_m) {
-      const result = v(value.byte + this.p.a.byte + this.p.flag_c);
+      const result = b(value.byte + this.p.a.byte + this.p.flag_c);
       this.p.flag_n = result.byte & flag_n_mask;
       this.p.flag_v = result.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
       this.p.flag_c = result.page > 0;
       return result;
     } else {
-      const result = v(value.word + this.p.a.word + this.p.flag_c);
+      const result = w(value.word + this.p.a.word + this.p.flag_c);
       this.p.flag_n = result.page & flag_n_mask;
       this.p.flag_v = result.page & flag_v_mask;
       this.p.flag_z = result.word === 0;

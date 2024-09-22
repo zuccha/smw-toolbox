@@ -118,8 +118,9 @@ export class Value {
 // Shared Exports
 //------------------------------------------------------------------------------
 
-export const v = (value: number, mask = long_mask): Value =>
-  new Value(value, mask);
+export const b = (value: number): Value => new Value(value, byte_mask);
+export const w = (value: number): Value => new Value(value, word_mask);
+export const l = (value: number): Value => new Value(value, long_mask);
 
 export const byte_mask = 0x0000ff;
 export const word_mask = 0x00ffff;

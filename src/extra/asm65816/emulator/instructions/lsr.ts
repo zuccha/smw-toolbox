@@ -1,20 +1,20 @@
 import { flag_c_mask, minus_m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v, Value } from "../value";
+import { b, Value, w } from "../value";
 
 export abstract class LSR extends Instruction {
   public static mnemonic = "LSR";
 
   protected lsr(value: Value): Value {
     if (this.p.flag_m) {
-      const result = v(value.byte >> 1);
+      const result = b(value.byte >> 1);
       this.p.flag_n = 0;
       this.p.flag_z = result.byte === 0;
       this.p.flag_c = value.byte & flag_c_mask;
       return result;
     } else {
-      const result = v(value.word >> 1);
+      const result = w(value.word >> 1);
       this.p.flag_n = 0;
       this.p.flag_z = result.word === 0;
       this.p.flag_c = value.page & flag_c_mask;

@@ -1,6 +1,6 @@
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v } from "../value";
+import { b, w } from "../value";
 
 export abstract class JSR extends Instruction {
   public static mnemonic = "JSR";
@@ -8,8 +8,8 @@ export abstract class JSR extends Instruction {
   public execute_effect(): void {
     this.p.pc.word = this.p.pc.word - 1;
     this.p.sp.word = this.p.sp.word - 2;
-    this.m.save_byte(v(this.p.sp.word + 2), v(this.p.pc.page));
-    this.m.save_byte(v(this.p.sp.word + 1), v(this.p.pc.byte));
+    this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
+    this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
     this.p.pc.word = this._arg.word;
   }
 }
@@ -20,9 +20,9 @@ export abstract class JSL extends Instruction {
   public execute_effect(): void {
     this.p.pc.word = this.p.pc.word - 1;
     this.p.sp.word = this.p.sp.word - 3;
-    this.m.save_byte(v(this.p.sp.word + 3), v(this.p.pb.byte));
-    this.m.save_byte(v(this.p.sp.word + 2), v(this.p.pc.page));
-    this.m.save_byte(v(this.p.sp.word + 1), v(this.p.pc.byte));
+    this.m.save_byte(w(this.p.sp.word + 3), b(this.p.pb.byte));
+    this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
+    this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
     this.p.pb.byte = this._arg.bank;
     this.p.pc.word = this._arg.word;
   }

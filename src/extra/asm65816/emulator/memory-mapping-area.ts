@@ -1,4 +1,4 @@
-import { v, Value } from "./value";
+import { l, Value } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory Mapping Area
@@ -6,17 +6,17 @@ import { v, Value } from "./value";
 
 export default class MemoryMappingArea {
   public static WRAM = new MemoryMappingArea([
-    { min: v(0x7e0000), max: v(0x7e1fff) },
-    { min: v(0x7e2000), max: v(0x7fffff) },
+    { min: l(0x7e0000), max: l(0x7e1fff) },
+    { min: l(0x7e2000), max: l(0x7fffff) },
   ]);
 
   public static WRAM_Mirror = new MemoryMappingArea(
     [
-      { min: v(0x000000), max: v(0x3f1fff) },
-      { min: v(0x7f0000), max: v(0x7f1fff) },
-      { min: v(0x800000), max: v(0xbf1fff) },
+      { min: l(0x000000), max: l(0x3f1fff) },
+      { min: l(0x7f0000), max: l(0x7f1fff) },
+      { min: l(0x800000), max: l(0xbf1fff) },
     ],
-    (addr) => v(0x7e0000 | addr.word),
+    (addr) => l(0x7e0000 | addr.word),
   );
 
   public map: (addr: Value) => Value;

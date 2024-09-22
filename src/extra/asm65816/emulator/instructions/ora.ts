@@ -7,19 +7,19 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v, Value } from "../value";
+import { b, Value, w } from "../value";
 
 export abstract class ORA extends Instruction {
   public static mnemonic = "ORA";
 
   protected ora(value: Value): Value {
     if (this.p.flag_m) {
-      const result = v(value.byte | this.p.a.byte);
+      const result = b(value.byte | this.p.a.byte);
       this.p.flag_n = result.byte & flag_n_mask;
       this.p.flag_z = result.byte === 0;
       return result;
     } else {
-      const result = v(value.word | this.p.a.word);
+      const result = w(value.word | this.p.a.word);
       this.p.flag_n = result.page & flag_n_mask;
       this.p.flag_z = result.word === 0;
       return result;

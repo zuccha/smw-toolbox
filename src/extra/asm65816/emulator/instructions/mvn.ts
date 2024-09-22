@@ -1,6 +1,6 @@
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { v } from "../value";
+import { l } from "../value";
 
 export class MVN extends Instruction {
   public static mnemonic = "MVN";
@@ -21,8 +21,8 @@ export class MVN extends Instruction {
     this._iterations = 0;
     while (this.p.a.word !== 0xffff) {
       this._iterations++;
-      const value = this.m.load_byte(v((srcBank << 16) + this.p.get_x()));
-      this.m.save_byte(v((destBank << 16) + this.p.get_y()), value);
+      const value = this.m.load_byte(l((srcBank << 16) + this.p.get_x()));
+      this.m.save_byte(l((destBank << 16) + this.p.get_y()), value);
       this.p.x.add_byte(1);
       this.p.y.add_byte(1);
       this.p.a.sub_word(1);
