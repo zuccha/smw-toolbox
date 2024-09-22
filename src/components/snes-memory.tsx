@@ -19,6 +19,9 @@ type SnesMemoryProps = {
 
 type Selection = { address: number; byte: number; index: number };
 
+const long = 0xffffff;
+const offset = 0xfffff0;
+
 export default function SnesMemory({
   baseAddress,
   columnCount = 16,
@@ -29,16 +32,15 @@ export default function SnesMemory({
   onChangeAddress,
 }: SnesMemoryProps) {
   const [selection, setSelection] = useState<Selection | undefined>();
-  const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 
   useLayoutEffect(() => setSelection(undefined), [memory]);
 
   const increaseBaseAddress = useCallback(() => {
-    onChangeAddress((baseAddress + 0x000010) & 0xffffff);
+    onChangeAddress((baseAddress + 0x000010) & long);
   }, [baseAddress]);
 
   const decreaseBaseAddress = useCallback(() => {
-    onChangeAddress((baseAddress - 0x000010) & 0xffffff);
+    onChangeAddress((baseAddress - 0x000010) & long);
   }, [baseAddress]);
 
   const setBaseAddressToRam = useCallback(() => {
@@ -50,8 +52,13 @@ export default function SnesMemory({
   }, [baseAddress, initialRomAddress]);
 
   const setBaseAddressToStack = useCallback(() => {
-    onChangeAddress(stackAddress & 0xfffff0);
+    onChangeAddress(stackAddress & offset);
   }, [baseAddress, stackAddress]);
+
+  const baseAddressOffset = baseAddress & offset;
+  const isRamSelected = baseAddressOffset === (initialRamAddress & offset);
+  const isRomSelected = baseAddressOffset === (initialRomAddress & offset);
+  const isStackSelected = baseAddressOffset === (stackAddress & offset);
 
   return (
     <div className="SnesMemory">
@@ -61,9 +68,7 @@ export default function SnesMemory({
 
           <div className="SnesMemory_Table_RowIndex">
             {range(memory.length / columnCount).map((index) => (
-              <div>
-                {toHex((safeBaseAddress + columnCount * index) & 0xffffff, 6)}
-              </div>
+              <div>{toHex((baseAddress + columnCount * index) & long, 6)}</div>
             ))}
           </div>
         </div>
@@ -77,7 +82,7 @@ export default function SnesMemory({
           <div className="SnesMemory_Table_Grid">
             {memory.map((byte, index) => {
               const isSelected = selection?.index === index;
-              const address = (safeBaseAddress + index) & 0xffffff;
+              const address = (baseAddress + index) & 0xffffff;
               const className = classNames([
                 ["selected", isSelected],
                 ["stack", address === stackAddress],
@@ -130,11 +135,23 @@ export default function SnesMemory({
 
             <div className="divider"></div>
 
-            <Button label="RAM" onClick={setBaseAddressToRam} />
+            <Button
+              isSelected={isRamSelected}
+              label="RAM"
+              onClick={setBaseAddressToRam}
+            />
 
-            <Button label="ROM" onClick={setBaseAddressToRom} />
+            <Button
+              isSelected={isRomSelected}
+              label="ROM"
+              onClick={setBaseAddressToRom}
+            />
 
-            <Button label="Stack" onClick={setBaseAddressToStack} />
+            <Button
+              isSelected={isStackSelected}
+              label="Stack"
+              onClick={setBaseAddressToStack}
+            />
           </div>
         </Setting>
       </div>
