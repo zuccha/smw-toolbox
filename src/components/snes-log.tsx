@@ -38,7 +38,9 @@ export default function SnesLog({
 
   if (instructions.length === 0)
     return errors.length === 0 ? (
-      <div className="SnesLog">Run emulator to see processor state.</div>
+      <div className="SnesLog">
+        Run the emulator to see the processor's state.
+      </div>
     ) : (
       <div>
         <div className="SnesLog_CompilationErrorLabel">
