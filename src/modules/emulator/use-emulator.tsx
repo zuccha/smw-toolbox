@@ -65,6 +65,8 @@ export default function useEmulator() {
     compilationErrors,
     cycles: emulator.cycles,
     executionErrors: emulator.errors,
+    initialRamAddress: emulator.initial_ram_address,
+    initialRomAddress: emulator.initial_rom_address,
     instructionId,
     instructions: emulator.instructions,
     length: emulator.length,

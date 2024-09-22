@@ -9,6 +9,8 @@ import Button from "./button";
 type SnesMemoryProps = {
   baseAddress: number;
   columnCount?: number;
+  initialRamAddress: number;
+  initialRomAddress: number;
   memory: (number | undefined)[];
   onChangeAddress: (address: number) => void;
 };
@@ -20,6 +22,8 @@ const zeroWidthSpace = "\u200b";
 export default function SnesMemory({
   baseAddress,
   columnCount = 16,
+  initialRamAddress,
+  initialRomAddress,
   memory,
   onChangeAddress,
 }: SnesMemoryProps) {
@@ -35,6 +39,14 @@ export default function SnesMemory({
   const decreaseBaseAddress = useCallback(() => {
     onChangeAddress((baseAddress - 0x000010) & 0xffffff);
   }, [baseAddress]);
+
+  const setBaseAddressToRam = useCallback(() => {
+    onChangeAddress(initialRamAddress);
+  }, [baseAddress, initialRamAddress]);
+
+  const setBaseAddressToRom = useCallback(() => {
+    onChangeAddress(initialRomAddress);
+  }, [baseAddress, initialRomAddress]);
 
   return (
     <div className="SnesMemory">
@@ -92,6 +104,12 @@ export default function SnesMemory({
             />
 
             <Button label="+10" onClick={increaseBaseAddress} />
+
+            <div className="divider"></div>
+
+            <Button label="RAM" onClick={setBaseAddressToRam} />
+
+            <Button label="ROM" onClick={setBaseAddressToRom} />
           </div>
         </Setting>
 

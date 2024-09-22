@@ -117,3 +117,10 @@
   align-items: flex-end;
   column-gap: 0.5em;
 }
+
+.SnesMemory_Footer .divider {
+  width: 1px;
+  margin: 0.2em 0.2em;
+  align-self: stretch;
+  background-color: var(--color-neutral-2);
+}

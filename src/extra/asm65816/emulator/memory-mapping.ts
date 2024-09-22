@@ -7,7 +7,6 @@ import { v, Value } from "./value";
 
 export default class MemoryMapping {
   public static LoROM = new MemoryMapping(
-    v(0x008000),
     [MemoryMappingArea.WRAM, MemoryMappingArea.WRAM_Mirror],
     [
       new MemoryMappingArea([{ min: v(0x808000), max: v(0xffffff) }]),
@@ -17,19 +16,23 @@ export default class MemoryMapping {
     ],
   );
 
-  public readonly rom_initial_address: Value;
-
-  private _ram: MemoryMappingArea[];
-  private _rom: MemoryMappingArea[];
+  private _ram: [MemoryMappingArea, ...MemoryMappingArea[]];
+  private _rom: [MemoryMappingArea, ...MemoryMappingArea[]];
 
   public constructor(
-    rom_initial_address: Value,
-    ram: MemoryMappingArea[],
-    rom: MemoryMappingArea[],
+    ram: [MemoryMappingArea, ...MemoryMappingArea[]],
+    rom: [MemoryMappingArea, ...MemoryMappingArea[]],
   ) {
-    this.rom_initial_address = rom_initial_address;
     this._ram = ram;
     this._rom = rom;
+  }
+
+  public get ram_initial_address(): Value {
+    return this._ram[0].initial_address;
+  }
+
+  public get rom_initial_address(): Value {
+    return this._rom[0].initial_address;
   }
 
   public map(addr: Value): number {

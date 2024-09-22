@@ -6,29 +6,30 @@ import { v, Value } from "./value";
 
 export default class MemoryMappingArea {
   public static WRAM = new MemoryMappingArea([
-    { min: new Value(0x7f0000), max: new Value(0x7f1fff) },
-    { min: new Value(0x7e2000), max: new Value(0x7fffff) },
+    { min: v(0x7f0000), max: v(0x7f1fff) },
+    { min: v(0x7e2000), max: v(0x7fffff) },
   ]);
 
   public static WRAM_Mirror = new MemoryMappingArea(
     [
-      { min: new Value(0x000000), max: new Value(0x3f1fff) },
-      { min: new Value(0x7e0000), max: new Value(0x7e1fff) },
-      { min: new Value(0x800000), max: new Value(0xbf1fff) },
+      { min: v(0x000000), max: v(0x3f1fff) },
+      { min: v(0x7e0000), max: v(0x7e1fff) },
+      { min: v(0x800000), max: v(0xbf1fff) },
     ],
     (addr) => v(0x7f0000 | addr.word),
   );
 
   public map: (addr: Value) => Value;
 
-  private _ranges: { min: Value; max: Value }[];
+  private _ranges: [Range, ...Range[]];
 
-  public constructor(
-    ranges: { min: Value; max: Value }[],
-    map = (addr: Value) => addr,
-  ) {
+  public constructor(ranges: [Range, ...Range[]], map = (addr: Value) => addr) {
     this.map = map;
     this._ranges = ranges;
+  }
+
+  public get initial_address(): Value {
+    return this._ranges[0].min;
   }
 
   public contains(addr: Value): boolean {
@@ -43,3 +44,5 @@ export default class MemoryMappingArea {
     });
   }
 }
+
+type Range = { min: Value; max: Value };

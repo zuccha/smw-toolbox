@@ -39,6 +39,14 @@ export default class Emulator {
     return this._processor.snapshot();
   }
 
+  public get initial_ram_address(): number {
+    return this._memory_mapping.ram_initial_address.long;
+  }
+
+  public get initial_rom_address(): number {
+    return this._memory_mapping.rom_initial_address.long;
+  }
+
   public read_byte(addr: number): number | undefined {
     return this._memory.load_byte_raw(v(addr));
   }
