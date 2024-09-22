@@ -123,7 +123,7 @@ export default class InstructionMode {
   public static DirectPage_IndirectLong_Y = new InstructionMode({
     addr: ({ arg, p, m }) => {
       const addr = v(arg.byte + p.dp.word, word_mask);
-      return v(m.load_long(addr).word + p.y.word);
+      return v(m.load_long(addr).long + p.y.word);
     },
     format: ({ arg }) => `[${arg.format_byte("$")}],y`,
     base_length: 2,

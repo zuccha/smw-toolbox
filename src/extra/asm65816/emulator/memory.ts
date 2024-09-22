@@ -1,5 +1,5 @@
 import MemoryMapping from "./memory-mapping";
-import { byte_mask, v, Value, word_mask } from "./value";
+import { byte_mask, long_mask, v, Value, word_mask } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory
@@ -34,14 +34,14 @@ export default class Memory {
   public load_word(addr: Value): Value {
     const byte = this._load(this._mapping.map(addr));
     const page = this._load(this._mapping.map(v(addr.long + 1)));
-    return v((page << 8) + byte);
+    return v((page << 8) + byte, word_mask);
   }
 
   public load_long(addr: Value): Value {
     const byte = this._load(this._mapping.map(addr));
     const page = this._load(this._mapping.map(v(addr.long + 1)));
     const bank = this._load(this._mapping.map(v(addr.long + 2)));
-    return v((bank << 16) + (page << 8) + byte, word_mask);
+    return v((bank << 16) + (page << 8) + byte, long_mask);
   }
 
   public save_byte(addr: Value, value: Value, force = false): void {
