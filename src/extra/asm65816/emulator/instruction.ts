@@ -19,6 +19,7 @@ import { v, Value } from "./value";
 export abstract class Instruction {
   public static cycles_modifier = 0;
 
+  public readonly id: number;
   protected _arg: Value;
   protected _processor: Processor;
   protected _processor_snapshot: ProcessorSnapshot | undefined;
@@ -26,7 +27,13 @@ export abstract class Instruction {
   protected _pb: Value;
   protected _pc: Value;
 
-  public constructor(arg: Value, processor: Processor, memory: Memory) {
+  public constructor(
+    id: number,
+    arg: Value,
+    processor: Processor,
+    memory: Memory,
+  ) {
+    this.id = id;
     this._arg = arg;
     this._processor = processor;
     this._processor_snapshot = undefined;

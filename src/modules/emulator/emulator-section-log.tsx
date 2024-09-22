@@ -16,7 +16,7 @@ export default function EmulatorSectionLog() {
       : [];
 
   const clickValidInstruction = useCallback(
-    (index: number) => emulator.runUntil(index === -1 ? Infinity : index),
+    (id: number) => emulator.runUntil(id),
     [emulator.runUntil],
   );
 

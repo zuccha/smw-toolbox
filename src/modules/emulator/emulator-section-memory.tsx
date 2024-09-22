@@ -11,7 +11,7 @@ import useEmulator from "./use-emulator";
 const memorySize = 8 * 16;
 
 export default function EmulatorSectionMemory() {
-  const { instructionIndex, readByte } = useEmulator();
+  const { instructionId, readByte } = useEmulator();
   const [baseAddress, setBaseAddress] = useEmulatorMemoryBaseAddress();
   const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
 
@@ -23,9 +23,7 @@ export default function EmulatorSectionMemory() {
   );
 
   const label =
-    instructionIndex === Infinity
-      ? "Memory"
-      : `Memory (instruction ${instructionIndex + 1})`;
+    instructionId === -1 ? "Memory" : `Memory (instruction ${instructionId})`;
 
   return (
     <SectionCollapsible

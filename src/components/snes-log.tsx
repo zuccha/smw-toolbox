@@ -1,20 +1,18 @@
+import { useCallback, useLayoutEffect, useState } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
-import { classNames, padL, padR, toHex } from "../utils";
-import Tooltip from "./tooltip";
-import "./snes-log.css";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
-import { useLayoutEffect, useState } from "preact/hooks";
+import { classNames, padL, toHex } from "../utils";
+import "./snes-log.css";
 
 export type SnesLogProps = {
   cycles: number;
   errors: readonly string[];
   instructions: readonly Instruction[];
   length: number;
-  onClickValidInstruction: (index: number) => void;
+  onClickValidInstruction: (id: number) => void;
   snapshot: ProcessorSnapshot;
+  windowSize?: number;
 };
-
-const fill = " ";
 
 export default function SnesLog({
   cycles,
@@ -23,9 +21,27 @@ export default function SnesLog({
   length,
   onClickValidInstruction,
   snapshot,
+  windowSize = 16,
 }: SnesLogProps) {
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  useLayoutEffect(() => setSelectedIndex(-1), [instructions]);
+  const [selectedId, setSelectedId] = useState(-1);
+  const [scrollIndex, setScrollIndex] = useState(0);
+
+  useLayoutEffect(() => {
+    setSelectedId(-1);
+    setScrollIndex(0);
+  }, [instructions]);
+
+  const scroll = useCallback(
+    (e: WheelEvent) => {
+      const nextScrollIndex = scrollIndex + e.deltaY / 30;
+      const lastIndex = instructions.length - windowSize + 1;
+      if (nextScrollIndex < 0 || lastIndex <= nextScrollIndex) return;
+
+      e.preventDefault();
+      setScrollIndex(nextScrollIndex);
+    },
+    [instructions.length, scrollIndex, windowSize],
+  );
 
   if (instructions.length === 0)
     return errors.length === 0 ? (
@@ -43,136 +59,101 @@ export default function SnesLog({
       </div>
     );
 
-  const widths = {
-    pc: 6,
-    instruction: 13,
-    a: 4,
-    x: 4,
-    y: 4,
-    sp: 4,
-    dp: 4,
-    db: 2,
-    flags: 8,
-    cycles: String(cycles).length,
-    length: String(length).length,
-  };
-
-  const headers = {
-    pc: padR("PC", widths.pc, fill),
-    instruction: padR("Instruction", widths.instruction, fill),
-    a: padR("A", widths.a, fill),
-    x: padR("X", widths.x, fill),
-    y: padR("Y", widths.y, fill),
-    sp: padR("SP", widths.sp, fill),
-    dp: padR("DP", widths.dp, fill),
-    db: padR("DB", widths.db, fill),
-    flags: padR("Flags", widths.flags, fill),
-    cycles: padL("C", widths.cycles, fill),
-    length: padL("B", widths.length, fill),
-  };
-
   const instructionCount =
     instructions.length === 1
       ? `${instructions.length} instruction`
       : `${instructions.length} instructions`;
 
+  const idLength = `${instructions.length}`.length;
+
   return (
     <div className="SnesLog">
-      <div className="SnesLog_TableHeader">
-        <Tooltip tooltip="Program Counter">{headers.pc}</Tooltip>
-        <div>{headers.instruction}</div>
-        <Tooltip tooltip="Accumulator">{headers.a}</Tooltip>
-        <Tooltip tooltip="X index">{headers.x}</Tooltip>
-        <Tooltip tooltip="Y index">{headers.y}</Tooltip>
-        <Tooltip tooltip="Stack Pointer">{headers.sp}</Tooltip>
-        <Tooltip tooltip="Direct Page">{headers.dp}</Tooltip>
-        <Tooltip tooltip="Data Bank">{headers.db}</Tooltip>
-        <div>{headers.flags}</div>
-        <Tooltip tooltip="Cycles">{headers.cycles}</Tooltip>
-        <Tooltip tooltip="Bytes">{headers.length}</Tooltip>
-      </div>
+      <div className="SnesLog_Table">
+        <table>
+          <thead>
+            <tr>
+              <td>Id</td>
+              <td>PC</td>
+              <td>Instruction</td>
+              <td>A</td>
+              <td>X</td>
+              <td>Y</td>
+              <td>SP</td>
+              <td>DP</td>
+              <td className="space-right">DB</td>
+              <td>Flags</td>
+              <td className="right">C</td>
+              <td className="right space-left">B</td>
+            </tr>
+          </thead>
 
-      <div className="SnesLog_TableBody">
-        <div className="SnesLog_TableBody_Instructions">
-          {instructions.map((instruction, index) => {
-            const className = classNames([
-              ["SnesLog_TableBody_Instruction", true],
-              ["selected", index === selectedIndex],
-              ["error", !instruction.snapshot],
-            ]);
-            const onClick = instruction.snapshot
-              ? () => {
-                  const newSelectedIndex = index === selectedIndex ? -1 : index;
-                  setSelectedIndex(newSelectedIndex);
-                  onClickValidInstruction(newSelectedIndex);
-                }
-              : undefined;
-            return (
-              <div className={className} onClick={onClick}>
-                <div>{toHex(instruction.pc, 6)}</div>
-                <div>
-                  {padR(instruction.text_with_value, widths.instruction, fill)}
-                </div>
-                {instruction.snapshot ? (
-                  <>
-                    <Register
-                      dimPage={!!instruction.snapshot.flag_m}
-                      value={instruction.snapshot.a}
-                    />
-                    <Register
-                      dimPage={!!instruction.snapshot.flag_x}
-                      value={instruction.snapshot.x}
-                    />
-                    <Register
-                      dimPage={!!instruction.snapshot.flag_x}
-                      value={instruction.snapshot.y}
-                    />
-                    <div>{toHex(instruction.snapshot.sp, 4)}</div>
-                    <div>{toHex(instruction.snapshot.dp, 4)}</div>
-                    <div>{toHex(instruction.snapshot.db, 2)}</div>
-                    <Flags flags={instruction.snapshot.flags} />
-                    <div>
-                      {padL(`${instruction.cycles}`, widths.cycles, fill)}
-                    </div>
-                    <div>
-                      {padL(`${instruction.length}`, widths.length, fill)}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>{fill.repeat(widths.a)}</div>
-                    <div>{fill.repeat(widths.x)}</div>
-                    <div>{fill.repeat(widths.y)}</div>
-                    <div>{fill.repeat(widths.sp)}</div>
-                    <div>{fill.repeat(widths.dp)}</div>
-                    <div>{fill.repeat(widths.db)}</div>
-                    <div>{fill.repeat(widths.flags)}</div>
-                    <div>{fill.repeat(widths.cycles)}</div>
-                    <div>{fill.repeat(widths.length)}</div>
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+          <tbody onWheel={scroll}>
+            {instructions
+              .slice(scrollIndex, scrollIndex + windowSize)
+              .map((instruction) => {
+                const className = classNames([
+                  ["selected", instruction.id === selectedId],
+                  ["error", !instruction.snapshot],
+                ]);
+                const onClick = instruction.snapshot
+                  ? () => {
+                      const newSelectedId =
+                        instruction.id === selectedId ? -1 : instruction.id;
+                      setSelectedId(newSelectedId);
+                      onClickValidInstruction(newSelectedId);
+                    }
+                  : undefined;
+                return (
+                  <tr className={className} onClick={onClick}>
+                    <td>{padL(`${instruction.id}`, idLength, " ")}</td>
+                    <td>{toHex(instruction.pc, 6)}</td>
+                    <td>{instruction.text_with_value}</td>
+                    {instruction.snapshot ? (
+                      <>
+                        <Register
+                          dimPage={!!instruction.snapshot.flag_m}
+                          value={instruction.snapshot.a}
+                        />
+                        <Register
+                          dimPage={!!instruction.snapshot.flag_x}
+                          value={instruction.snapshot.x}
+                        />
+                        <Register
+                          dimPage={!!instruction.snapshot.flag_x}
+                          value={instruction.snapshot.y}
+                        />
+                        <td>{toHex(instruction.snapshot.sp, 4)}</td>
+                        <td>{toHex(instruction.snapshot.dp, 4)}</td>
+                        <td>{toHex(instruction.snapshot.db, 2)}</td>
+                        <Flags flags={instruction.snapshot.flags} />
+                        <td className="right">{instruction.cycles}</td>
+                        <td className="right space-left">
+                          {instruction.length}
+                        </td>
+                      </>
+                    ) : (
+                      <td colSpan={10}>*** Error ***</td>
+                    )}
+                  </tr>
+                );
+              })}
+          </tbody>
 
-      <div className="SnesLog_TableFooter">
-        <div>
-          {padR(instructionCount, widths.pc + widths.instruction, fill)}
-        </div>
-        <div></div>
-
-        <Register dimPage={!!snapshot.flag_m} value={snapshot.a} />
-        <Register dimPage={!!snapshot.flag_x} value={snapshot.x} />
-        <Register dimPage={!!snapshot.flag_x} value={snapshot.y} />
-        <div>{toHex(snapshot.sp, 4)}</div>
-        <div>{toHex(snapshot.dp, 4)}</div>
-        <div>{toHex(snapshot.db, 2)}</div>
-        <Flags flags={snapshot.flags} />
-
-        <div>{cycles}</div>
-        <div>{length}</div>
+          <tfoot>
+            <tr>
+              <td colSpan={3}>{instructionCount}</td>
+              <Register dimPage={!!snapshot.flag_m} value={snapshot.a} />
+              <Register dimPage={!!snapshot.flag_x} value={snapshot.x} />
+              <Register dimPage={!!snapshot.flag_x} value={snapshot.y} />
+              <td>{toHex(snapshot.sp, 4)}</td>
+              <td>{toHex(snapshot.dp, 4)}</td>
+              <td className="space-right">{toHex(snapshot.db, 2)}</td>
+              <Flags flags={snapshot.flags} />
+              <td className="right">{cycles}</td>
+              <td className="right space-left">{length}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
 
       {errors.length > 0 && (
@@ -188,22 +169,22 @@ export default function SnesLog({
 
 function Register({ dimPage, value }: { dimPage: boolean; value: number }) {
   return dimPage ? (
-    <span>
+    <td>
       <dim>{toHex((value >> 8) & 0xff, 2)}</dim>
       <span>{toHex(value & 0xff, 2)}</span>
-    </span>
+    </td>
   ) : (
-    <span>{toHex(value, 4)}</span>
+    <td>{toHex(value, 4)}</td>
   );
 }
 
 function Flags({ flags }: { flags: string }) {
   return (
-    <span>
+    <td>
       {flags.split("").map((flag) => (
         <Flag flag={flag} />
       ))}
-    </span>
+    </td>
   );
 }
 

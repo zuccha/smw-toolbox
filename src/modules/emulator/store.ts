@@ -47,7 +47,7 @@ export const useEmulatorMaxInstructions = () =>
 
 export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
 export const useEmulatorSnapshot = createUseSharedState(emulator.snapshot);
-export const useEmulatorInstructionIndex = createUseSharedState(Infinity);
+export const useEmulatorInstructionId = createUseSharedState(-1);
 
 export const useEmulatorMemoryBaseAddress = () =>
   useStoreNumber(`${emulatorId}.memory.baseAddress`, 0x7e0000);
