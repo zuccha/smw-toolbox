@@ -93,9 +93,7 @@ export default function SnesLog({
                 : undefined;
               return (
                 <tr className={className} onClick={onClick}>
-                  <td>
-                    <dim>{padL(`${instruction.id}`, idLength, " ")}</dim>
-                  </td>
+                  <td>{padL(`${instruction.id}`, idLength, " ")}</td>
                   <td>{instruction.pc.format_address()}</td>
                   <TdInstruction instruction={instruction} />
                   {instruction.snapshot ? (
