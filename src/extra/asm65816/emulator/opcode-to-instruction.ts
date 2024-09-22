@@ -22,6 +22,7 @@ import { JSR } from "./instructions/jsr";
 import { LDA } from "./instructions/lda";
 import { LDX } from "./instructions/ldx";
 import { LDY } from "./instructions/ldy";
+import { LSR } from "./instructions/lsr";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
 import { REP } from "./instructions/rep";
@@ -189,11 +190,11 @@ export const opcode_to_instruction = {
   [0xac]: LDY.Absolute, // LDY addr
   [0xbc]: LDY.Absolute_X, // LDY addr,x
 
-  [0x4a]: NOP, // LSR A
-  [0x46]: NOP, // LSR dp
-  [0x56]: NOP, // LSR dp,x
-  [0x4e]: NOP, // LSR addr
-  [0x5e]: NOP, // LSR addr,x
+  [0x4a]: LSR.Accumulator, // LSR A
+  [0x46]: LSR.DirectPage, // LSR dp
+  [0x56]: LSR.DirectPage_X, // LSR dp,x
+  [0x4e]: LSR.Absolute, // LSR addr
+  [0x5e]: LSR.Absolute_X, // LSR addr,x
 
   [0x54]: NOP, // MVN srcbk,destbk
   [0x44]: NOP, // MVP srcbk,destbk
