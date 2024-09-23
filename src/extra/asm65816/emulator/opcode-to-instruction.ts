@@ -71,6 +71,8 @@ import {
   TYA,
   TYX,
 } from "./instructions/t__";
+import { TRB } from "./instructions/trb";
+import { TSB } from "./instructions/tsb";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -360,11 +362,11 @@ export const opcode_to_instruction = {
   [0x98]: TYA, // TYA
   [0xbb]: TYX, // TYX
 
-  [0x14]: NOP, // TRB dp
-  [0x1c]: NOP, // TRB addr
+  [0x14]: TRB.DirectPage, // TRB dp
+  [0x1c]: TRB.Absolute, // TRB addr
 
-  [0x04]: NOP, // TSB dp
-  [0x0c]: NOP, // TSB addr
+  [0x04]: TSB.DirectPage, // TSB dp
+  [0x0c]: TSB.Absolute, // TSB addr
 
   [0xcb]: NOP, // WAI
 
