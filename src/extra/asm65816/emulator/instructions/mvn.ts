@@ -23,8 +23,8 @@ export class MVN extends Instruction {
       this._iterations++;
       const value = this.m.load_byte(l((srcBank << 16) + this.p.get_x()));
       this.m.save_byte(l((destBank << 16) + this.p.get_y()), value);
-      this.p.x.add_byte(1);
-      this.p.y.add_byte(1);
+      this.p.set_x(this.p.get_x() + 1);
+      this.p.set_y(this.p.get_y() + 1);
       this.p.a.sub_word(1);
     }
   }

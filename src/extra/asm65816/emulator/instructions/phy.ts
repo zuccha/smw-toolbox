@@ -12,12 +12,11 @@ export class PHY extends Instruction {
 
   public execute_effect(): void {
     if (this.p.flag_x) {
-      this.p.sp.sub_byte(1);
+      this.p.sp.sub_word(1);
       this.m.save_byte(w(this.p.sp.word + 1), b(this.p.y.byte));
     } else {
-      this.p.sp.sub_byte(2);
-      this.m.save_byte(w(this.p.sp.word + 2), b(this.p.y.page));
-      this.m.save_byte(w(this.p.sp.word + 1), b(this.p.y.byte));
+      this.p.sp.sub_word(2);
+      this.m.save_word(w(this.p.sp.word + 1), w(this.p.y.word));
     }
   }
 }
