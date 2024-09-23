@@ -8,7 +8,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { Value, w } from "../value";
 
 export function add_decimal(
   value1: number,
@@ -33,8 +33,8 @@ export abstract class ADC extends Instruction {
   protected adc(value: Value): Value {
     if (this.p.flag_m) {
       const result = this.p.flag_d
-        ? b(add_decimal(value.byte, this.p.a.byte, this.p.flag_c, 2))
-        : b(value.byte + this.p.a.byte + this.p.flag_c);
+        ? w(add_decimal(value.byte, this.p.a.byte, this.p.flag_c, 2))
+        : w(value.byte + this.p.a.byte + this.p.flag_c);
       this.p.flag_n = result.byte & flag_n_mask;
       this.p.flag_v = result.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
