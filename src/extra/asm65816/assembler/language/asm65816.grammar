@@ -81,7 +81,7 @@ dataLong { DL Long ("," Long)* }
   | "STP" | "STX" | "STY" | "STZ" | "TAX" | "TAY" | "TCD" | "TCS" | "TDC" | "TRB"
   | "TSB" | "TSC" | "TSX" | "TXA" | "TXS" | "TXY" | "TYA" | "TYX" | "WAI" | "WDM"
   | "XBA" | "XCE"
-    "adc" | "and" | "asl" | "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl"
+  | "adc" | "and" | "asl" | "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl"
   | "bra" | "brk" | "brl" | "bvc" | "bvs" | "clc" | "cld" | "cli" | "clv" | "cmp"
   | "cop" | "cpx" | "cpy" | "dec" | "dex" | "dey" | "eor" | "inc" | "inx" | "iny"
   | "jmp" | "jml" | "jsl" | "jsr" | "lda" | "ldx" | "ldy" | "lsr" | "mvn" | "mvp"
