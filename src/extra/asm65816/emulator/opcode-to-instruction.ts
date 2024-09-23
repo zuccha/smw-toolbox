@@ -74,6 +74,7 @@ import {
 import { TRB } from "./instructions/trb";
 import { TSB } from "./instructions/tsb";
 import { WDM } from "./instructions/wdm";
+import { XBA } from "./instructions/xba";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -373,7 +374,7 @@ export const opcode_to_instruction = {
 
   [0x42]: WDM, // WDM #const
 
-  [0xeb]: NOP, // XBA
+  [0xeb]: XBA, // XBA
 
   [0xfb]: NOP, // XCE
 };
