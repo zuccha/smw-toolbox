@@ -10,19 +10,40 @@ import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { b, Value, w } from "../value";
 
+export function add_decimal(
+  value1: number,
+  value2: number,
+  carry: number,
+  nibbles: number,
+): number {
+  let result = 0;
+  for (let i = 0; i < nibbles; ++i) {
+    const digit_1 = (value1 >> (i * 4)) & 0xf;
+    const digit_2 = (value2 >> (i * 4)) & 0xf;
+    const digit = digit_1 + digit_2 + carry;
+    carry = Math.floor(digit / 10);
+    result |= digit % 10 << (i * 4);
+  }
+  return result;
+}
+
 export abstract class ADC extends Instruction {
   public static mnemonic = "ADC";
 
   protected adc(value: Value): Value {
     if (this.p.flag_m) {
-      const result = b(value.byte + this.p.a.byte + this.p.flag_c);
+      const result = this.p.flag_d
+        ? b(add_decimal(value.byte, this.p.a.byte, this.p.flag_c, 2))
+        : b(value.byte + this.p.a.byte + this.p.flag_c);
       this.p.flag_n = result.byte & flag_n_mask;
       this.p.flag_v = result.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
       this.p.flag_c = result.page > 0;
       return result;
     } else {
-      const result = w(value.word + this.p.a.word + this.p.flag_c);
+      const result = this.p.flag_d
+        ? w(add_decimal(value.word, this.p.a.word, this.p.flag_c, 4))
+        : w(value.word + this.p.a.word + this.p.flag_c);
       this.p.flag_n = result.page & flag_n_mask;
       this.p.flag_v = result.page & flag_v_mask;
       this.p.flag_z = result.word === 0;
