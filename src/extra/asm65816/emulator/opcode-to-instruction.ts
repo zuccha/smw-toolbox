@@ -44,6 +44,8 @@ import { PER } from "./instructions/per";
 import { PHA, PHX, PHY, PHB, PHD, PHP, PHK } from "./instructions/ph_";
 import { PLA, PLX, PLY, PLB, PLD, PLP } from "./instructions/pl_";
 import { REP } from "./instructions/rep";
+import { ROL } from "./instructions/rol";
+import { ROR } from "./instructions/ror";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
 import { SEC } from "./instructions/sec";
@@ -264,17 +266,17 @@ export const opcode_to_instruction = {
   [0xc2]: REP, // REP #const
   [0xe2]: SEP, // SEP #const
 
-  [0x2a]: NOP, // ROL A
-  [0x26]: NOP, // ROL dp
-  [0x36]: NOP, // ROL dp,x
-  [0x2e]: NOP, // ROL addr
-  [0x3e]: NOP, // ROL addr,x
+  [0x2a]: ROL.Accumulator, // ROL A
+  [0x26]: ROL.DirectPage, // ROL dp
+  [0x36]: ROL.DirectPage_X, // ROL dp,x
+  [0x2e]: ROL.Absolute, // ROL addr
+  [0x3e]: ROL.Absolute_X, // ROL addr,x
 
-  [0x6a]: NOP, // ROR A
-  [0x66]: NOP, // ROR dp
-  [0x76]: NOP, // ROR dp,x
-  [0x6e]: NOP, // ROR addr
-  [0x7e]: NOP, // ROR addr,x
+  [0x6a]: ROR.Accumulator, // ROR A
+  [0x66]: ROR.DirectPage, // ROR dp
+  [0x76]: ROR.DirectPage_X, // ROR dp,x
+  [0x6e]: ROR.Absolute, // ROR addr
+  [0x7e]: ROR.Absolute_X, // ROR addr,x
 
   [0x60]: RTS, // RTS
   [0x6b]: RTL, // RTL
