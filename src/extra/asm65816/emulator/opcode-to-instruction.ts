@@ -1,8 +1,19 @@
 import { ADC } from "./instructions/adc";
 import { AND } from "./instructions/and";
 import { ASL } from "./instructions/asl";
+import {
+  BCC,
+  BCS,
+  BNE,
+  BEQ,
+  BPL,
+  BMI,
+  BVC,
+  BVS,
+  BRA,
+  BRL,
+} from "./instructions/b__";
 import { BIT } from "./instructions/bit";
-import { BXX } from "./instructions/bxx";
 import { CLC } from "./instructions/clc";
 import { CLD } from "./instructions/cld";
 import { CLI } from "./instructions/cli";
@@ -83,16 +94,16 @@ export const opcode_to_instruction = {
   [0x0e]: ASL.Absolute, // ASL addr
   [0x1e]: ASL.Absolute_X, // ASL addr,x
 
-  [0x90]: BXX.BCC, // BCC nearlabel
-  [0xb0]: BXX.BCS, // BCS nearlabel
-  [0xd0]: BXX.BNE, // BNE nearlabel
-  [0xf0]: BXX.BEQ, // BEQ nearlabel
-  [0x10]: BXX.BPL, // BPL nearlabel
-  [0x30]: BXX.BMI, // BMI nearlabel
-  [0x50]: BXX.BVC, // BVC nearlabel
-  [0x70]: BXX.BVS, // BVS nearlabel
-  [0x80]: BXX.BRA, // BRA nearlabel
-  [0x82]: BXX.BRL, // BRL label
+  [0x90]: BCC, // BCC nearlabel
+  [0xb0]: BCS, // BCS nearlabel
+  [0xd0]: BNE, // BNE nearlabel
+  [0xf0]: BEQ, // BEQ nearlabel
+  [0x10]: BPL, // BPL nearlabel
+  [0x30]: BMI, // BMI nearlabel
+  [0x50]: BVC, // BVC nearlabel
+  [0x70]: BVS, // BVS nearlabel
+  [0x80]: BRA, // BRA nearlabel
+  [0x82]: BRL, // BRL label
 
   [0x89]: BIT.Immediate_VariableA, // BIT #const
   [0x24]: BIT.DirectPage, // BIT dp
