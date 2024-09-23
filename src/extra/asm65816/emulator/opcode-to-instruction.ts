@@ -40,6 +40,9 @@ import { PHY } from "./instructions/phy";
 import { REP } from "./instructions/rep";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
+import { SEC } from "./instructions/sec";
+import { SED } from "./instructions/sed";
+import { SEI } from "./instructions/sei";
 import { SEP } from "./instructions/sep";
 
 export const opcode_to_instruction = {
@@ -283,9 +286,9 @@ export const opcode_to_instruction = {
   [0xe3]: NOP, // SBC sr,s
   [0xf3]: NOP, // SBC (sr,s),y
 
-  [0x38]: NOP, // SEC
-  [0x78]: NOP, // SEI
-  [0xf8]: NOP, // SED
+  [0x38]: SEC, // SEC
+  [0x78]: SEI, // SEI
+  [0xf8]: SED, // SED
 
   [0x85]: NOP, // STA dp
   [0x95]: NOP, // STA dp,x
