@@ -45,6 +45,9 @@ import { SED } from "./instructions/sed";
 import { SEI } from "./instructions/sei";
 import { SEP } from "./instructions/sep";
 import { STA } from "./instructions/sta";
+import { STX } from "./instructions/stx";
+import { STY } from "./instructions/sty";
+import { STZ } from "./instructions/stz";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -308,18 +311,18 @@ export const opcode_to_instruction = {
 
   [0xdb]: NOP, // STP
 
-  [0x86]: NOP, // STX dp
-  [0x96]: NOP, // STX dp,y
-  [0x8e]: NOP, // STX addr
+  [0x86]: STX.DirectPage, // STX dp
+  [0x96]: STX.DirectPage_Y, // STX dp,y
+  [0x8e]: STX.Absolute, // STX addr
 
-  [0x84]: NOP, // STY dp
-  [0x94]: NOP, // STY dp,x
-  [0x8c]: NOP, // STY addr
+  [0x84]: STY.DirectPage, // STY dp
+  [0x94]: STY.DirectPage_X, // STY dp,x
+  [0x8c]: STY.Absolute, // STY addr
 
-  [0x64]: NOP, // STZ dp
-  [0x74]: NOP, // STZ dp,x
-  [0x9c]: NOP, // STZ addr
-  [0x9e]: NOP, // STZ addr,x
+  [0x64]: STZ.DirectPage, // STZ dp
+  [0x74]: STZ.DirectPage_X, // STZ dp,x
+  [0x9c]: STZ.Absolute, // STZ addr
+  [0x9e]: STZ.Absolute_X, // STZ addr,x
 
   [0xaa]: NOP, // TAX
   [0xa8]: NOP, // TAY
