@@ -48,6 +48,7 @@ import { ROL } from "./instructions/rol";
 import { ROR } from "./instructions/ror";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
+import { SBC } from "./instructions/sbc";
 import { SEC } from "./instructions/sec";
 import { SED } from "./instructions/sed";
 import { SEI } from "./instructions/sei";
@@ -282,21 +283,21 @@ export const opcode_to_instruction = {
   [0x6b]: RTL, // RTL
   [0x40]: NOP, // RTI
 
-  [0xe9]: NOP, // SBC #const
-  [0xe5]: NOP, // SBC dp
-  [0xf5]: NOP, // SBC dp,x
-  [0xf2]: NOP, // SBC (dp)
-  [0xe1]: NOP, // SBC (dp,x)
-  [0xf1]: NOP, // SBC (dp),y
-  [0xe7]: NOP, // SBC [dp]
-  [0xf7]: NOP, // SBC [dp],y
-  [0xed]: NOP, // SBC addr
-  [0xfd]: NOP, // SBC addr,x
-  [0xf9]: NOP, // SBC addr,y
-  [0xef]: NOP, // SBC long
-  [0xff]: NOP, // SBC long,x
-  [0xe3]: NOP, // SBC sr,s
-  [0xf3]: NOP, // SBC (sr,s),y
+  [0xe9]: SBC.Immediate_VariableA, // SBC #const
+  [0xe5]: SBC.DirectPage, // SBC dp
+  [0xf5]: SBC.DirectPage_X, // SBC dp,x
+  [0xf2]: SBC.DirectPage_Indirect, // SBC (dp)
+  [0xe1]: SBC.DirectPage_X_Indirect, // SBC (dp,x)
+  [0xf1]: SBC.DirectPage_Indirect_Y, // SBC (dp),y
+  [0xe7]: SBC.DirectPage_IndirectLong, // SBC [dp]
+  [0xf7]: SBC.DirectPage_IndirectLong_Y, // SBC [dp],y
+  [0xed]: SBC.Absolute, // SBC addr
+  [0xfd]: SBC.Absolute_X, // SBC addr,x
+  [0xf9]: SBC.Absolute_Y, // SBC addr,y
+  [0xef]: SBC.AbsoluteLong, // SBC long
+  [0xff]: SBC.AbsoluteLong_X, // SBC long,x
+  [0xe3]: SBC.StackRelative, // SBC sr,s
+  [0xf3]: SBC.StackRelative_Indirect_Y, // SBC (sr,s),y
 
   [0x38]: SEC, // SEC
   [0x78]: SEI, // SEI
