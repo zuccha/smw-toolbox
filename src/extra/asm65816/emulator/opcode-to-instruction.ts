@@ -75,6 +75,7 @@ import { TRB } from "./instructions/trb";
 import { TSB } from "./instructions/tsb";
 import { WDM } from "./instructions/wdm";
 import { XBA } from "./instructions/xba";
+import { XCE } from "./instructions/xce";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -376,7 +377,7 @@ export const opcode_to_instruction = {
 
   [0xeb]: XBA, // XBA
 
-  [0xfb]: NOP, // XCE
+  [0xfb]: XCE, // XCE
 };
 
 export type Opcode = keyof typeof opcode_to_instruction;
