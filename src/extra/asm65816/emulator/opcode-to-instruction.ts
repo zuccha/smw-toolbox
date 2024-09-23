@@ -73,6 +73,7 @@ import {
 } from "./instructions/t__";
 import { TRB } from "./instructions/trb";
 import { TSB } from "./instructions/tsb";
+import { WDM } from "./instructions/wdm";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -370,7 +371,7 @@ export const opcode_to_instruction = {
 
   [0xcb]: NOP, // WAI
 
-  [0x42]: NOP, // WDM
+  [0x42]: WDM, // WDM #const
 
   [0xeb]: NOP, // XBA
 

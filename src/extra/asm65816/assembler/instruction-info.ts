@@ -296,7 +296,7 @@ export const instruction_id_to_instruction_info: Record<
   "TYA-Implied": /*                   */ { opcode: 0x98, label_type: LabelType.None },
   "TYX-Implied": /*                   */ { opcode: 0xbb, label_type: LabelType.None },
   "WAI-Implied": /*                   */ { opcode: 0xcb, label_type: LabelType.None },
-  "WDM-Implied": /*                   */ { opcode: 0x42, label_type: LabelType.None },
+  "WDM-Immediate_Byte": /*            */ { opcode: 0x42, label_type: LabelType.None },
   "XBA-Implied": /*                   */ { opcode: 0xeb, label_type: LabelType.None },
   "XCE-Implied": /*                   */ { opcode: 0xfb, label_type: LabelType.None },
 };
