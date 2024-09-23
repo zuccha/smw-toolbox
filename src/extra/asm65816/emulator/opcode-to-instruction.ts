@@ -30,6 +30,9 @@ import { ORA } from "./instructions/ora";
 import { PEA } from "./instructions/pea";
 import { PEI } from "./instructions/pei";
 import { PER } from "./instructions/per";
+import { PHA } from "./instructions/pha";
+import { PHX } from "./instructions/phx";
+import { PHY } from "./instructions/phy";
 import { REP } from "./instructions/rep";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
@@ -226,9 +229,9 @@ export const opcode_to_instruction = {
   [0xd4]: PEI, // PEI (dp)
   [0x62]: PER, // PER label
 
-  [0x48]: NOP, // PHA
-  [0xda]: NOP, // PHX
-  [0x5a]: NOP, // PHY
+  [0x48]: PHA, // PHA
+  [0xda]: PHX, // PHX
+  [0x5a]: PHY, // PHY
   [0x8b]: NOP, // PHB
   [0x0b]: NOP, // PHD
   [0x4b]: NOP, // PHK
