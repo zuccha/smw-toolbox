@@ -57,6 +57,20 @@ import { STA } from "./instructions/sta";
 import { STX } from "./instructions/stx";
 import { STY } from "./instructions/sty";
 import { STZ } from "./instructions/stz";
+import {
+  TAX,
+  TAY,
+  TCD,
+  TCS,
+  TDC,
+  TSC,
+  TSX,
+  TXA,
+  TXS,
+  TXY,
+  TYA,
+  TYX,
+} from "./instructions/t__";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -333,18 +347,18 @@ export const opcode_to_instruction = {
   [0x9c]: STZ.Absolute, // STZ addr
   [0x9e]: STZ.Absolute_X, // STZ addr,x
 
-  [0xaa]: NOP, // TAX
-  [0xa8]: NOP, // TAY
-  [0x5b]: NOP, // TCD
-  [0x1b]: NOP, // TCS
-  [0x7b]: NOP, // TDC
-  [0x3b]: NOP, // TSC
-  [0xba]: NOP, // TSX
-  [0x8a]: NOP, // TXA
-  [0x9a]: NOP, // TXS
-  [0x9b]: NOP, // TXY
-  [0x98]: NOP, // TYA
-  [0xbb]: NOP, // TYX
+  [0xaa]: TAX, // TAX
+  [0xa8]: TAY, // TAY
+  [0x5b]: TCD, // TCD
+  [0x1b]: TCS, // TCS
+  [0x7b]: TDC, // TDC
+  [0x3b]: TSC, // TSC
+  [0xba]: TSX, // TSX
+  [0x8a]: TXA, // TXA
+  [0x9a]: TXS, // TXS
+  [0x9b]: TXY, // TXY
+  [0x98]: TYA, // TYA
+  [0xbb]: TYX, // TYX
 
   [0x14]: NOP, // TRB dp
   [0x1c]: NOP, // TRB addr

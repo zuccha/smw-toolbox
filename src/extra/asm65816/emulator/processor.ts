@@ -96,7 +96,13 @@ export default class Processor {
   // prettier-ignore
   public get flag_x(): number { return this._flag_x;}
   // prettier-ignore
-  public set flag_x(active: boolean | number) { this._flag_x = active ? 1 : 0; if (active) this.x.page = 0; }
+  public set flag_x(active: boolean | number) {
+    this._flag_x = active ? 1 : 0;
+    if (active) {
+      this.x.page = 0;
+      this.y.page = 0;
+    }
+  }
 
   private _flag_d: 0 | 1 = 0;
   // prettier-ignore
