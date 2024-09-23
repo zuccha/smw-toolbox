@@ -123,6 +123,26 @@ export default class Processor {
   // prettier-ignore
   public set flag_b(active: boolean | number) { this._flag_b = active ? 1 : 0; }
 
+  public get flags() {
+    return this._flag_e
+      ? this._flag_c |
+          (this._flag_z << 1) |
+          (this._flag_i << 2) |
+          (this._flag_d << 3) |
+          (this._flag_b << 4) |
+          // Unused flag
+          (this._flag_v << 6) |
+          (this._flag_n << 7)
+      : this._flag_c |
+          (this._flag_z << 1) |
+          (this._flag_i << 2) |
+          (this._flag_d << 3) |
+          (this._flag_x << 4) |
+          (this._flag_m << 5) |
+          (this._flag_v << 6) |
+          (this._flag_n << 7);
+  }
+
   //----------------------------------------------------------------------------
   // Reset
   //----------------------------------------------------------------------------

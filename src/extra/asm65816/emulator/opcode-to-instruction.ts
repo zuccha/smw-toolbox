@@ -31,6 +31,10 @@ import { PEA } from "./instructions/pea";
 import { PEI } from "./instructions/pei";
 import { PER } from "./instructions/per";
 import { PHA } from "./instructions/pha";
+import { PHB } from "./instructions/phb";
+import { PHD } from "./instructions/phd";
+import { PHK } from "./instructions/phk";
+import { PHP } from "./instructions/php";
 import { PHX } from "./instructions/phx";
 import { PHY } from "./instructions/phy";
 import { REP } from "./instructions/rep";
@@ -232,10 +236,10 @@ export const opcode_to_instruction = {
   [0x48]: PHA, // PHA
   [0xda]: PHX, // PHX
   [0x5a]: PHY, // PHY
-  [0x8b]: NOP, // PHB
-  [0x0b]: NOP, // PHD
-  [0x4b]: NOP, // PHK
-  [0x08]: NOP, // PHP
+  [0x8b]: PHB, // PHB
+  [0x0b]: PHD, // PHD
+  [0x4b]: PHK, // PHK
+  [0x08]: PHP, // PHP
 
   [0x68]: NOP, // PLA
   [0xfa]: NOP, // PLX
