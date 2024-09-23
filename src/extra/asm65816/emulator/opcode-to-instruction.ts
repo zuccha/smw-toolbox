@@ -27,6 +27,9 @@ import { MVN } from "./instructions/mvn";
 import { MVP } from "./instructions/mvp";
 import { NOP } from "./instructions/nop";
 import { ORA } from "./instructions/ora";
+import { PEA } from "./instructions/pea";
+import { PEI } from "./instructions/pei";
+import { PER } from "./instructions/per";
 import { REP } from "./instructions/rep";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
@@ -219,9 +222,9 @@ export const opcode_to_instruction = {
   [0x03]: ORA.StackRelative, // ORA sr,s
   [0x13]: ORA.StackRelative_Indirect_Y, // ORA (sr,s),y
 
-  [0xf4]: NOP, // PEA addr
-  [0xd4]: NOP, // PEI (dp)
-  [0x62]: NOP, // PER label
+  [0xf4]: PEA, // PEA addr
+  [0xd4]: PEI, // PEI (dp)
+  [0x62]: PER, // PER label
 
   [0x48]: NOP, // PHA
   [0xda]: NOP, // PHX
