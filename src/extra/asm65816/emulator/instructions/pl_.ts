@@ -3,7 +3,7 @@ import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { w } from "../value";
 
-export abstract class PL_ extends Instruction {
+abstract class PL_ extends Instruction {
   public static mode = InstructionMode.Implied;
 
   protected pull_byte(): number {
