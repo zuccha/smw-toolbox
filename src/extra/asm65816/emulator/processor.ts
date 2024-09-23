@@ -1,3 +1,14 @@
+import {
+  flag_c_mask,
+  flag_z_mask,
+  flag_i_mask,
+  flag_d_mask,
+  flag_v_mask,
+  flag_n_mask,
+  flag_x_mask,
+  flag_m_mask,
+  flag_b_mask,
+} from "./constants";
 import { ProcessorSnapshot } from "./processor-snapshot";
 import { b, l, w } from "./value";
 
@@ -141,6 +152,27 @@ export default class Processor {
           (this._flag_m << 5) |
           (this._flag_v << 6) |
           (this._flag_n << 7);
+  }
+
+  public set flags(flags: number) {
+    if (this.flag_e) {
+      this.flag_c = flags & flag_c_mask;
+      this.flag_z = flags & flag_z_mask;
+      this.flag_i = flags & flag_i_mask;
+      this.flag_d = flags & flag_d_mask;
+      this.flag_b = flags & flag_b_mask;
+      this.flag_v = flags & flag_v_mask;
+      this.flag_n = flags & flag_n_mask;
+    } else {
+      this.flag_c = flags & flag_c_mask;
+      this.flag_z = flags & flag_z_mask;
+      this.flag_i = flags & flag_i_mask;
+      this.flag_d = flags & flag_d_mask;
+      this.flag_x = flags & flag_x_mask;
+      this.flag_m = flags & flag_m_mask;
+      this.flag_v = flags & flag_v_mask;
+      this.flag_n = flags & flag_n_mask;
+    }
   }
 
   //----------------------------------------------------------------------------

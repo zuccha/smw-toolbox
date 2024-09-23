@@ -37,6 +37,7 @@ import { PHK } from "./instructions/phk";
 import { PHP } from "./instructions/php";
 import { PHX } from "./instructions/phx";
 import { PHY } from "./instructions/phy";
+import { PLA, PLX, PLY, PLB, PLD, PLP } from "./instructions/pl_";
 import { REP } from "./instructions/rep";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
@@ -248,12 +249,12 @@ export const opcode_to_instruction = {
   [0x4b]: PHK, // PHK
   [0x08]: PHP, // PHP
 
-  [0x68]: NOP, // PLA
-  [0xfa]: NOP, // PLX
-  [0x7a]: NOP, // PLY
-  [0xab]: NOP, // PLB
-  [0x2b]: NOP, // PLD
-  [0x28]: NOP, // PLP
+  [0x68]: PLA, // PLA
+  [0xfa]: PLX, // PLX
+  [0x7a]: PLY, // PLY
+  [0xab]: PLB, // PLB
+  [0x2b]: PLD, // PLD
+  [0x28]: PLP, // PLP
 
   [0xc2]: REP, // REP #const
   [0xe2]: SEP, // SEP #const

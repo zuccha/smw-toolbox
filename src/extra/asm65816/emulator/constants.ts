@@ -10,6 +10,7 @@ export const flag_z_mask = 0x02;
 export const flag_i_mask = 0x04;
 export const flag_d_mask = 0x08;
 export const flag_x_mask = 0x10;
+export const flag_b_mask = 0x10;
 export const flag_m_mask = 0x20;
 export const flag_v_mask = 0x40;
 export const flag_n_mask = 0x80;
