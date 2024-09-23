@@ -218,7 +218,7 @@ export default class InstructionMode {
     addr: ({ arg, p, m }) => {
       const db = p.db.byte << 16;
       const addr = w(arg.byte + p.sp.word);
-      return l(db + m.load_word(addr).word);
+      return l(db + w(m.load_word(addr).word + p.y.word).word);
     },
     format: ({ arg }) => `(${arg.format_byte("$")},s),y`,
     base_length: 2,

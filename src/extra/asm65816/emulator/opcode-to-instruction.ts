@@ -44,6 +44,7 @@ import { SEC } from "./instructions/sec";
 import { SED } from "./instructions/sed";
 import { SEI } from "./instructions/sei";
 import { SEP } from "./instructions/sep";
+import { STA } from "./instructions/sta";
 
 export const opcode_to_instruction = {
   [0x69]: ADC.Immediate_VariableA, // ADC #const
@@ -290,20 +291,20 @@ export const opcode_to_instruction = {
   [0x78]: SEI, // SEI
   [0xf8]: SED, // SED
 
-  [0x85]: NOP, // STA dp
-  [0x95]: NOP, // STA dp,x
-  [0x92]: NOP, // STA (dp)
-  [0x81]: NOP, // STA (dp,x)
-  [0x91]: NOP, // STA (dp),y
-  [0x87]: NOP, // STA [dp]
-  [0x97]: NOP, // STA [dp],y
-  [0x8d]: NOP, // STA addr
-  [0x9d]: NOP, // STA addr,x
-  [0x99]: NOP, // STA addr,y
-  [0x8f]: NOP, // STA long
-  [0x9f]: NOP, // STA long,x
-  [0x83]: NOP, // STA sr,s
-  [0x93]: NOP, // STA (sr,s),y
+  [0x85]: STA.DirectPage, // STA dp
+  [0x95]: STA.DirectPage_X, // STA dp,x
+  [0x92]: STA.DirectPage_Indirect, // STA (dp)
+  [0x81]: STA.DirectPage_X_Indirect, // STA (dp,x)
+  [0x91]: STA.DirectPage_Indirect_Y, // STA (dp),y
+  [0x87]: STA.DirectPage_IndirectLong, // STA [dp]
+  [0x97]: STA.DirectPage_IndirectLong_Y, // STA [dp],y
+  [0x8d]: STA.Absolute, // STA addr
+  [0x9d]: STA.Absolute_X, // STA addr,x
+  [0x99]: STA.Absolute_Y, // STA addr,y
+  [0x8f]: STA.AbsoluteLong, // STA long
+  [0x9f]: STA.AbsoluteLong_X, // STA long,x
+  [0x83]: STA.StackRelative, // STA sr,s
+  [0x93]: STA.StackRelative_Indirect_Y, // STA (sr,s),y
 
   [0xdb]: NOP, // STP
 
