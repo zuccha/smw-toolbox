@@ -1,12 +1,12 @@
 import { flag_n_mask, minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class ASL extends Instruction {
   public static mnemonic = "ASL";
 
-  protected asl(value: Value): Value {
+  protected asl(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       const result = b(value.byte << 1);
       this.p.flag_n = result.byte & flag_n_mask;
@@ -37,7 +37,7 @@ export namespace ASL {
     public static base_cycles = 2;
 
     public execute_effect(): void {
-      this.p.set_a(this.asl(this.p.a).word);
+      this.p.a = this.asl(this.p.a);
     }
   }
 

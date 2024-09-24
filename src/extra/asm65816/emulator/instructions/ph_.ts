@@ -7,12 +7,12 @@ abstract class PH_ extends Instruction {
   public static mode = InstructionMode.Implied;
 
   protected push_byte(byte: number) {
-    this.p.sp.sub_word(1);
+    this.p.sp = w(this.p.sp.word - 1);
     this.m.save_byte(w(this.p.sp.word + 1), b(byte));
   }
 
   protected push_word(word: number) {
-    this.p.sp.sub_word(2);
+    this.p.sp = w(this.p.sp.word - 2);
     this.m.save_word(w(this.p.sp.word + 1), w(word));
   }
 }

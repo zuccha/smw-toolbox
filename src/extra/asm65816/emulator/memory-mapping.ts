@@ -1,5 +1,5 @@
 import MemoryMappingArea from "./memory-mapping-area";
-import { b, l, Value } from "./value";
+import { b, l, ReadOnlyValue } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory Mapping
@@ -27,15 +27,15 @@ export default class MemoryMapping {
     this._rom = rom;
   }
 
-  public get ram_initial_address(): Value {
+  public get ram_initial_address(): ReadOnlyValue {
     return this._ram[0].initial_address;
   }
 
-  public get rom_initial_address(): Value {
+  public get rom_initial_address(): ReadOnlyValue {
     return this._rom[0].initial_address;
   }
 
-  public map(addr: Value): number {
+  public map(addr: ReadOnlyValue): number {
     for (const area of this._ram)
       if (area.contains(addr)) return area.map(addr).long;
 
@@ -46,7 +46,7 @@ export default class MemoryMapping {
     throw new Error(message);
   }
 
-  public map_readonly(addr: Value): number {
+  public map_readonly(addr: ReadOnlyValue): number {
     for (const area of this._ram)
       if (area.contains(addr)) return area.map(addr).long;
 

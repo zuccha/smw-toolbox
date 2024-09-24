@@ -1,21 +1,25 @@
 import { flag_n_mask } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 abstract class T__ extends Instruction {
   public static mode = InstructionMode.Implied;
 
-  protected transfer_byte(value: Value): number {
+  protected transfer_byte(value: ReadOnlyValue): ReadOnlyValue {
     this.p.flag_n = value.byte & flag_n_mask;
     this.p.flag_z = value.byte === 0;
-    return value.byte;
+    return value;
   }
 
-  protected transfer_word(value: Value): number {
+  protected transfer_word(value: ReadOnlyValue): ReadOnlyValue {
     this.p.flag_n = value.page & flag_n_mask;
     this.p.flag_z = value.word === 0;
-    return value.word;
+    return value;
+  }
+
+  protected transfer(value: ReadOnlyValue, flag: number): ReadOnlyValue {
+    return flag ? this.transfer_byte(value) : this.transfer_word(value);
   }
 }
 
@@ -25,8 +29,7 @@ export class TAX extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.x.byte = this.transfer_byte(this.p.a);
-    else this.p.x.word = this.transfer_word(this.p.a);
+    this.p.x = this.transfer(this.p.a, this.p.flag_x);
   }
 }
 
@@ -36,8 +39,7 @@ export class TAY extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.y.byte = this.transfer_byte(this.p.a);
-    else this.p.y.word = this.transfer_word(this.p.a);
+    this.p.y = this.transfer(this.p.a, this.p.flag_x);
   }
 }
 
@@ -47,7 +49,7 @@ export class TCD extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.dp.word = this.transfer_word(this.p.a);
+    this.p.dp = this.transfer_word(this.p.a);
   }
 }
 
@@ -57,9 +59,7 @@ export class TCS extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_e)
-      this.p.sp.word = this.transfer_byte(b(0x0100 | this.p.a.byte));
-    else this.p.sp.word = this.transfer_word(this.p.a);
+    this.p.sp = this.transfer(this.p.a, this.p.flag_e);
   }
 }
 
@@ -69,7 +69,7 @@ export class TDC extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.a.word = this.transfer_word(this.p.dp);
+    this.p.a = this.transfer_word(this.p.dp);
   }
 }
 
@@ -79,7 +79,7 @@ export class TSC extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.a.word = this.transfer_word(this.p.sp);
+    this.p.a = this.transfer_word(this.p.sp);
   }
 }
 
@@ -89,8 +89,7 @@ export class TSX extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.x.byte = this.transfer_byte(this.p.sp);
-    else this.p.x.word = this.transfer_word(this.p.sp);
+    this.p.x = this.transfer(this.p.sp, this.p.flag_x);
   }
 }
 
@@ -100,8 +99,7 @@ export class TXA extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_m) this.p.a.byte = this.transfer_byte(this.p.x);
-    else this.p.a.word = this.transfer_word(this.p.x);
+    this.p.a = this.transfer(this.p.x, this.p.flag_m);
   }
 }
 
@@ -111,9 +109,7 @@ export class TXS extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_e)
-      this.p.sp.word = this.transfer_byte(b(0x0100 | this.p.x.byte));
-    else this.p.sp.word = this.transfer_word(this.p.x);
+    this.p.sp = this.transfer(this.p.x, this.p.flag_e);
   }
 }
 
@@ -123,8 +119,7 @@ export class TXY extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.y.byte = this.transfer_byte(this.p.x);
-    else this.p.y.word = this.transfer_word(this.p.x);
+    this.p.y = this.transfer(this.p.x, this.p.flag_x);
   }
 }
 
@@ -134,8 +129,7 @@ export class TYA extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_m) this.p.a.byte = this.transfer_byte(this.p.y);
-    else this.p.a.word = this.transfer_word(this.p.y);
+    this.p.a = this.transfer(this.p.y, this.p.flag_m);
   }
 }
 
@@ -145,7 +139,6 @@ export class TYX extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.x.byte = this.transfer_byte(this.p.y);
-    else this.p.x.word = this.transfer_word(this.p.y);
+    this.p.x = this.transfer(this.p.y, this.p.flag_x);
   }
 }

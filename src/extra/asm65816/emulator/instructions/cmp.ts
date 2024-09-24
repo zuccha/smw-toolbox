@@ -6,12 +6,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 export abstract class CMP extends Instruction {
   public static mnemonic = "CMP";
 
-  protected cmp(value: Value): void {
+  protected cmp(value: ReadOnlyValue): void {
     if (this.p.flag_m) {
       this.p.flag_n = this.p.a.byte < value.byte;
       this.p.flag_z = this.p.a.byte === value.byte;

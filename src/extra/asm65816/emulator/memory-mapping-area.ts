@@ -1,4 +1,4 @@
-import { l, Value } from "./value";
+import { l, ReadOnlyValue } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory Mapping Area
@@ -19,20 +19,23 @@ export default class MemoryMappingArea {
     (addr) => l(0x7e0000 | addr.word),
   );
 
-  public map: (addr: Value) => Value;
+  public map: (addr: ReadOnlyValue) => ReadOnlyValue;
 
   private _ranges: [Range, ...Range[]];
 
-  public constructor(ranges: [Range, ...Range[]], map = (addr: Value) => addr) {
+  public constructor(
+    ranges: [Range, ...Range[]],
+    map = (addr: ReadOnlyValue) => addr,
+  ) {
     this.map = map;
     this._ranges = ranges;
   }
 
-  public get initial_address(): Value {
+  public get initial_address(): ReadOnlyValue {
     return this._ranges[0].min;
   }
 
-  public contains(addr: Value): boolean {
+  public contains(addr: ReadOnlyValue): boolean {
     return this._ranges.some((range) => {
       const addr_bank = addr.bank;
       const addr_word = addr.word;
@@ -45,4 +48,4 @@ export default class MemoryMappingArea {
   }
 }
 
-type Range = { min: Value; max: Value };
+type Range = { min: ReadOnlyValue; max: ReadOnlyValue };

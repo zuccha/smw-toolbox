@@ -9,9 +9,10 @@ export class RTS extends Instruction {
   public static base_cycles = 6;
 
   public execute_effect(): void {
-    this.p.pc.byte = this.m.load_byte(w(this.p.sp.word + 1)).byte;
-    this.p.pc.page = this.m.load_byte(w(this.p.sp.word + 2)).byte;
-    this.p.sp.word = this.p.sp.word + 2;
-    this.p.pc.word = this.p.pc.word + 1;
+    const pc_byte = this.m.load_byte(w(this.p.sp.word + 1)).byte;
+    const pc_page = this.m.load_byte(w(this.p.sp.word + 2)).byte;
+    this.p.pc = w((pc_page << 8) | pc_byte);
+    this.p.sp = w(this.p.sp.word + 2);
+    this.p.pc = w(this.p.pc.word + 1);
   }
 }

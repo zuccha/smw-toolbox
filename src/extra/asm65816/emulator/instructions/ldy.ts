@@ -6,12 +6,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 export abstract class LDY extends Instruction {
   public static mnemonic = "LDY";
 
-  protected ldy(value: Value): Value {
+  protected ldy(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_x) {
       this.p.flag_n = value.byte & flag_n_mask;
       this.p.flag_z = value.byte === 0;
@@ -25,7 +25,7 @@ export abstract class LDY extends Instruction {
 
 class LDY_Addr extends LDY {
   public execute_effect(): void {
-    this.p.set_y(this.ldy(this.load_x(this.addr)).word);
+    this.p.y = this.ldy(this.load_x(this.addr));
   }
 }
 
@@ -37,7 +37,7 @@ export namespace LDY {
     public static cyclesModifier = minus_x;
 
     public execute_effect(): void {
-      this.p.set_y(this.ldy(this._arg).word);
+      this.p.y = this.ldy(this._arg);
     }
   }
 

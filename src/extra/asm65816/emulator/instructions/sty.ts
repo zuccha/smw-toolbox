@@ -1,13 +1,12 @@
 import { minus_x, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { w } from "../value";
 
 export abstract class STY extends Instruction {
   public static mnemonic = "STY";
 
   public execute_effect(): void {
-    this.save_x(this.addr, w(this.p.get_y()));
+    this.save_x(this.addr, this.p.y);
   }
 }
 

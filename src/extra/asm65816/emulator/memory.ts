@@ -1,5 +1,5 @@
 import MemoryMapping from "./memory-mapping";
-import { b, byte_mask, l, Value, w } from "./value";
+import { b, byte_mask, l, ReadOnlyValue, w } from "./value";
 
 //------------------------------------------------------------------------------
 // Memory
@@ -27,39 +27,51 @@ export default class Memory {
     this._memory.set(addr, value & byte_mask);
   }
 
-  public load_byte(addr: Value): Value {
+  public load_byte(addr: ReadOnlyValue): ReadOnlyValue {
     return b(this._load(this._mapping.map(addr)));
   }
 
-  public load_word(addr: Value): Value {
+  public load_word(addr: ReadOnlyValue): ReadOnlyValue {
     const byte = this._load(this._mapping.map(addr));
     const page = this._load(this._mapping.map(l(addr.long + 1)));
     return w((page << 8) + byte);
   }
 
-  public load_long(addr: Value): Value {
+  public load_long(addr: ReadOnlyValue): ReadOnlyValue {
     const byte = this._load(this._mapping.map(addr));
     const page = this._load(this._mapping.map(l(addr.long + 1)));
     const bank = this._load(this._mapping.map(l(addr.long + 2)));
     return l((bank << 16) + (page << 8) + byte);
   }
 
-  public save_byte(addr: Value, value: Value, force = false): void {
+  public save_byte(
+    addr: ReadOnlyValue,
+    value: ReadOnlyValue,
+    force = false,
+  ): void {
     this._save(this._map(addr, !force), value.byte);
   }
 
-  public save_word(addr: Value, value: Value, force = false): void {
+  public save_word(
+    addr: ReadOnlyValue,
+    value: ReadOnlyValue,
+    force = false,
+  ): void {
     this._save(this._map(addr, !force), value.byte);
     this._save(this._map(l(addr.long + 1), !force), value.page);
   }
 
-  public save_long(addr: Value, value: Value, force = false): void {
+  public save_long(
+    addr: ReadOnlyValue,
+    value: ReadOnlyValue,
+    force = false,
+  ): void {
     this._save(this._map(addr, !force), value.byte);
     this._save(this._map(l(addr.long + 1), !force), value.page);
     this._save(this._map(l(addr.long + 2), !force), value.bank);
   }
 
-  public load_byte_raw(addr: Value): number | undefined {
+  public load_byte_raw(addr: ReadOnlyValue): number | undefined {
     try {
       return this._memory.get(this._mapping.map(addr));
     } catch {
@@ -67,7 +79,7 @@ export default class Memory {
     }
   }
 
-  private _map(addr: Value, readonly: boolean): number {
+  private _map(addr: ReadOnlyValue, readonly: boolean): number {
     return readonly
       ? this._mapping.map_readonly(addr)
       : this._mapping.map(addr);

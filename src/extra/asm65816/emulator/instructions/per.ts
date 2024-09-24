@@ -9,7 +9,7 @@ export class PER extends Instruction {
   public static base_cycles = 6;
 
   public execute_effect(): void {
-    this.p.sp.sub_word(2);
+    this.p.sp = w(this.p.sp.word - 2);
     const addr = this.addr;
     this.m.save_byte(w(this.p.sp.word + 2), b(addr.page));
     this.m.save_byte(w(this.p.sp.word + 1), b(addr.byte));

@@ -1,7 +1,7 @@
 import { flag_n_mask, minus_m, minus_x } from "./constants";
 import Memory from "./memory";
 import Processor from "./processor";
-import { l, Value, w } from "./value";
+import { b, l, ReadOnlyValue, w } from "./value";
 
 //------------------------------------------------------------------------------
 // Instruction Mode
@@ -64,14 +64,20 @@ export default class InstructionMode {
   });
 
   public static DirectPage_X = new InstructionMode({
-    addr: ({ arg, p }) => w(arg.byte + p.dp.word + p.x.word),
+    addr: ({ arg, p }) =>
+      p.flag_e && p.dp.byte === 0
+        ? w(p.dp.word + b(arg.byte + p.x.word).byte)
+        : w(p.dp.word + arg.byte + p.x.word),
     format: ({ arg }) => `${arg.format_byte("$")},x`,
     base_length: 2,
     text: "dp,x",
   });
 
   public static DirectPage_Y = new InstructionMode({
-    addr: ({ arg, p }) => w(arg.byte + p.dp.word + p.y.word),
+    addr: ({ arg, p }) =>
+      p.flag_e && p.dp.byte === 0
+        ? w(p.dp.word + b(arg.byte + p.y.word).byte)
+        : w(p.dp.word + arg.byte + p.y.word),
     format: ({ arg }) => `${arg.format_byte("$")},y`,
     base_length: 2,
     text: "dp,y",
@@ -91,7 +97,10 @@ export default class InstructionMode {
   public static DirectPage_X_Indirect = new InstructionMode({
     addr: ({ arg, p, m }) => {
       const db = p.db.byte << 16;
-      const addr = w(arg.byte + p.dp.word + p.x.word);
+      const addr =
+        p.flag_e && p.dp.byte === 0
+          ? w(p.dp.word + b(arg.byte + p.x.word).byte)
+          : w(p.dp.word + arg.byte + p.x.word);
       return l(db + m.load_word(addr).word);
     },
     format: ({ arg }) => `(${arg.format_byte("$")},x)`,
@@ -261,7 +270,7 @@ export default class InstructionMode {
   // Class Definition
   //----------------------------------------------------------------------------
 
-  public addr: (args: InstructionModeContext) => Value;
+  public addr: (args: InstructionModeContext) => ReadOnlyValue;
   public format: (args: InstructionModeContext) => string;
   public readonly base_length: number;
   public readonly length_modifier: number;
@@ -269,7 +278,7 @@ export default class InstructionMode {
   public readonly text: string;
 
   public constructor(args: {
-    addr: (context: InstructionModeContext) => Value;
+    addr: (context: InstructionModeContext) => ReadOnlyValue;
     format: (context: InstructionModeContext) => string;
     base_length: number;
     length_modifier?: number;
@@ -286,7 +295,7 @@ export default class InstructionMode {
 }
 
 type InstructionModeContext = {
-  arg: Value;
+  arg: ReadOnlyValue;
   arg_size: number;
   p: Processor;
   m: Memory;

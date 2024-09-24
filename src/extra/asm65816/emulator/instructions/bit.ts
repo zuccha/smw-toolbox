@@ -7,12 +7,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class BIT extends Instruction {
   public static mnemonic = "BIT";
 
-  protected bit(value: Value): void {
+  protected bit(value: ReadOnlyValue): void {
     if (this.p.flag_m) {
       const result = b(this.p.a.byte & value.byte);
       this.p.flag_n = value.byte & flag_z_mask;

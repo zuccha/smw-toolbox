@@ -7,12 +7,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class EOR extends Instruction {
   public static mnemonic = "EOR";
 
-  protected eor(value: Value): Value {
+  protected eor(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       const result = b(value.byte ^ this.p.a.byte);
       this.p.flag_n = result.byte & flag_n_mask;
@@ -29,7 +29,7 @@ export abstract class EOR extends Instruction {
 
 export abstract class EOR_Addr extends EOR {
   public execute_effect(): void {
-    this.p.set_a(this.eor(this.load_m(this.addr)).word);
+    this.p.a = this.eor(this.load_m(this.addr));
   }
 }
 
@@ -41,7 +41,7 @@ export namespace EOR {
     public static cyclesModifier = minus_m;
 
     public execute_effect(): void {
-      this.p.set_a(this.eor(this._arg).word);
+      this.p.a = this.eor(this._arg);
     }
   }
 

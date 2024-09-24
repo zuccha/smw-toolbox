@@ -1,5 +1,6 @@
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
+import { w } from "../value";
 
 export class DEX extends Instruction {
   public static mnemonic = "DEX";
@@ -8,7 +9,6 @@ export class DEX extends Instruction {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    if (this.p.flag_x) this.p.x.byte = this.p.x.byte - 1;
-    else this.p.x.word = this.p.x.word - 1;
+    this.p.x = w(this.p.x.word - 1);
   }
 }

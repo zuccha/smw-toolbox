@@ -6,11 +6,11 @@ export abstract class JSR extends Instruction {
   public static mnemonic = "JSR";
 
   public execute_effect(): void {
-    this.p.pc.word = this.p.pc.word - 1;
-    this.p.sp.word = this.p.sp.word - 2;
+    this.p.pc = w(this.p.pc.word - 1);
+    this.p.sp = w(this.p.sp.word - 2);
     this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
     this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
-    this.p.pc.word = this._arg.word;
+    this.p.pc = this._arg;
   }
 }
 
@@ -18,13 +18,13 @@ export abstract class JSL extends Instruction {
   public static mnemonic = "JSL";
 
   public execute_effect(): void {
-    this.p.pc.word = this.p.pc.word - 1;
-    this.p.sp.word = this.p.sp.word - 3;
+    this.p.pc = w(this.p.pc.word - 1);
+    this.p.sp = w(this.p.sp.word - 3);
     this.m.save_byte(w(this.p.sp.word + 3), b(this.p.pb.byte));
     this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
     this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
-    this.p.pb.byte = this._arg.bank;
-    this.p.pc.word = this._arg.word;
+    this.p.pb = b(this._arg.bank);
+    this.p.pc = this._arg;
   }
 }
 

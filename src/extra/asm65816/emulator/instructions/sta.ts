@@ -1,13 +1,12 @@
 import { minus_m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { w } from "../value";
 
 export abstract class STA extends Instruction {
   public static mnemonic = "STA";
 
   public execute_effect(): void {
-    this.save_m(this.addr, w(this.p.get_a()));
+    this.save_m(this.addr, this.p.a);
   }
 }
 

@@ -1,11 +1,12 @@
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
+import { b } from "../value";
 
 export abstract class JMP extends Instruction {
   public static mnemonic = "JMP";
 
   public execute_effect(): void {
-    this.p.pc.word = this.addr.word;
+    this.p.pc = this.addr;
   }
 }
 
@@ -14,8 +15,8 @@ export abstract class JML extends Instruction {
 
   public execute_effect(): void {
     const addr = this.addr;
-    this.p.pb.byte = addr.bank;
-    this.p.pc.word = addr.word;
+    this.p.pb = b(addr.bank);
+    this.p.pc = addr;
   }
 }
 

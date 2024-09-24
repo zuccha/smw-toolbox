@@ -58,34 +58,6 @@ export class Value {
   }
 
   //----------------------------------------------------------------------------
-  // Modifiers
-  //----------------------------------------------------------------------------
-
-  public add_byte(byte: number): void {
-    this.byte = this.byte + byte;
-  }
-
-  public sub_byte(byte: number): void {
-    this.byte = this.byte - byte;
-  }
-
-  public add_word(word: number): void {
-    this.word = this.word + word;
-  }
-
-  public sub_word(word: number): void {
-    this.word = this.word - word;
-  }
-
-  public add_long(long: number): void {
-    this.long = this.long + long;
-  }
-
-  public sub_long(long: number): void {
-    this.long = this.long - long;
-  }
-
-  //----------------------------------------------------------------------------
   // Formatting
   //----------------------------------------------------------------------------
 
@@ -112,15 +84,50 @@ export class Value {
   public format_address(): string {
     return `[${to_hex(this.bank, 2, "")}:${to_hex(this.word, 4, "")}]`;
   }
+
+  //----------------------------------------------------------------------------
+  // Conversion
+  //----------------------------------------------------------------------------
+
+  public as_byte(): Value {
+    return new Value(this._value, byte_mask);
+  }
+
+  public as_word(): Value {
+    return new Value(this._value, word_mask);
+  }
+
+  public as_long(): Value {
+    return new Value(this._value, long_mask);
+  }
 }
+
+//------------------------------------------------------------------------------
+// Read-Only Value
+//------------------------------------------------------------------------------
+
+export type ReadOnlyValue = {
+  readonly byte: number;
+  readonly word: number;
+  readonly long: number;
+  readonly page: number;
+  readonly bank: number;
+
+  format_byte: (prefix: string) => string;
+  format_word: (prefix: string) => string;
+  format_long: (prefix: string) => string;
+  format_page: (prefix: string) => string;
+  format_bank: (prefix: string) => string;
+  format_address: () => string;
+};
 
 //------------------------------------------------------------------------------
 // Shared Exports
 //------------------------------------------------------------------------------
 
-export const b = (value: number): Value => new Value(value, byte_mask);
-export const w = (value: number): Value => new Value(value, word_mask);
-export const l = (value: number): Value => new Value(value, long_mask);
+export const b = (value: number): ReadOnlyValue => new Value(value, byte_mask);
+export const w = (value: number): ReadOnlyValue => new Value(value, word_mask);
+export const l = (value: number): ReadOnlyValue => new Value(value, long_mask);
 
 export const byte_mask = 0x0000ff;
 export const word_mask = 0x00ffff;

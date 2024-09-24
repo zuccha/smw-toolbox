@@ -1,12 +1,12 @@
 import { flag_n_mask, minus_m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class ROL extends Instruction {
   public static mnemonic = "ROL";
 
-  protected rol(value: Value): Value {
+  protected rol(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       const result = b((value.byte << 1) + this.p.flag_c);
       this.p.flag_n = result.byte & flag_n_mask;
@@ -37,7 +37,7 @@ export namespace ROL {
     public static base_cycles = 2;
 
     public execute_effect(): void {
-      this.p.set_a(this.rol(this.p.a).word);
+      this.p.a = this.rol(this.p.a);
     }
   }
 

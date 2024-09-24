@@ -11,7 +11,7 @@ export class PEI extends Instruction {
   public static cyclesModifier = plus_1_if_dp_low_is_zero;
 
   public execute_effect(): void {
-    this.p.sp.sub_word(2);
+    this.p.sp = w(this.p.sp.word - 2);
 
     const page = this.m.load_byte(w(this.addr.word + 1));
     this.m.save_byte(w(this.p.sp.word + 2), page);

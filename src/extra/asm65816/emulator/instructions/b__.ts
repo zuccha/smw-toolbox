@@ -8,14 +8,14 @@ abstract class B___Near extends Instruction {
 
   public get cycles(): number {
     return this._branch_taken()
-      ? B___Near.base_cycles + 1 + this.p.flag_e
+      ? B___Near.base_cycles + 1 + this.p.flag_e // TODO: Add e only if branch crossed page boundary.
       : B___Near.base_cycles;
   }
 
   protected abstract _branch_taken(): boolean;
 
   public execute_effect(): void {
-    if (this._branch_taken()) this.p.pc.word = this.addr.word;
+    if (this._branch_taken()) this.p.pc = this.addr;
   }
 }
 
@@ -80,6 +80,6 @@ export class BRL extends Instruction {
   public static base_cycles = 4;
 
   public execute_effect(): void {
-    this.p.pc.word = this.addr.word;
+    this.p.pc = this.addr;
   }
 }

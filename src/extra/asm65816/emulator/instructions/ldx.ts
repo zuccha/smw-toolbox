@@ -6,12 +6,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 export abstract class LDX extends Instruction {
   public static mnemonic = "LDX";
 
-  protected ldx(value: Value): Value {
+  protected ldx(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_x) {
       this.p.flag_n = value.byte & flag_n_mask;
       this.p.flag_z = value.byte === 0;
@@ -25,7 +25,7 @@ export abstract class LDX extends Instruction {
 
 class LDX_Addr extends LDX {
   public execute_effect(): void {
-    this.p.set_x(this.ldx(this.load_x(this.addr)).word);
+    this.p.x = this.ldx(this.load_x(this.addr));
   }
 }
 
@@ -37,7 +37,7 @@ export namespace LDX {
     public static cyclesModifier = minus_x;
 
     public execute_effect(): void {
-      this.p.set_x(this.ldx(this._arg).word);
+      this.p.x = this.ldx(this._arg);
     }
   }
 

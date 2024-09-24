@@ -7,12 +7,12 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 export abstract class LDA extends Instruction {
   public static mnemonic = "LDA";
 
-  protected lda(value: Value): Value {
+  protected lda(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       this.p.flag_n = value.byte & flag_n_mask;
       this.p.flag_z = value.byte === 0;
@@ -26,7 +26,7 @@ export abstract class LDA extends Instruction {
 
 class LDA_Addr extends LDA {
   public execute_effect(): void {
-    this.p.set_a(this.lda(this.load_m(this.addr)).word);
+    this.p.a = this.lda(this.load_m(this.addr));
   }
 }
 
@@ -38,7 +38,7 @@ export namespace LDA {
     public static cyclesModifier = minus_m;
 
     public execute_effect(): void {
-      this.p.set_a(this.lda(this._arg).word);
+      this.p.a = this.lda(this._arg);
     }
   }
 

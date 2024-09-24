@@ -10,7 +10,7 @@ import {
   flag_b_mask,
 } from "./constants";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { b, l, w } from "./value";
+import { byte_mask, ReadOnlyValue, Value, word_mask } from "./value";
 
 //------------------------------------------------------------------------------
 // Processor
@@ -22,9 +22,9 @@ export default class Processor {
     initial_pc: number,
     initial_sp: number,
   ) {
-    this.pb = b(initial_pb);
-    this.pc = w(initial_pc);
-    this.sp = w(initial_sp);
+    this._pb = new Value(initial_pb, byte_mask);
+    this._pc = new Value(initial_pc, word_mask);
+    this._sp = new Value(initial_sp, word_mask);
   }
 
   //----------------------------------------------------------------------------
@@ -33,62 +33,103 @@ export default class Processor {
 
   // Accumulator ---------------------------------------------------------------
 
-  public readonly a = l(0);
+  private _a = new Value(0);
 
-  public get_a(): number {
-    return this._flag_m ? this.a.byte : this.a.word;
+  public get a(): ReadOnlyValue {
+    return this._flag_m ? this._a.as_byte() : this._a.as_word();
   }
 
-  public set_a(value: number): void {
-    if (this._flag_m) this.a.byte = value;
-    else this.a.word = value;
+  public set a(value: ReadOnlyValue) {
+    if (this._flag_m) this._a.byte = value.byte;
+    else this._a.word = value.word;
   }
 
   // X Index -------------------------------------------------------------------
 
-  public readonly x = l(0);
+  private _x = new Value(0);
 
-  public get_x(): number {
-    return this._flag_x ? this.x.byte : this.x.word;
+  public get x(): ReadOnlyValue {
+    return this._flag_x ? this._x.as_byte() : this._x.as_word();
   }
 
-  public set_x(value: number): void {
-    if (this._flag_x) this.x.byte = value;
-    else this.x.word = value;
+  public set x(value: ReadOnlyValue) {
+    if (this._flag_x) this._x.byte = value.byte;
+    else this._x.word = value.word;
   }
 
   // Y Index -------------------------------------------------------------------
 
-  public readonly y = l(0);
+  private _y = new Value(0);
 
-  public get_y(): number {
-    return this._flag_x ? this.y.byte : this.y.word;
+  public get y(): ReadOnlyValue {
+    return this._flag_x ? this._y.as_byte() : this._y.as_word();
   }
 
-  public set_y(value: number): void {
-    if (this._flag_x) this.y.byte = value;
-    else this.y.word = value;
+  public set y(value: ReadOnlyValue) {
+    if (this._flag_x) this._y.byte = value.byte;
+    else this._y.word = value.word;
   }
 
   // Data Bank -----------------------------------------------------------------
 
-  public readonly db = l(0);
+  private _db = new Value(0);
+
+  public get db(): ReadOnlyValue {
+    return this._db;
+  }
+
+  public set db(value: ReadOnlyValue) {
+    this._db.byte = value.byte;
+  }
 
   // Direct Page ---------------------------------------------------------------
 
-  public readonly dp = l(0);
+  private _dp = new Value(0);
+
+  public get dp(): ReadOnlyValue {
+    return this._dp;
+  }
+
+  public set dp(value: ReadOnlyValue) {
+    if (!this._flag_e) this._dp.word = value.word;
+  }
 
   // Stack Pointer -------------------------------------------------------------
 
-  public readonly sp = l(0);
+  private _sp = new Value(0);
+
+  public get sp(): ReadOnlyValue {
+    return this._sp;
+  }
+
+  public set sp(value: ReadOnlyValue) {
+    if (this._flag_e) this._sp.byte = value.byte;
+    else this._sp.word = value.word;
+  }
 
   // Program Bank --------------------------------------------------------------
 
-  public readonly pb = l(0);
+  private _pb = new Value(0);
+
+  public get pb(): ReadOnlyValue {
+    return this._pb;
+  }
+
+  public set pb(value: ReadOnlyValue) {
+    this._pb.byte = value.byte;
+  }
 
   // Program Counter -----------------------------------------------------------
 
-  public readonly pc = l(0);
+  private _pc = new Value(0);
+
+  public get pc(): ReadOnlyValue {
+    return this._pc;
+  }
+
+  public set pc(value: ReadOnlyValue) {
+    this._pc.word = value.word;
+  }
 
   //----------------------------------------------------------------------------
   // Flags
@@ -127,6 +168,7 @@ export default class Processor {
   }
 
   public set flag_m(active: boolean | number) {
+    if (this._flag_e) return;
     this._flag_m = active ? 1 : 0;
   }
 
@@ -139,10 +181,13 @@ export default class Processor {
   }
 
   public set flag_x(active: boolean | number) {
-    this._flag_x = active ? 1 : 0;
+    if (this._flag_e) return;
     if (active) {
-      this.x.page = 0;
-      this.y.page = 0;
+      this._flag_x = 1;
+      this._x.page = 0;
+      this._y.page = 0;
+    } else {
+      this._flag_x = 0;
     }
   }
 
@@ -206,7 +251,7 @@ export default class Processor {
     if (active) {
       this.flag_m = 1;
       this.flag_x = 1;
-      this.sp.page = 0x01;
+      this._sp.page = 0x01;
     }
   }
 
@@ -270,14 +315,14 @@ export default class Processor {
   //----------------------------------------------------------------------------
 
   public reset(pb: number, pc: number, sp: number) {
-    this.a.long = 0;
-    this.x.long = 0;
-    this.y.long = 0;
-    this.db.long = 0;
-    this.dp.long = 0;
-    this.sp.long = sp;
-    this.pb.long = pb;
-    this.pc.long = pc;
+    this._a.long = 0;
+    this._x.long = 0;
+    this._y.long = 0;
+    this._db.long = 0;
+    this._dp.long = 0;
+    this._sp.long = sp;
+    this._pb.long = pb;
+    this._pc.long = pc;
     this._flag_n = 0;
     this._flag_v = 0;
     this._flag_m = 1;
@@ -296,14 +341,14 @@ export default class Processor {
 
   public snapshot(): ProcessorSnapshot {
     return {
-      a: this.a.word,
-      x: this.x.word,
-      y: this.y.word,
-      db: this.db.byte,
-      dp: this.dp.word,
-      sp: this.sp.word,
-      pb: this.pb.byte,
-      pc: this.pc.word,
+      a: this._a.word,
+      x: this._x.word,
+      y: this._y.word,
+      db: this._db.byte,
+      dp: this._dp.word,
+      sp: this._sp.word,
+      pb: this._pb.byte,
+      pc: this._pc.word,
 
       flag_n: this._flag_n,
       flag_v: this._flag_v,

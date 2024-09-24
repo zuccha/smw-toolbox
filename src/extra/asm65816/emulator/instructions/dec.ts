@@ -21,7 +21,7 @@ export namespace DEC {
     public static base_cycles = 2;
 
     public execute_effect(): void {
-      this.p.set_a(this.p.get_a() - 1);
+      this.p.a = w(this.p.a.word - 1);
     }
   }
 

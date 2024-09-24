@@ -10,7 +10,7 @@ import Memory from "./memory";
 import { InstructionImpl } from "./opcode-to-instruction";
 import Processor from "./processor";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { l, Value } from "./value";
+import { l, ReadOnlyValue, w } from "./value";
 
 //------------------------------------------------------------------------------
 // Instruction
@@ -20,7 +20,7 @@ export abstract class Instruction {
   public static cycles_modifier = 0;
 
   public readonly id: number;
-  protected _arg: Value;
+  protected _arg: ReadOnlyValue;
   protected _processor: Processor;
   protected _snapshot_before: ProcessorSnapshot;
   protected _snapshot_after: ProcessorSnapshot | undefined;
@@ -28,7 +28,7 @@ export abstract class Instruction {
 
   public constructor(
     id: number,
-    arg: Value,
+    arg: ReadOnlyValue,
     processor: Processor,
     memory: Memory,
   ) {
@@ -43,7 +43,7 @@ export abstract class Instruction {
   protected abstract execute_effect(): void;
 
   public execute() {
-    this._processor.pc.add_word(this.length);
+    this._processor.pc = w(this._processor.pc.word + this.length);
     this.execute_effect();
     this._snapshot_after = this._processor.snapshot();
   }
@@ -56,7 +56,7 @@ export abstract class Instruction {
     return this.mode.has_address;
   }
 
-  public get addr(): Value {
+  public get addr(): ReadOnlyValue {
     return this.mode.addr(this._mode_context);
   }
 
@@ -111,7 +111,7 @@ export abstract class Instruction {
     return bytes;
   }
 
-  public get pc(): Value {
+  public get pc(): ReadOnlyValue {
     return l((this._snapshot_before.pb << 16) + this._snapshot_before.pc);
   }
 
@@ -119,25 +119,25 @@ export abstract class Instruction {
     return this._snapshot_after;
   }
 
-  public load_m(addr: Value): Value {
+  public load_m(addr: ReadOnlyValue): ReadOnlyValue {
     return this._processor.flag_m
       ? this._memory.load_byte(addr)
       : this._memory.load_word(addr);
   }
 
-  public load_x(addr: Value): Value {
+  public load_x(addr: ReadOnlyValue): ReadOnlyValue {
     return this._processor.flag_x
       ? this._memory.load_byte(addr)
       : this._memory.load_word(addr);
   }
 
-  public save_m(addr: Value, value: Value): void {
+  public save_m(addr: ReadOnlyValue, value: ReadOnlyValue): void {
     this._processor.flag_m
       ? this._memory.save_byte(addr, value)
       : this._memory.save_word(addr, value);
   }
 
-  public save_x(addr: Value, value: Value): void {
+  public save_x(addr: ReadOnlyValue, value: ReadOnlyValue): void {
     this._processor.flag_x
       ? this._memory.save_byte(addr, value)
       : this._memory.save_word(addr, value);

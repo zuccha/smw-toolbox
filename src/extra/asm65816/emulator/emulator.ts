@@ -4,7 +4,7 @@ import MemoryMapping from "./memory-mapping";
 import { Opcode, opcode_to_instruction } from "./opcode-to-instruction";
 import Processor from "./processor";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { b, l, Value, w } from "./value";
+import { b, l, ReadOnlyValue, w } from "./value";
 
 export default class Emulator {
   private _bytes: number[] = [];
@@ -123,18 +123,21 @@ export default class Emulator {
     }
   }
 
-  private _opcode(addr: Value): Opcode | undefined {
+  private _opcode(addr: ReadOnlyValue): Opcode | undefined {
     return this._memory.load_byte_raw(addr) as Opcode | undefined;
   }
 
-  private _arg(addr: Value): Value {
+  private _arg(addr: ReadOnlyValue): ReadOnlyValue {
     const bank = this._memory.load_byte_raw(l(addr.long + 1)) ?? 0;
     const page = (this._memory.load_byte_raw(l(addr.long + 2)) ?? 0) << 8;
     const byte = (this._memory.load_byte_raw(l(addr.long + 3)) ?? 0) << 16;
     return l(bank + page + byte);
   }
 
-  private _next_instruction(id: number, addr: Value): Instruction | undefined {
+  private _next_instruction(
+    id: number,
+    addr: ReadOnlyValue,
+  ): Instruction | undefined {
     const opcode = this._opcode(addr);
     if (opcode === undefined) return undefined;
     const impl = opcode_to_instruction[opcode];

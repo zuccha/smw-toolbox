@@ -8,7 +8,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, byte_mask, Value, w, word_mask } from "../value";
+import { b, byte_mask, ReadOnlyValue, w, word_mask } from "../value";
 
 export function add_decimal(
   a: number,
@@ -30,7 +30,7 @@ export function add_decimal(
 export abstract class ADC extends Instruction {
   public static mnemonic = "ADC";
 
-  protected adc(value: Value): number {
+  protected adc(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       const result_raw = this.p.flag_d
         ? add_decimal(this.p.a.byte, value.byte, this.p.flag_c, 2)
@@ -40,7 +40,7 @@ export abstract class ADC extends Instruction {
       this.p.flag_v = result.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
       this.p.flag_c = result_raw > byte_mask;
-      return result.byte;
+      return result;
     } else {
       const result_raw = this.p.flag_d
         ? add_decimal(this.p.a.word, value.word, this.p.flag_c, 4)
@@ -50,7 +50,7 @@ export abstract class ADC extends Instruction {
       this.p.flag_v = result.page & flag_v_mask;
       this.p.flag_z = result.word === 0;
       this.p.flag_c = result_raw > word_mask;
-      return result.word;
+      return result;
     }
   }
 }
@@ -58,7 +58,7 @@ export abstract class ADC extends Instruction {
 export abstract class ADC_Addr extends ADC {
   public execute_effect(): void {
     const value = this.load_m(this.addr);
-    this.p.set_a(this.adc(value));
+    this.p.a = this.adc(value);
   }
 }
 
@@ -70,7 +70,7 @@ export namespace ADC {
     public static cyclesModifier = minus_m;
 
     public execute_effect(): void {
-      this.p.set_a(this.adc(this._arg));
+      this.p.a = this.adc(this._arg);
     }
   }
 

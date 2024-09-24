@@ -1,12 +1,12 @@
 import { minus_x, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { Value } from "../value";
+import { ReadOnlyValue } from "../value";
 
 export abstract class CPX extends Instruction {
   public static mnemonic = "CPX";
 
-  protected cpx(value: Value): void {
+  protected cpx(value: ReadOnlyValue): void {
     if (this.p.flag_x) {
       this.p.flag_n = this.p.x.byte < value.byte;
       this.p.flag_z = this.p.x.byte === value.byte;

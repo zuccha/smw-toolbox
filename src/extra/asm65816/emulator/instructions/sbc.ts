@@ -9,7 +9,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { b, Value, w } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export function sub_decimal(
   a: number,
@@ -35,7 +35,7 @@ export function sub_decimal(
 export abstract class SBC extends Instruction {
   public static mnemonic = "SBC";
 
-  protected sbc(value: Value): number {
+  protected sbc(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {
       const result_raw = this.p.flag_d
         ? sub_decimal(this.p.a.byte, value.byte, this.p.flag_c, 2)
@@ -45,7 +45,7 @@ export abstract class SBC extends Instruction {
       this.p.flag_v = result.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
       this.p.flag_c = result_raw < 0 ? 0 : 1;
-      return result.byte;
+      return result;
     } else {
       const result_raw = this.p.flag_d
         ? sub_decimal(this.p.a.word, value.word, this.p.flag_c, 4)
@@ -55,7 +55,7 @@ export abstract class SBC extends Instruction {
       this.p.flag_v = result.page & flag_v_mask;
       this.p.flag_z = result.word === 0;
       this.p.flag_c = result_raw < 0 ? 0 : 1;
-      return result.word;
+      return result;
     }
   }
 }
@@ -63,7 +63,7 @@ export abstract class SBC extends Instruction {
 export abstract class SBC_Addr extends SBC {
   public execute_effect(): void {
     const value = this.load_m(this.addr);
-    this.p.set_a(this.sbc(value));
+    this.p.a = this.sbc(value);
   }
 }
 
@@ -75,7 +75,7 @@ export namespace SBC {
     public static cyclesModifier = minus_m;
 
     public execute_effect(): void {
-      this.p.set_a(this.sbc(this._arg));
+      this.p.a = this.sbc(this._arg);
     }
   }
 
