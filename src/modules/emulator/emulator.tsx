@@ -2,6 +2,7 @@ import EmulatorHotkeys from "./emulator-hotkeys";
 import EmulatorSectionLog from "./emulator-section-log";
 import EmulatorSectionMain from "./emulator-section-main";
 import EmulatorSectionMemory from "./emulator-section-memory";
+import EmulatorSectionOpcode from "./emulator-section-opcode";
 
 export default function Emulator() {
   return (
@@ -10,6 +11,7 @@ export default function Emulator() {
 
       <div class="App_ModuleBlock">
         <EmulatorSectionMain />
+        <EmulatorSectionOpcode />
       </div>
 
       <div class="App_ModuleBlock">

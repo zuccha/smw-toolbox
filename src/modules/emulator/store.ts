@@ -48,6 +48,7 @@ export const useEmulatorMaxInstructions = () =>
 export const useEmulatorCompilationErrors = createUseSharedState<string[]>([]);
 export const useEmulatorSnapshot = createUseSharedState(emulator.snapshot);
 export const useEmulatorSelectedInstructionId = createUseSharedState(-1);
+export const useEmulatorOpcode = createUseSharedState("");
 
 export const useEmulatorMemoryBaseAddress = () =>
   useStoreNumber(`${emulatorId}.memory.baseAddress`, 0x7e0000);
@@ -57,3 +58,6 @@ export const useEmulatorTabLogIsVisible = () =>
 
 export const useEmulatorTabMemoryIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.memory.isVisible`, true);
+
+export const useEmulatorTabOpcodeIsVisible = () =>
+  useStoreBoolean(`${emulatorId}.tab.opcode.isVisible`, true);

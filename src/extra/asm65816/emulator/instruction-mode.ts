@@ -271,7 +271,7 @@ export default class InstructionMode {
   //----------------------------------------------------------------------------
 
   public addr: (args: InstructionModeContext) => ReadOnlyValue;
-  public format: (args: InstructionModeContext) => string;
+  public format: (args: { arg: ReadOnlyValue; arg_size: number }) => string;
   public readonly base_length: number;
   public readonly length_modifier: number;
   public readonly has_address: boolean;
@@ -279,7 +279,7 @@ export default class InstructionMode {
 
   public constructor(args: {
     addr: (context: InstructionModeContext) => ReadOnlyValue;
-    format: (context: InstructionModeContext) => string;
+    format: (context: { arg: ReadOnlyValue; arg_size: number }) => string;
     base_length: number;
     length_modifier?: number;
     has_address?: boolean;
