@@ -11,6 +11,7 @@ import { useEmulatorOpcode, useEmulatorTabOpcodeIsVisible } from "./store";
 import { l } from "../../extra/asm65816/emulator/value";
 import {
   minus_2m,
+  minus_e,
   minus_m,
   minus_x,
   plus_1_if_branch_taken,
@@ -18,6 +19,7 @@ import {
   plus_1_if_index_x_crosses_page,
   plus_1_if_index_y_crosses_page,
   plus_7_for_each_transfer,
+  plus_x_to_restart_processor,
 } from "../../extra/asm65816/emulator/constants";
 
 const flags = ["n", "v", "m", "x", "d", "i", "z", "c"];
@@ -56,11 +58,13 @@ const columns: TableColumn<InstructionImpl>[] = [
       if (impl.cycles_modifier & minus_m) cycles += "-m";
       if (impl.cycles_modifier & minus_2m) cycles += "-2*m";
       if (impl.cycles_modifier & minus_x) cycles += "-x";
+      if (impl.cycles_modifier & minus_e) cycles += "-e";
       if (impl.cycles_modifier & plus_1_if_dp_low_is_zero) cycles += "+d";
       if (impl.cycles_modifier & plus_1_if_index_x_crosses_page) cycles += "+p";
       if (impl.cycles_modifier & plus_1_if_index_y_crosses_page) cycles += "+p";
       if (impl.cycles_modifier & plus_1_if_branch_taken) cycles += "+b";
       if (impl.cycles_modifier & plus_7_for_each_transfer) cycles += "+7*t";
+      if (impl.cycles_modifier & plus_x_to_restart_processor) cycles += "+r";
       return cycles;
     },
     align: "right",
@@ -86,7 +90,7 @@ export default function EmulatorSectionLog() {
   return (
     <SectionCollapsible
       isVisible={isTabOpcodeVisible}
-      label="Opcode"
+      label="Search Opcode"
       onChange={setIsTabOpcodeVisible}
     >
       <div className="App_SectionCol">

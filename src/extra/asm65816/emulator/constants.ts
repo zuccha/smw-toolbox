@@ -6,6 +6,8 @@ export const plus_1_if_index_x_crosses_page = 0x10;
 export const plus_1_if_index_y_crosses_page = 0x20;
 export const plus_1_if_branch_taken = 0x40;
 export const plus_7_for_each_transfer = 0x80;
+export const minus_e = 0x100;
+export const plus_x_to_restart_processor = 0x200;
 
 export const flag_c_mask = 0x01;
 export const flag_z_mask = 0x02;

@@ -14,11 +14,13 @@ import {
   BRL,
 } from "./instructions/b__";
 import { BIT } from "./instructions/bit";
+import { BRK } from "./instructions/brk";
 import { CLC } from "./instructions/clc";
 import { CLD } from "./instructions/cld";
 import { CLI } from "./instructions/cli";
 import { CLV } from "./instructions/clv";
 import { CMP } from "./instructions/cmp";
+import { COP } from "./instructions/cop";
 import { CPX } from "./instructions/cpx";
 import { CPY } from "./instructions/cpy";
 import { DEC } from "./instructions/dec";
@@ -46,6 +48,7 @@ import { PLA, PLX, PLY, PLB, PLD, PLP } from "./instructions/pl_";
 import { REP } from "./instructions/rep";
 import { ROL } from "./instructions/rol";
 import { ROR } from "./instructions/ror";
+import { RTI } from "./instructions/rti";
 import { RTL } from "./instructions/rtl";
 import { RTS } from "./instructions/rts";
 import { SBC } from "./instructions/sbc";
@@ -54,6 +57,7 @@ import { SED } from "./instructions/sed";
 import { SEI } from "./instructions/sei";
 import { SEP } from "./instructions/sep";
 import { STA } from "./instructions/sta";
+import { STP } from "./instructions/stp";
 import { STX } from "./instructions/stx";
 import { STY } from "./instructions/sty";
 import { STZ } from "./instructions/stz";
@@ -73,6 +77,7 @@ import {
 } from "./instructions/t__";
 import { TRB } from "./instructions/trb";
 import { TSB } from "./instructions/tsb";
+import { WAI } from "./instructions/wai";
 import { WDM } from "./instructions/wdm";
 import { XBA } from "./instructions/xba";
 import { XCE } from "./instructions/xce";
@@ -133,8 +138,8 @@ export const opcode_to_instruction = {
   [0x2c]: BIT.Absolute, // BIT addr
   [0x3c]: BIT.Absolute_X, // BIT addr,x
 
-  [0x00]: NOP, // BRK #const
-  [0x02]: NOP, // COP #const
+  [0x00]: BRK, // BRK #const
+  [0x02]: COP, // COP #const
 
   [0x18]: CLC, // CLC
   [0x58]: CLI, // CLI
@@ -300,7 +305,7 @@ export const opcode_to_instruction = {
 
   [0x60]: RTS, // RTS
   [0x6b]: RTL, // RTL
-  [0x40]: NOP, // RTI
+  [0x40]: RTI, // RTI
 
   [0xe9]: SBC.Immediate_VariableA, // SBC #const
   [0xe5]: SBC.DirectPage, // SBC dp
@@ -337,7 +342,7 @@ export const opcode_to_instruction = {
   [0x83]: STA.StackRelative, // STA sr,s
   [0x93]: STA.StackRelative_Indirect_Y, // STA (sr,s),y
 
-  [0xdb]: NOP, // STP
+  [0xdb]: STP, // STP
 
   [0x86]: STX.DirectPage, // STX dp
   [0x96]: STX.DirectPage_Y, // STX dp,y
@@ -371,7 +376,7 @@ export const opcode_to_instruction = {
   [0x04]: TSB.DirectPage, // TSB dp
   [0x0c]: TSB.Absolute, // TSB addr
 
-  [0xcb]: NOP, // WAI
+  [0xcb]: WAI, // WAI
 
   [0x42]: WDM, // WDM #const
 
