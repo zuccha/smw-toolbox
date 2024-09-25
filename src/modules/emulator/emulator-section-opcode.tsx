@@ -43,15 +43,6 @@ const columns: TableColumn<InstructionImpl>[] = [
         .join(""),
   },
   {
-    header: "Length",
-    value: (impl) => {
-      let length = `${impl.mode.base_length}`;
-      if (impl.mode.length_modifier & minus_m) length += "-m";
-      return length;
-    },
-    align: "right",
-  },
-  {
     header: "Cycles",
     value: (impl) => {
       let cycles = `${impl.base_cycles}`;
@@ -66,6 +57,15 @@ const columns: TableColumn<InstructionImpl>[] = [
       if (impl.cycles_modifier & plus_7_for_each_transfer) cycles += "+7*t";
       if (impl.cycles_modifier & plus_x_to_restart_processor) cycles += "+r";
       return cycles;
+    },
+    align: "right",
+  },
+  {
+    header: "Length",
+    value: (impl) => {
+      let length = `${impl.mode.base_length}`;
+      if (impl.mode.length_modifier & minus_m) length += "-m";
+      return length;
     },
     align: "right",
   },
