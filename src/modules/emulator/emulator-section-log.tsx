@@ -32,6 +32,7 @@ export default function EmulatorSectionLog() {
         instructions={emulator.instructions}
         length={emulator.length}
         onClickValidInstruction={clickValidInstruction}
+        selectedInstructionId={emulator.selectedInstructionId}
         snapshot={emulator.snapshot}
       />
     </SectionCollapsible>

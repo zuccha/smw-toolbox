@@ -1,8 +1,7 @@
-import { useLayoutEffect, useState } from "preact/hooks";
+import { useLayoutEffect } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
 import { l } from "../extra/asm65816/emulator/value";
-import useItemsWindow from "../hooks/use-items-window";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { padL, toHex } from "../utils";
 import Table from "./table";
@@ -16,6 +15,7 @@ export type SnesLogProps = {
   instructions: readonly Instruction[];
   length: number;
   onClickValidInstruction: (id: number) => void;
+  selectedInstructionId: number;
   snapshot: ProcessorSnapshot;
   windowSize?: number;
 };
@@ -26,17 +26,9 @@ export default function SnesLog({
   instructions,
   length,
   onClickValidInstruction,
+  selectedInstructionId,
   snapshot,
-  windowSize = 16,
 }: SnesLogProps) {
-  const [selected, setSelected] = useState<Instruction | undefined>(undefined);
-  const instructionsWindow = useItemsWindow(instructions, windowSize);
-
-  useLayoutEffect(() => {
-    setSelected(undefined);
-    instructionsWindow.resetScroll();
-  }, [instructions, instructionsWindow.resetScroll]);
-
   if (instructions.length === 0)
     return errors.length === 0 ? (
       <div className="SnesLog">
@@ -192,14 +184,15 @@ export default function SnesLog({
           },
         ]}
         isRowClickable={(instruction) => !!instruction.snapshot}
-        isRowSelected={(instruction) => instruction.id === selected?.id}
+        isRowSelected={(instruction) =>
+          instruction.id === selectedInstructionId
+        }
         items={instructions}
         onClickRow={(instruction) => {
           if (instruction.snapshot) {
-            const newSelected =
-              instruction.id === selected?.id ? undefined : instruction;
-            setSelected(newSelected);
-            onClickValidInstruction(newSelected?.id ?? -1);
+            const newSelectedInstructionId =
+              instruction.id === selectedInstructionId ? -1 : instruction.id;
+            onClickValidInstruction(newSelectedInstructionId);
           }
         }}
         windowSize={16}

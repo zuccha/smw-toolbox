@@ -5,7 +5,7 @@ import {
   emulator,
   useEmulatorCode,
   useEmulatorCompilationErrors,
-  useEmulatorInstructionId,
+  useEmulatorSelectedInstructionId,
   useEmulatorMaxInstructions,
   useEmulatorSnapshot,
 } from "./store";
@@ -17,7 +17,8 @@ export default function useEmulator() {
   const [compilationErrors, setCompilationErrors] =
     useEmulatorCompilationErrors();
   const [snapshot, setSnapshot] = useEmulatorSnapshot();
-  const [instructionId, setInstructionId] = useEmulatorInstructionId();
+  const [selectedInstructionId, setSelectedInstructionId] =
+    useEmulatorSelectedInstructionId();
   const [maxInstructions] = useEmulatorMaxInstructions();
 
   const [notifyEmulator, renderCount] = useSignal("emulator");
@@ -32,7 +33,7 @@ export default function useEmulator() {
       notifyEmulator();
       setCompilationErrors([]);
       setSnapshot(emulator.snapshot);
-      setInstructionId(-1);
+      setSelectedInstructionId(-1);
     } else {
       setCompilationErrors(
         assembler.errors.map(
@@ -46,7 +47,7 @@ export default function useEmulator() {
     (id: number) => {
       emulator.run_until(id);
       notifyEmulator();
-      setInstructionId(id);
+      setSelectedInstructionId(id);
     },
     [notifyEmulator],
   );
@@ -67,12 +68,12 @@ export default function useEmulator() {
     executionErrors: emulator.errors,
     initialRamAddress: emulator.initial_ram_address,
     initialRomAddress: emulator.initial_rom_address,
-    instructionId,
     instructions: emulator.instructions,
     length: emulator.length,
     readByte,
     run,
     runUntil,
+    selectedInstructionId,
     setMaxInstructions,
     snapshot,
     stackPointer: emulator.sp,

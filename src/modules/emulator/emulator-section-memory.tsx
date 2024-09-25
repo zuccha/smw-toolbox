@@ -16,17 +16,15 @@ export default function EmulatorSectionMemory() {
   const [isTabSnesVisible, setIsTabSnesVisible] =
     useEmulatorTabMemoryIsVisible();
 
-  const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
-
   const memory = useMemo(
-    () => range(memorySize).map((i) => emulator.readByte(safeBaseAddress + i)),
-    [safeBaseAddress, emulator.readByte],
+    () => range(memorySize).map((i) => emulator.readByte(baseAddress + i)),
+    [baseAddress, emulator.readByte],
   );
 
   const label =
-    emulator.instructionId === -1
+    emulator.selectedInstructionId === -1
       ? "Memory"
-      : `Memory (instruction ${emulator.instructionId})`;
+      : `Memory (instruction ${emulator.selectedInstructionId})`;
 
   return (
     <SectionCollapsible
