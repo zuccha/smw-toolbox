@@ -93,6 +93,7 @@ export default function Input({
         placeholder={placeholder}
         ref={inputRef}
         size={size}
+        spellcheck={false}
         type={type}
         value={value}
       />
