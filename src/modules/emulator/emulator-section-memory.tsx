@@ -4,7 +4,7 @@ import SnesMemory from "../../components/snes-memory";
 import { range } from "../../utils";
 import {
   useEmulatorMemoryBaseAddress,
-  useEmulatorTabSnesIsVisible,
+  useEmulatorTabMemoryIsVisible,
 } from "./store";
 import useEmulator from "./use-emulator";
 
@@ -13,7 +13,8 @@ const memorySize = 8 * 16;
 export default function EmulatorSectionMemory() {
   const emulator = useEmulator();
   const [baseAddress, setBaseAddress] = useEmulatorMemoryBaseAddress();
-  const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabSnesIsVisible();
+  const [isTabSnesVisible, setIsTabSnesVisible] =
+    useEmulatorTabMemoryIsVisible();
 
   const safeBaseAddress = isNaN(baseAddress) ? 0 : baseAddress;
 

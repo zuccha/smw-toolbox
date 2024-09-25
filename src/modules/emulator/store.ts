@@ -55,5 +55,5 @@ export const useEmulatorMemoryBaseAddress = () =>
 export const useEmulatorTabLogIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.log.isVisible`, true);
 
-export const useEmulatorTabSnesIsVisible = () =>
-  useStoreBoolean(`${emulatorId}.tab.snes.isVisible`, true);
+export const useEmulatorTabMemoryIsVisible = () =>
+  useStoreBoolean(`${emulatorId}.tab.memory.isVisible`, true);
