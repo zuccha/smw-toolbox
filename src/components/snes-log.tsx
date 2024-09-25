@@ -6,7 +6,7 @@ import useItemsWindow from "../hooks/use-items-window";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { classNames, padL, toHex } from "../utils";
 import Tooltip from "./tooltip";
-import { formatValue } from "./value";
+import Value, { formatValue } from "./value";
 import "./snes-log.css";
 
 export type SnesLogProps = {
@@ -84,27 +84,29 @@ export default function SnesLog({
               <TdId id={0} length={idLength} />
               <TdPc pb={snapshotInitial.pb} pc={snapshotInitial.pc} />
               <td colSpan={1}>{"<initial state>"}</td>
-              <TdRegister
+              <TdRegisterVar
                 is8Bit={!!snapshotInitial.flag_m}
                 value={snapshotInitial.a}
               />
-              <TdRegister
+              <TdRegisterVar
                 is8Bit={!!snapshotInitial.flag_x}
                 value={snapshotInitial.x}
               />
-              <TdRegister
+              <TdRegisterVar
                 is8Bit={!!snapshotInitial.flag_x}
                 value={snapshotInitial.y}
               />
-              <td>{toHex(snapshotInitial.sp, 4)}</td>
-              <td>{toHex(snapshotInitial.dp, 4)}</td>
-              <td className="space-right">{toHex(snapshotInitial.db, 2)}</td>
+              <TdRegister16Bit value={snapshotInitial.sp} />
+              <TdRegister16Bit value={snapshotInitial.dp} />
+              <TdRegister8Bit value={snapshotInitial.db} />
               <TdFlags flags={snapshotInitial.flags} />
               <td className="right">-</td>
               <td className="right space-left">-</td>
             </tr>
 
             {instructionsWindow.items.map((instruction) => {
+              const prevSnapshot =
+                instructions[instruction.id - 2]?.snapshot ?? snapshotInitial;
               const className = classNames([
                 ["selected", instruction.id === selected?.id],
                 ["error", !instruction.snapshot],
@@ -124,22 +126,37 @@ export default function SnesLog({
                   <TdInstruction instruction={instruction} />
                   {instruction.snapshot ? (
                     <>
-                      <TdRegister
+                      <TdRegisterVar
+                        didChange={instruction.snapshot.a !== prevSnapshot.a}
                         is8Bit={!!instruction.snapshot.flag_m}
                         value={instruction.snapshot.a}
                       />
-                      <TdRegister
+                      <TdRegisterVar
+                        didChange={instruction.snapshot.x !== prevSnapshot.x}
                         is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.x}
                       />
-                      <TdRegister
+                      <TdRegisterVar
+                        didChange={instruction.snapshot.y !== prevSnapshot.y}
                         is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.y}
                       />
-                      <td>{toHex(instruction.snapshot.sp, 4)}</td>
-                      <td>{toHex(instruction.snapshot.dp, 4)}</td>
-                      <td>{toHex(instruction.snapshot.db, 2)}</td>
-                      <TdFlags flags={instruction.snapshot.flags} />
+                      <TdRegister16Bit
+                        didChange={instruction.snapshot.sp !== prevSnapshot.sp}
+                        value={instruction.snapshot.sp}
+                      />
+                      <TdRegister16Bit
+                        didChange={instruction.snapshot.dp !== prevSnapshot.dp}
+                        value={instruction.snapshot.dp}
+                      />
+                      <TdRegister8Bit
+                        didChange={instruction.snapshot.db !== prevSnapshot.db}
+                        value={instruction.snapshot.db}
+                      />
+                      <TdFlags
+                        flags={instruction.snapshot.flags}
+                        prevFlags={prevSnapshot.flags}
+                      />
                       <td className="right">{instruction.cycles}</td>
                       <td className="right space-left">{instruction.length}</td>
                     </>
@@ -156,12 +173,12 @@ export default function SnesLog({
               <TdId id={instructions.length} length={idLength} />
               <TdPc pb={snapshot.pb} pc={snapshot.pc} />
               <td></td>
-              <TdRegister is8Bit={!!snapshot.flag_m} value={snapshot.a} />
-              <TdRegister is8Bit={!!snapshot.flag_x} value={snapshot.x} />
-              <TdRegister is8Bit={!!snapshot.flag_x} value={snapshot.y} />
-              <td>{toHex(snapshot.sp, 4)}</td>
-              <td>{toHex(snapshot.dp, 4)}</td>
-              <td className="space-right">{toHex(snapshot.db, 2)}</td>
+              <TdRegisterVar is8Bit={!!snapshot.flag_m} value={snapshot.a} />
+              <TdRegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.x} />
+              <TdRegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.y} />
+              <TdRegister16Bit value={snapshot.sp} />
+              <TdRegister16Bit value={snapshot.dp} />
+              <TdRegister8Bit value={snapshot.db} />
               <TdFlags flags={snapshot.flags} />
               <td className="right">{cycles}</td>
               <td className="right space-left">{length}</td>
@@ -189,12 +206,20 @@ function TdPc({ pb, pc }: { pb: number; pc: number }) {
   return <td>{l((pb << 16) | pc).format_address()}</td>;
 }
 
-function TdRegister({ is8Bit, value }: { is8Bit: boolean; value: number }) {
+function TdRegisterVar({
+  didChange = false,
+  is8Bit,
+  value,
+}: {
+  didChange?: boolean;
+  is8Bit: boolean;
+  value: number;
+}) {
   const byte = formatValue(value & 0xff, IntegerEncoding.Hex, IntegerUnit.Byte);
   const word = formatValue(value, IntegerEncoding.Hex, IntegerUnit.Word);
   const tooltip = `8-bit: ${byte.tooltip}\n16-bit: ${word.tooltip}`;
   return (
-    <td>
+    <td className={didChange ? "highlight" : undefined}>
       <Tooltip monospace tooltip={tooltip}>
         {is8Bit ? (
           <>
@@ -209,14 +234,55 @@ function TdRegister({ is8Bit, value }: { is8Bit: boolean; value: number }) {
   );
 }
 
-function TdFlags({ flags }: { flags: string }) {
+function TdRegister8Bit({
+  didChange,
+  value,
+}: {
+  didChange?: boolean;
+  value: number;
+}) {
+  const [encoding, unit] = [IntegerEncoding.Hex, IntegerUnit.Byte];
+  return (
+    <td className={didChange ? "highlight" : undefined}>
+      <Value encoding={encoding} unit={unit} value={value} />
+    </td>
+  );
+}
+
+function TdRegister16Bit({
+  didChange = false,
+  value,
+}: {
+  didChange?: boolean;
+  value: number;
+}) {
+  const [encoding, unit] = [IntegerEncoding.Hex, IntegerUnit.Word];
+  return (
+    <td className={didChange ? "highlight" : undefined}>
+      <Value encoding={encoding} unit={unit} value={value} />
+    </td>
+  );
+}
+
+function TdFlags({
+  flags,
+  prevFlags = "",
+}: {
+  flags: string;
+  prevFlags?: string;
+}) {
   return (
     <td>
-      {flags
-        .split("")
-        .map((flag) =>
-          flag === flag.toUpperCase() ? <span>{flag}</span> : <dim>{flag}</dim>,
-        )}
+      {flags.split("").map((flag, i) => {
+        const active = flag === flag.toUpperCase();
+        const prevFlag = prevFlags[i] ?? flag;
+        const className = flag !== prevFlag ? "highlight" : undefined;
+        return active ? (
+          <span className={className}>{flag}</span>
+        ) : (
+          <dim className={className}>{flag}</dim>
+        );
+      })}
     </td>
   );
 }

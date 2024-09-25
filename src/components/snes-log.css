@@ -58,6 +58,11 @@
   background-color: var(--color-highlight-2);
 }
 
+.SnesLog_Table > table > tbody > tr .highlight {
+  color: var(--color-primary-1);
+  font-weight: bold;
+}
+
 .SnesLog_Table > table .right {
   text-align: right;
 }

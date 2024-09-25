@@ -63,7 +63,7 @@ kbd {
 }
 
 dim {
-  color: var(--color-neutral-2);
+  opacity: 0.6;
 }
 
 @media (max-width: 40em) {
