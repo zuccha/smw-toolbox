@@ -33,7 +33,6 @@ export default function EmulatorSectionLog() {
         length={emulator.length}
         onClickValidInstruction={clickValidInstruction}
         snapshot={emulator.snapshot}
-        snapshotInitial={emulator.snapshotInitial}
       />
     </SectionCollapsible>
   );

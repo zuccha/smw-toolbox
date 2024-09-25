@@ -1,4 +1,5 @@
 import { Instruction } from "./instruction";
+import { _Init } from "./instructions/_init";
 import Memory from "./memory";
 import MemoryMapping from "./memory-mapping";
 import { Opcode, opcode_to_instruction } from "./opcode-to-instruction";
@@ -12,11 +13,6 @@ export default class Emulator {
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
-  private _snapshot_initial: ProcessorSnapshot;
-
-  public constructor() {
-    this._snapshot_initial = this._processor.snapshot();
-  }
 
   private _max_instructions = 100;
 
@@ -38,10 +34,6 @@ export default class Emulator {
 
   public get length(): number {
     return this._bytes.length;
-  }
-
-  public get snapshot_initial(): ProcessorSnapshot {
-    return this._snapshot_initial;
   }
 
   public get snapshot(): ProcessorSnapshot {
@@ -75,18 +67,17 @@ export default class Emulator {
   public run() {
     this._reset_processor();
     this._reset_memory();
-    this._instructions = [];
+    this._instructions = [this._initial_instruction()];
     this._errors = [];
-    this._snapshot_initial = this._processor.snapshot();
 
     try {
       while (true) {
-        const id = this._instructions.length + 1;
+        const id = this._instructions.length;
         const pc = l((this._processor.pb.byte << 16) | this._processor.pc.word);
         const instruction = this._next_instruction(id, pc);
         if (!instruction) break;
 
-        if (this._instructions.length >= this._max_instructions) {
+        if (this._instructions.length - 1 >= this._max_instructions) {
           const message = `Reached the maximum amount of instructions (${this._max_instructions}).`;
           this._errors.push(message);
           break;
@@ -142,6 +133,12 @@ export default class Emulator {
     const page = (this._memory.load_byte_raw(l(addr.long + 2)) ?? 0) << 8;
     const byte = (this._memory.load_byte_raw(l(addr.long + 3)) ?? 0) << 16;
     return l(bank + page + byte);
+  }
+
+  private _initial_instruction(): Instruction {
+    const initial = new _Init(0, l(0), this._processor, this._memory);
+    initial.execute();
+    return initial;
   }
 
   private _next_instruction(

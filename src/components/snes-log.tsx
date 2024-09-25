@@ -16,7 +16,6 @@ export type SnesLogProps = {
   length: number;
   onClickValidInstruction: (id: number) => void;
   snapshot: ProcessorSnapshot;
-  snapshotInitial: ProcessorSnapshot;
   windowSize?: number;
 };
 
@@ -27,7 +26,6 @@ export default function SnesLog({
   length,
   onClickValidInstruction,
   snapshot,
-  snapshotInitial,
   windowSize = 16,
 }: SnesLogProps) {
   const [selected, setSelected] = useState<Instruction | undefined>(undefined);
@@ -80,33 +78,8 @@ export default function SnesLog({
           </thead>
 
           <tbody onWheel={instructionsWindow.handleScroll}>
-            <tr>
-              <TdId id={0} length={idLength} />
-              <TdPc pb={snapshotInitial.pb} pc={snapshotInitial.pc} />
-              <td colSpan={1}>{"<initial state>"}</td>
-              <TdRegisterVar
-                is8Bit={!!snapshotInitial.flag_m}
-                value={snapshotInitial.a}
-              />
-              <TdRegisterVar
-                is8Bit={!!snapshotInitial.flag_x}
-                value={snapshotInitial.x}
-              />
-              <TdRegisterVar
-                is8Bit={!!snapshotInitial.flag_x}
-                value={snapshotInitial.y}
-              />
-              <TdRegister16Bit value={snapshotInitial.sp} />
-              <TdRegister16Bit value={snapshotInitial.dp} />
-              <TdRegister8Bit value={snapshotInitial.db} />
-              <TdFlags flags={snapshotInitial.flags} />
-              <td className="right">-</td>
-              <td className="right space-left">-</td>
-            </tr>
-
             {instructionsWindow.items.map((instruction) => {
-              const prevSnapshot =
-                instructions[instruction.id - 2]?.snapshot ?? snapshotInitial;
+              const prevSnapshot = instructions[instruction.id - 1]?.snapshot;
               const className = classNames([
                 ["selected", instruction.id === selected?.id],
                 ["error", !instruction.snapshot],
@@ -127,35 +100,35 @@ export default function SnesLog({
                   {instruction.snapshot ? (
                     <>
                       <TdRegisterVar
-                        didChange={instruction.snapshot.a !== prevSnapshot.a}
+                        didChange={c(instruction.snapshot.a, prevSnapshot?.a)}
                         is8Bit={!!instruction.snapshot.flag_m}
                         value={instruction.snapshot.a}
                       />
                       <TdRegisterVar
-                        didChange={instruction.snapshot.x !== prevSnapshot.x}
+                        didChange={c(instruction.snapshot.x, prevSnapshot?.x)}
                         is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.x}
                       />
                       <TdRegisterVar
-                        didChange={instruction.snapshot.y !== prevSnapshot.y}
+                        didChange={c(instruction.snapshot.y, prevSnapshot?.y)}
                         is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.y}
                       />
                       <TdRegister16Bit
-                        didChange={instruction.snapshot.sp !== prevSnapshot.sp}
+                        didChange={c(instruction.snapshot.sp, prevSnapshot?.sp)}
                         value={instruction.snapshot.sp}
                       />
                       <TdRegister16Bit
-                        didChange={instruction.snapshot.dp !== prevSnapshot.dp}
+                        didChange={c(instruction.snapshot.dp, prevSnapshot?.dp)}
                         value={instruction.snapshot.dp}
                       />
                       <TdRegister8Bit
-                        didChange={instruction.snapshot.db !== prevSnapshot.db}
+                        didChange={c(instruction.snapshot.db, prevSnapshot?.db)}
                         value={instruction.snapshot.db}
                       />
                       <TdFlags
                         flags={instruction.snapshot.flags}
-                        prevFlags={prevSnapshot.flags}
+                        prevFlags={prevSnapshot?.flags}
                       />
                       <td className="right">{instruction.cycles}</td>
                       <td className="right space-left">{instruction.length}</td>
@@ -170,7 +143,7 @@ export default function SnesLog({
 
           <tfoot>
             <tr>
-              <TdId id={instructions.length} length={idLength} />
+              <TdId id={instructions.length - 1} length={idLength} />
               <TdPc pb={snapshot.pb} pc={snapshot.pc} />
               <td></td>
               <TdRegisterVar is8Bit={!!snapshot.flag_m} value={snapshot.a} />
@@ -295,10 +268,16 @@ function TdInstruction({ instruction }: { instruction: Instruction }) {
   return (
     <td>
       <span className="flex">
-        <Tooltip monospace tooltip={tooltip}>
-          {instruction.text_with_value}
-        </Tooltip>
+        {tooltip ? (
+          <Tooltip monospace tooltip={tooltip}>
+            {instruction.text_with_value}
+          </Tooltip>
+        ) : (
+          instruction.text_with_value
+        )}
       </span>
     </td>
   );
 }
+
+const c = (value: number, prev: number | undefined) => !!prev && value !== prev;
