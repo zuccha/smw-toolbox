@@ -75,6 +75,7 @@ export default function useEmulator() {
     runUntil,
     setMaxInstructions,
     snapshot,
+    snapshotInitial: emulator.snapshot_initial,
     stackPointer: emulator.sp,
   };
 }

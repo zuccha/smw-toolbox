@@ -12,6 +12,11 @@ export default class Emulator {
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
+  private _snapshot_initial: ProcessorSnapshot;
+
+  public constructor() {
+    this._snapshot_initial = this._processor.snapshot();
+  }
 
   private _max_instructions = 100;
 
@@ -33,6 +38,10 @@ export default class Emulator {
 
   public get length(): number {
     return this._bytes.length;
+  }
+
+  public get snapshot_initial(): ProcessorSnapshot {
+    return this._snapshot_initial;
   }
 
   public get snapshot(): ProcessorSnapshot {
@@ -68,6 +77,7 @@ export default class Emulator {
     this._reset_memory();
     this._instructions = [];
     this._errors = [];
+    this._snapshot_initial = this._processor.snapshot();
 
     try {
       while (true) {

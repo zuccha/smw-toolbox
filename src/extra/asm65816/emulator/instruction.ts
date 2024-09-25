@@ -111,8 +111,12 @@ export abstract class Instruction {
     return bytes;
   }
 
-  public get pc(): ReadOnlyValue {
-    return l((this._snapshot_before.pb << 16) + this._snapshot_before.pc);
+  public get pb(): number {
+    return this._snapshot_before.pb;
+  }
+
+  public get pc(): number {
+    return this._snapshot_before.pc;
   }
 
   public get snapshot(): ProcessorSnapshot | undefined {

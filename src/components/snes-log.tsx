@@ -16,6 +16,7 @@ export type SnesLogProps = {
   length: number;
   onClickValidInstruction: (id: number) => void;
   snapshot: ProcessorSnapshot;
+  snapshotInitial: ProcessorSnapshot;
   windowSize?: number;
 };
 
@@ -26,6 +27,7 @@ export default function SnesLog({
   length,
   onClickValidInstruction,
   snapshot,
+  snapshotInitial,
   windowSize = 16,
 }: SnesLogProps) {
   const [selected, setSelected] = useState<Instruction | undefined>(undefined);
@@ -78,6 +80,30 @@ export default function SnesLog({
           </thead>
 
           <tbody onWheel={instructionsWindow.handleScroll}>
+            <tr>
+              <TdId id={0} length={idLength} />
+              <TdPc pb={snapshotInitial.pb} pc={snapshotInitial.pc} />
+              <td colSpan={1}>{"<initial state>"}</td>
+              <TdRegister
+                is8Bit={!!snapshotInitial.flag_m}
+                value={snapshotInitial.a}
+              />
+              <TdRegister
+                is8Bit={!!snapshotInitial.flag_x}
+                value={snapshotInitial.x}
+              />
+              <TdRegister
+                is8Bit={!!snapshotInitial.flag_x}
+                value={snapshotInitial.y}
+              />
+              <td>{toHex(snapshotInitial.sp, 4)}</td>
+              <td>{toHex(snapshotInitial.dp, 4)}</td>
+              <td className="space-right">{toHex(snapshotInitial.db, 2)}</td>
+              <TdFlags flags={snapshotInitial.flags} />
+              <td className="right">-</td>
+              <td className="right space-left">-</td>
+            </tr>
+
             {instructionsWindow.items.map((instruction) => {
               const className = classNames([
                 ["selected", instruction.id === selected?.id],
@@ -93,21 +119,21 @@ export default function SnesLog({
                 : undefined;
               return (
                 <tr className={className} onClick={onClick}>
-                  <td>{padL(`${instruction.id}`, idLength, " ")}</td>
-                  <td>{instruction.pc.format_address()}</td>
+                  <TdId id={instruction.id} length={idLength} />
+                  <TdPc pb={instruction.pb} pc={instruction.pc} />
                   <TdInstruction instruction={instruction} />
                   {instruction.snapshot ? (
                     <>
                       <TdRegister
-                        dimPage={!!instruction.snapshot.flag_m}
+                        is8Bit={!!instruction.snapshot.flag_m}
                         value={instruction.snapshot.a}
                       />
                       <TdRegister
-                        dimPage={!!instruction.snapshot.flag_x}
+                        is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.x}
                       />
                       <TdRegister
-                        dimPage={!!instruction.snapshot.flag_x}
+                        is8Bit={!!instruction.snapshot.flag_x}
                         value={instruction.snapshot.y}
                       />
                       <td>{toHex(instruction.snapshot.sp, 4)}</td>
@@ -127,12 +153,12 @@ export default function SnesLog({
 
           <tfoot>
             <tr>
-              <td>{instructions.length}</td>
-              <td>{l((snapshot.pb << 16) + snapshot.pc).format_address()}</td>
+              <TdId id={instructions.length} length={idLength} />
+              <TdPc pb={snapshot.pb} pc={snapshot.pc} />
               <td></td>
-              <TdRegister dimPage={!!snapshot.flag_m} value={snapshot.a} />
-              <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.x} />
-              <TdRegister dimPage={!!snapshot.flag_x} value={snapshot.y} />
+              <TdRegister is8Bit={!!snapshot.flag_m} value={snapshot.a} />
+              <TdRegister is8Bit={!!snapshot.flag_x} value={snapshot.x} />
+              <TdRegister is8Bit={!!snapshot.flag_x} value={snapshot.y} />
               <td>{toHex(snapshot.sp, 4)}</td>
               <td>{toHex(snapshot.dp, 4)}</td>
               <td className="space-right">{toHex(snapshot.db, 2)}</td>
@@ -155,14 +181,22 @@ export default function SnesLog({
   );
 }
 
-function TdRegister({ dimPage, value }: { dimPage: boolean; value: number }) {
+function TdId({ id, length }: { id: number; length: number }) {
+  return <td>{padL(`${id}`, length, " ")}</td>;
+}
+
+function TdPc({ pb, pc }: { pb: number; pc: number }) {
+  return <td>{l((pb << 16) | pc).format_address()}</td>;
+}
+
+function TdRegister({ is8Bit, value }: { is8Bit: boolean; value: number }) {
   const byte = formatValue(value & 0xff, IntegerEncoding.Hex, IntegerUnit.Byte);
   const word = formatValue(value, IntegerEncoding.Hex, IntegerUnit.Word);
   const tooltip = `8-bit: ${byte.tooltip}\n16-bit: ${word.tooltip}`;
   return (
     <td>
       <Tooltip monospace tooltip={tooltip}>
-        {dimPage ? (
+        {is8Bit ? (
           <>
             <dim>{toHex((value >> 8) & 0xff, 2)}</dim>
             <span>{byte.formatted}</span>
