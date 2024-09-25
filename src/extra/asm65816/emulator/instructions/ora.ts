@@ -4,6 +4,7 @@ import {
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_y_crosses_page,
   plus_1_if_index_x_crosses_page,
+  flag_z_mask,
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
@@ -11,6 +12,7 @@ import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class ORA extends Instruction {
   public static mnemonic = "ORA";
+  public static affected_flags = flag_n_mask | flag_z_mask;
 
   protected ora(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {

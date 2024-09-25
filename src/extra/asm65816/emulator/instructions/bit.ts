@@ -1,4 +1,5 @@
 import {
+  flag_n_mask,
   flag_v_mask,
   flag_z_mask,
   minus_m,
@@ -28,6 +29,8 @@ export abstract class BIT extends Instruction {
 }
 
 export abstract class BIT_Addr extends BIT {
+  public static affected_flags = flag_n_mask | flag_v_mask | flag_z_mask;
+
   public execute_effect(): void {
     this.bit(this.load_m(this.addr));
   }
@@ -35,6 +38,8 @@ export abstract class BIT_Addr extends BIT {
 
 export namespace BIT {
   export class Immediate_VariableA extends BIT {
+    public static affected_flags = flag_z_mask;
+
     public static opcode = 0x89;
     public static mode = InstructionMode.Immediate_VariableA;
     public static base_cycles = 3;

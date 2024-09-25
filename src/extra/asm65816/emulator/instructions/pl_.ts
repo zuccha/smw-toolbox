@@ -1,10 +1,11 @@
-import { flag_n_mask, minus_m, minus_x } from "../constants";
+import { flag_n_mask, flag_z_mask, minus_m, minus_x } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { ReadOnlyValue, w } from "../value";
 
 abstract class PL_ extends Instruction {
   public static mode = InstructionMode.Implied;
+  public static affected_flags = flag_n_mask | flag_z_mask;
 
   protected pull_byte(): ReadOnlyValue {
     const value = this.m.load_byte(w(this.p.sp.word + 1));

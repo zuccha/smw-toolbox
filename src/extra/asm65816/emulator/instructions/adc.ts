@@ -1,6 +1,8 @@
 import {
+  flag_c_mask,
   flag_n_mask,
   flag_v_mask,
+  flag_z_mask,
   minus_m,
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_x_crosses_page,
@@ -29,6 +31,8 @@ export function add_decimal(
 
 export abstract class ADC extends Instruction {
   public static mnemonic = "ADC";
+  public static affected_flags =
+    flag_n_mask | flag_v_mask | flag_z_mask | flag_c_mask;
 
   protected adc(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {

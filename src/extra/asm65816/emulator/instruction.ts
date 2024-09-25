@@ -18,6 +18,7 @@ import { l, ReadOnlyValue, w } from "./value";
 
 export abstract class Instruction {
   public static cycles_modifier = 0;
+  public static affected_flags = 0;
 
   public readonly id: number;
   protected _arg: ReadOnlyValue;

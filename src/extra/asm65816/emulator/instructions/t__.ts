@@ -1,10 +1,11 @@
-import { flag_n_mask } from "../constants";
+import { flag_n_mask, flag_z_mask } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { ReadOnlyValue } from "../value";
 
 abstract class T__ extends Instruction {
   public static mode = InstructionMode.Implied;
+  public static affected_flags = flag_n_mask | flag_z_mask;
 
   protected transfer_byte(value: ReadOnlyValue): ReadOnlyValue {
     this.p.flag_n = value.byte & flag_n_mask;

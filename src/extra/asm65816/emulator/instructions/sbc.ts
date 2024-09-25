@@ -1,7 +1,9 @@
 import { mod } from "../../../../utils";
 import {
+  flag_c_mask,
   flag_n_mask,
   flag_v_mask,
+  flag_z_mask,
   minus_m,
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_x_crosses_page,
@@ -34,6 +36,8 @@ export function sub_decimal(
 
 export abstract class SBC extends Instruction {
   public static mnemonic = "SBC";
+  public static affected_flags =
+    flag_n_mask | flag_v_mask | flag_z_mask | flag_c_mask;
 
   protected sbc(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {

@@ -1,16 +1,36 @@
-import { minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
+import {
+  flag_n_mask,
+  flag_z_mask,
+  minus_2m,
+  plus_1_if_dp_low_is_zero,
+} from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { w } from "../value";
+import { ReadOnlyValue, w } from "../value";
 
 export abstract class INC extends Instruction {
   public static mnemonic = "INC";
+  public static affected_flags = flag_n_mask | flag_z_mask;
+
+  protected inc(value: ReadOnlyValue): ReadOnlyValue {
+    if (this.p.flag_m) {
+      const result = w(value.byte + 1);
+      this.p.flag_n = result.byte & flag_n_mask;
+      this.p.flag_z = result.byte === 0;
+      return result;
+    } else {
+      const result = w(value.word + 1);
+      this.p.flag_n = result.page & flag_n_mask;
+      this.p.flag_z = result.word === 0;
+      return result;
+    }
+  }
 }
 
 export abstract class INC_Addr extends INC {
   public execute_effect(): void {
     const addr = this.addr;
-    this.save_m(addr, w(this.load_m(addr).word + 1));
+    this.save_m(addr, this.inc(this.load_m(addr)));
   }
 }
 
@@ -22,7 +42,7 @@ export namespace INC {
     public static baseLength = 1;
 
     public execute_effect(): void {
-      this.p.a = w(this.p.a.word + 1);
+      this.p.a = this.inc(this.p.a);
     }
   }
 

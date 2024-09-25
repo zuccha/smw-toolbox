@@ -1,5 +1,6 @@
 import {
   flag_n_mask,
+  flag_z_mask,
   minus_m,
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_x_crosses_page,
@@ -11,6 +12,7 @@ import { ReadOnlyValue } from "../value";
 
 export abstract class LDA extends Instruction {
   public static mnemonic = "LDA";
+  public static affected_flags = flag_n_mask | flag_z_mask;
 
   protected lda(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_m) {

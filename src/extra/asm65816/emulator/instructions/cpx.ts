@@ -1,10 +1,17 @@
-import { minus_x, plus_1_if_dp_low_is_zero } from "../constants";
+import {
+  flag_c_mask,
+  flag_n_mask,
+  flag_z_mask,
+  minus_x,
+  plus_1_if_dp_low_is_zero,
+} from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { ReadOnlyValue } from "../value";
 
 export abstract class CPX extends Instruction {
   public static mnemonic = "CPX";
+  public static affected_flags = flag_n_mask | flag_z_mask | flag_c_mask;
 
   protected cpx(value: ReadOnlyValue): void {
     if (this.p.flag_x) {

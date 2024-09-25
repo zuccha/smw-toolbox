@@ -1,4 +1,7 @@
 import {
+  flag_c_mask,
+  flag_n_mask,
+  flag_z_mask,
   minus_m,
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_x_crosses_page,
@@ -10,6 +13,7 @@ import { ReadOnlyValue } from "../value";
 
 export abstract class CMP extends Instruction {
   public static mnemonic = "CMP";
+  public static affected_flags = flag_n_mask | flag_z_mask | flag_c_mask;
 
   protected cmp(value: ReadOnlyValue): void {
     if (this.p.flag_m) {

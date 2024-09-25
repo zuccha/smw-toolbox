@@ -1,10 +1,11 @@
-import { minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
+import { flag_z_mask, minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { b, w } from "../value";
 
 export abstract class TRB extends Instruction {
   public static mnemonic = "TRB";
+  public static affected_flags = flag_z_mask;
 
   public execute_effect(): void {
     const addr = this.addr;

@@ -18,6 +18,15 @@ export class REP extends Instruction {
   public static mode = InstructionMode.Immediate;
   public static base_cycles = 3;
   public static baseLength = 2;
+  public static affected_flags =
+    flag_n_mask |
+    flag_v_mask |
+    flag_m_mask |
+    flag_x_mask |
+    flag_d_mask |
+    flag_i_mask |
+    flag_z_mask |
+    flag_c_mask;
 
   public execute_effect(): void {
     const arg = this._arg.byte;

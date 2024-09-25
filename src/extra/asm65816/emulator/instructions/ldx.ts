@@ -1,5 +1,6 @@
 import {
   flag_n_mask,
+  flag_z_mask,
   minus_x,
   plus_1_if_dp_low_is_zero,
   plus_1_if_index_y_crosses_page,
@@ -10,6 +11,7 @@ import { ReadOnlyValue } from "../value";
 
 export abstract class LDX extends Instruction {
   public static mnemonic = "LDX";
+  public static affected_flags = flag_n_mask | flag_z_mask;
 
   protected ldx(value: ReadOnlyValue): ReadOnlyValue {
     if (this.p.flag_x) {
