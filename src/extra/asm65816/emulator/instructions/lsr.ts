@@ -52,27 +52,27 @@ export namespace LSR {
     public static opcode = 0x46;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends LSR_Addr {
     public static opcode = 0x56;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends LSR_Addr {
     public static opcode = 0x4e;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class Absolute_X extends LSR_Addr {
     public static opcode = 0x5e;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 }

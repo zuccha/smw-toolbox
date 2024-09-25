@@ -16,27 +16,27 @@ export namespace STZ {
     public static opcode = 0x64;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends STZ {
     public static opcode = 0x74;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends STZ {
     public static opcode = 0x9c;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class Absolute_X extends STZ {
     public static opcode = 0x9e;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 }

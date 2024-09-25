@@ -15,20 +15,20 @@ export namespace STX {
     public static opcode = 0x86;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Y extends STX {
     public static opcode = 0x96;
     public static mode = InstructionMode.DirectPage_Y;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends STX {
     public static opcode = 0x8e;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x;
+    public static cycles_modifier = minus_x;
   }
 }

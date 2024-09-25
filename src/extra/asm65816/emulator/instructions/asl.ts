@@ -52,27 +52,27 @@ export namespace ASL {
     public static opcode = 0x06;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_2m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends ASL_Addr {
     public static opcode = 0x16;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_2m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends ASL_Addr {
     public static opcode = 0x0e;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_2m;
+    public static cycles_modifier = minus_2m;
   }
 
   export class Absolute_X extends ASL_Addr {
     public static opcode = 0x1e;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 9;
-    public static cyclesModifier = minus_2m;
+    public static cycles_modifier = minus_2m;
   }
 }

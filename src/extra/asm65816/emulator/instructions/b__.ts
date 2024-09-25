@@ -1,10 +1,11 @@
+import { plus_1_if_branch_taken } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 
 abstract class B___Near extends Instruction {
   public static mode = InstructionMode.Offset;
-
   public static base_cycles = 2;
+  public static cycles_modifier = plus_1_if_branch_taken;
 
   protected _branch_taken = false;
 
@@ -73,6 +74,8 @@ export class BVS extends B___Near {
 export class BRA extends B___Near {
   public static mnemonic = "BRA";
   public static opcode = 0x80;
+  public static base_cycles = 3;
+  public static cycles_modifier = 0;
   protected check_branch = () => true;
 }
 

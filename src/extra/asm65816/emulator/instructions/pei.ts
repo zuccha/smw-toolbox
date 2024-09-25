@@ -8,7 +8,7 @@ export class PEI extends Instruction {
   public static opcode = 0xd4;
   public static mode = InstructionMode.DirectPage_Indirect;
   public static base_cycles = 6;
-  public static cyclesModifier = plus_1_if_dp_low_is_zero;
+  public static cycles_modifier = plus_1_if_dp_low_is_zero;
 
   public execute_effect(): void {
     this.p.sp = w(this.p.sp.word - 2);

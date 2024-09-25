@@ -36,7 +36,7 @@ export namespace LDY {
     public static opcode = 0xa0;
     public static mode = InstructionMode.Immediate_VariableX;
     public static base_cycles = 3;
-    public static cyclesModifier = minus_x;
+    public static cycles_modifier = minus_x;
 
     public execute_effect(): void {
       this.p.y = this.ldy(this._arg);
@@ -47,27 +47,27 @@ export namespace LDY {
     public static opcode = 0xa4;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends LDY_Addr {
     public static opcode = 0xb4;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends LDY_Addr {
     public static opcode = 0xac;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x;
+    public static cycles_modifier = minus_x;
   }
 
   export class Absolute_X extends LDY_Addr {
     public static opcode = 0xbc;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x + plus_1_if_index_y_crosses_page;
+    public static cycles_modifier = minus_x + plus_1_if_index_y_crosses_page;
   }
 }

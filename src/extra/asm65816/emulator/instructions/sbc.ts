@@ -76,7 +76,7 @@ export namespace SBC {
     public static opcode = 0xe9;
     public static mode = InstructionMode.Immediate_VariableA;
     public static base_cycles = 3;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
 
     public execute_effect(): void {
       this.p.a = this.sbc(this._arg);
@@ -87,35 +87,35 @@ export namespace SBC {
     public static opcode = 0xe5;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends SBC_Addr {
     public static opcode = 0xf5;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect extends SBC_Addr {
     public static opcode = 0xf2;
     public static mode = InstructionMode.DirectPage_Indirect;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X_Indirect extends SBC_Addr {
     public static opcode = 0xe1;
     public static mode = InstructionMode.DirectPage_X_Indirect;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect_Y extends SBC_Addr {
     public static opcode = 0xf1;
     public static mode = InstructionMode.DirectPage_Indirect_Y;
     public static base_cycles = 6;
-    public static cyclesModifier =
+    public static cycles_modifier =
       minus_m | plus_1_if_dp_low_is_zero | plus_1_if_index_y_crosses_page;
   }
 
@@ -123,62 +123,62 @@ export namespace SBC {
     public static opcode = 0xe7;
     public static mode = InstructionMode.DirectPage_IndirectLong;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_IndirectLong_Y extends SBC_Addr {
     public static opcode = 0xf7;
     public static mode = InstructionMode.DirectPage_IndirectLong_Y;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends SBC_Addr {
     public static opcode = 0xed;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class Absolute_X extends SBC_Addr {
     public static opcode = 0xfd;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_index_x_crosses_page;
+    public static cycles_modifier = minus_m | plus_1_if_index_x_crosses_page;
   }
 
   export class Absolute_Y extends SBC_Addr {
     public static opcode = 0xf9;
     public static mode = InstructionMode.Absolute_Y;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_index_y_crosses_page;
+    public static cycles_modifier = minus_m | plus_1_if_index_y_crosses_page;
   }
 
   export class AbsoluteLong extends SBC_Addr {
     public static opcode = 0xef;
     public static mode = InstructionMode.AbsoluteLong;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class AbsoluteLong_X extends SBC_Addr {
     public static opcode = 0xff;
     public static mode = InstructionMode.AbsoluteLong_X;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class StackRelative extends SBC_Addr {
     public static opcode = 0xe3;
     public static mode = InstructionMode.StackRelative;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class StackRelative_Indirect_Y extends SBC_Addr {
     public static opcode = 0xf3;
     public static mode = InstructionMode.StackRelative_Indirect_Y;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 }

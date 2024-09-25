@@ -49,27 +49,27 @@ export namespace DEC {
     public static opcode = 0xc6;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_2m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends DEC_Addr {
     public static opcode = 0xd6;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_2m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends DEC_Addr {
     public static opcode = 0xce;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_2m;
+    public static cycles_modifier = minus_2m;
   }
 
   export class Absolute_X extends DEC_Addr {
     public static opcode = 0xde;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 9;
-    public static cyclesModifier = minus_2m;
+    public static cycles_modifier = minus_2m;
   }
 }

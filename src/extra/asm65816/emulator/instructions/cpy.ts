@@ -35,7 +35,7 @@ export namespace CPY {
     public static opcode = 0xc0;
     public static mode = InstructionMode.Immediate_VariableX;
     public static base_cycles = 3;
-    public static cyclesModifier = minus_x;
+    public static cycles_modifier = minus_x;
 
     public execute_effect(): void {
       this.cpy(this._arg);
@@ -46,7 +46,7 @@ export namespace CPY {
     public static opcode = 0xc4;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
     public static baseLength = 2;
   }
 
@@ -54,7 +54,7 @@ export namespace CPY {
     public static opcode = 0xcc;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_x;
+    public static cycles_modifier = minus_x;
     public static baseLength = 3;
   }
 }

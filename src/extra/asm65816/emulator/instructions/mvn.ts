@@ -1,3 +1,4 @@
+import { plus_7_for_each_transfer } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { b, l, w } from "../value";
@@ -7,6 +8,7 @@ export class MVN extends Instruction {
   public static opcode = 0x54;
   public static mode = InstructionMode.BlockMove;
   public static base_cycles = 0;
+  public static cycles_modifier = plus_7_for_each_transfer;
 
   private _iterations = 0;
 

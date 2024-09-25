@@ -40,7 +40,7 @@ export namespace ORA {
     public static opcode = 0x09;
     public static mode = InstructionMode.Immediate_VariableA;
     public static base_cycles = 3;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
 
     public execute_effect(): void {
       this.p.a = this.ora(this._arg);
@@ -51,35 +51,35 @@ export namespace ORA {
     public static opcode = 0x05;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X extends ORA_Addr {
     public static opcode = 0x15;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect extends ORA_Addr {
     public static opcode = 0x12;
     public static mode = InstructionMode.DirectPage_Indirect;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_X_Indirect extends ORA_Addr {
     public static opcode = 0x01;
     public static mode = InstructionMode.DirectPage_X_Indirect;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_Indirect_Y extends ORA_Addr {
     public static opcode = 0x11;
     public static mode = InstructionMode.DirectPage_Indirect_Y;
     public static base_cycles = 6;
-    public static cyclesModifier =
+    public static cycles_modifier =
       minus_m | plus_1_if_dp_low_is_zero | plus_1_if_index_y_crosses_page;
   }
 
@@ -87,62 +87,62 @@ export namespace ORA {
     public static opcode = 0x07;
     public static mode = InstructionMode.DirectPage_IndirectLong;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class DirectPage_IndirectLong_Y extends ORA_Addr {
     public static opcode = 0x17;
     public static mode = InstructionMode.DirectPage_IndirectLong_Y;
     public static base_cycles = 7;
-    public static cyclesModifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
   }
 
   export class Absolute extends ORA_Addr {
     public static opcode = 0x0d;
     public static mode = InstructionMode.Absolute;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class Absolute_X extends ORA_Addr {
     public static opcode = 0x1d;
     public static mode = InstructionMode.Absolute_X;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_index_x_crosses_page;
+    public static cycles_modifier = minus_m | plus_1_if_index_x_crosses_page;
   }
 
   export class Absolute_Y extends ORA_Addr {
     public static opcode = 0x19;
     public static mode = InstructionMode.Absolute_Y;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m | plus_1_if_index_y_crosses_page;
+    public static cycles_modifier = minus_m | plus_1_if_index_y_crosses_page;
   }
 
   export class AbsoluteLong extends ORA_Addr {
     public static opcode = 0x0f;
     public static mode = InstructionMode.AbsoluteLong;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class AbsoluteLong_X extends ORA_Addr {
     public static opcode = 0x1f;
     public static mode = InstructionMode.AbsoluteLong_X;
     public static base_cycles = 6;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class StackRelative extends ORA_Addr {
     public static opcode = 0x03;
     public static mode = InstructionMode.StackRelative;
     public static base_cycles = 5;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 
   export class StackRelative_Indirect_Y extends ORA_Addr {
     public static opcode = 0x13;
     public static mode = InstructionMode.StackRelative_Indirect_Y;
     public static base_cycles = 8;
-    public static cyclesModifier = minus_m;
+    public static cycles_modifier = minus_m;
   }
 }
