@@ -1,4 +1,3 @@
-import { useLayoutEffect } from "preact/hooks";
 import { Instruction } from "../extra/asm65816/emulator/instruction";
 import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot";
 import { l } from "../extra/asm65816/emulator/value";
