@@ -27,5 +27,10 @@ export default function useItemsWindow<T>(
     [items, nextScrollIndex],
   );
 
-  return { handleScroll, items: scrolledItems, resetScroll };
+  return {
+    handleScroll,
+    items: scrolledItems,
+    resetScroll,
+    scrollIndex: Math.floor(scrollIndexFrac),
+  };
 }
