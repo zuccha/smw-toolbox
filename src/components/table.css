@@ -1,0 +1,63 @@
+.Table {
+  position: relative;
+  border-collapse: collapse;
+  white-space: pre;
+  width: 100%;
+  font-family: monospace;
+}
+
+.Table > thead,
+.Table > tfoot {
+  font-weight: bold;
+}
+
+.Table > thead > tr {
+  border-bottom: 1px solid var(--color-neutral-2);
+}
+
+.Table > tfoot > tr {
+  border-top: 1px solid var(--color-neutral-2);
+}
+
+.Table > thead > tr > td {
+  padding-bottom: 0.4em;
+}
+
+.Table > tfoot > tr > td {
+  padding-top: 0.4em;
+}
+
+.Table > tbody:before,
+.Table > tbody:after {
+  content: "";
+  display: block;
+  height: 0.4em;
+}
+
+.Table > tbody > tr {
+  cursor: default;
+}
+
+.Table > tbody > tr.clickable {
+  cursor: pointer;
+}
+
+.Table > tbody > tr.selected {
+  background-color: var(--color-highlight-1);
+}
+
+.Table > tbody > tr:hover:not(.selected) {
+  background-color: var(--color-highlight-2);
+}
+
+.Table .right {
+  text-align: right;
+}
+
+.Table .space-left {
+  padding-left: 0.5em;
+}
+
+.Table .space-right {
+  padding-right: 0.5em;
+}

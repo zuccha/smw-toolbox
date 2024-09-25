@@ -4,7 +4,8 @@ import { ProcessorSnapshot } from "../extra/asm65816/emulator/processor-snapshot
 import { l } from "../extra/asm65816/emulator/value";
 import useItemsWindow from "../hooks/use-items-window";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
-import { classNames, padL, toHex } from "../utils";
+import { padL, toHex } from "../utils";
+import Table from "./table";
 import Tooltip from "./tooltip";
 import Value, { formatValue } from "./value";
 import "./snes-log.css";
@@ -58,107 +59,152 @@ export default function SnesLog({
 
   return (
     <div className="SnesLog">
-      <div className="SnesLog_Table">
-        <table>
-          <thead>
-            <tr>
-              <td>Id</td>
-              <td>PC</td>
-              <td>Instruction</td>
-              <td>A</td>
-              <td>X</td>
-              <td>Y</td>
-              <td>SP</td>
-              <td>DP</td>
-              <td className="space-right">DB</td>
-              <td>Flags</td>
-              <td className="right">C</td>
-              <td className="right space-left">B</td>
-            </tr>
-          </thead>
-
-          <tbody onWheel={instructionsWindow.handleScroll}>
-            {instructionsWindow.items.map((instruction) => {
-              const prevSnapshot = instructions[instruction.id - 1]?.snapshot;
-              const className = classNames([
-                ["selected", instruction.id === selected?.id],
-                ["error", !instruction.snapshot],
-              ]);
-              const onClick = instruction.snapshot
-                ? () => {
-                    const newSelected =
-                      instruction.id === selected?.id ? undefined : instruction;
-                    setSelected(newSelected);
-                    onClickValidInstruction(newSelected?.id ?? -1);
-                  }
-                : undefined;
-              return (
-                <tr className={className} onClick={onClick}>
-                  <TdId id={instruction.id} length={idLength} />
-                  <TdPc pb={instruction.pb} pc={instruction.pc} />
-                  <TdInstruction instruction={instruction} />
-                  {instruction.snapshot ? (
-                    <>
-                      <TdRegisterVar
-                        didChange={c(instruction.snapshot.a, prevSnapshot?.a)}
-                        is8Bit={!!instruction.snapshot.flag_m}
-                        value={instruction.snapshot.a}
-                      />
-                      <TdRegisterVar
-                        didChange={c(instruction.snapshot.x, prevSnapshot?.x)}
-                        is8Bit={!!instruction.snapshot.flag_x}
-                        value={instruction.snapshot.x}
-                      />
-                      <TdRegisterVar
-                        didChange={c(instruction.snapshot.y, prevSnapshot?.y)}
-                        is8Bit={!!instruction.snapshot.flag_x}
-                        value={instruction.snapshot.y}
-                      />
-                      <TdRegister16Bit
-                        didChange={c(instruction.snapshot.sp, prevSnapshot?.sp)}
-                        value={instruction.snapshot.sp}
-                      />
-                      <TdRegister16Bit
-                        didChange={c(instruction.snapshot.dp, prevSnapshot?.dp)}
-                        value={instruction.snapshot.dp}
-                      />
-                      <TdRegister8Bit
-                        didChange={c(instruction.snapshot.db, prevSnapshot?.db)}
-                        value={instruction.snapshot.db}
-                      />
-                      <TdFlags
-                        flags={instruction.snapshot.flags}
-                        prevFlags={prevSnapshot?.flags}
-                      />
-                      <td className="right">{instruction.cycles}</td>
-                      <td className="right space-left">{instruction.length}</td>
-                    </>
-                  ) : (
-                    <td colSpan={10}>*** Error ***</td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-
-          <tfoot>
-            <tr>
-              <TdId id={instructions.length - 1} length={idLength} />
-              <TdPc pb={snapshot.pb} pc={snapshot.pc} />
-              <td></td>
-              <TdRegisterVar is8Bit={!!snapshot.flag_m} value={snapshot.a} />
-              <TdRegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.x} />
-              <TdRegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.y} />
-              <TdRegister16Bit value={snapshot.sp} />
-              <TdRegister16Bit value={snapshot.dp} />
-              <TdRegister8Bit value={snapshot.db} />
-              <TdFlags flags={snapshot.flags} />
-              <td className="right">{cycles}</td>
-              <td className="right space-left">{length}</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+      <Table
+        columns={[
+          {
+            header: "Id",
+            footer: <Cell_Id id={instructions.length - 1} length={idLength} />,
+            value: (instruction) => (
+              <Cell_Id id={instruction.id} length={idLength} />
+            ),
+          },
+          {
+            header: "PC",
+            footer: <Cell_Pc pb={snapshot.pb} pc={snapshot.pc} />,
+            value: (instruction) => (
+              <Cell_Pc pb={instruction.pb} pc={instruction.pc} />
+            ),
+          },
+          {
+            header: "Instruction",
+            value: (instruction) => (
+              <Cell_Instruction instruction={instruction} />
+            ),
+          },
+          {
+            header: "A",
+            footer: (
+              <Cell_RegisterVar is8Bit={!!snapshot.flag_m} value={snapshot.a} />
+            ),
+            value: (instruction, { prev }) =>
+              instruction.snapshot ? (
+                <Cell_RegisterVar
+                  didChange={c(instruction.snapshot.a, prev?.snapshot?.a)}
+                  is8Bit={!!instruction.snapshot.flag_m}
+                  value={instruction.snapshot.a}
+                />
+              ) : (
+                <span className="SnesLog_Error">*** Error ***</span>
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 7),
+          },
+          {
+            header: "X",
+            footer: (
+              <Cell_RegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.x} />
+            ),
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_RegisterVar
+                  didChange={c(instruction.snapshot.x, prev?.snapshot?.x)}
+                  is8Bit={!!instruction.snapshot.flag_x}
+                  value={instruction.snapshot.x}
+                />
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "Y",
+            footer: (
+              <Cell_RegisterVar is8Bit={!!snapshot.flag_x} value={snapshot.y} />
+            ),
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_RegisterVar
+                  didChange={c(instruction.snapshot.y, prev?.snapshot?.y)}
+                  is8Bit={!!instruction.snapshot.flag_x}
+                  value={instruction.snapshot.y}
+                />
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "SP",
+            footer: <Cell_Register16Bit value={snapshot.sp} />,
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_Register16Bit
+                  didChange={c(instruction.snapshot.sp, prev?.snapshot?.sp)}
+                  value={instruction.snapshot.sp}
+                />
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "DP",
+            footer: <Cell_Register16Bit value={snapshot.dp} />,
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_Register16Bit
+                  didChange={c(instruction.snapshot.dp, prev?.snapshot?.dp)}
+                  value={instruction.snapshot.dp}
+                />
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "DB",
+            footer: <Cell_Register8Bit value={snapshot.db} />,
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_Register8Bit
+                  didChange={c(instruction.snapshot.db, prev?.snapshot?.db)}
+                  value={instruction.snapshot.db}
+                />
+              ),
+            space: "right",
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "Flags",
+            footer: <Cell_Flags flags={snapshot.flags} />,
+            value: (instruction, { prev }) =>
+              instruction.snapshot && (
+                <Cell_Flags
+                  flags={instruction.snapshot.flags}
+                  prevFlags={prev?.snapshot?.flags}
+                />
+              ),
+            colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
+          },
+          {
+            header: "C",
+            footer: cycles,
+            value: (instruction) => instruction.cycles,
+            align: "right",
+          },
+          {
+            header: "L",
+            footer: length,
+            value: (instruction) => instruction.length,
+            align: "right",
+            space: "left",
+          },
+        ]}
+        isRowClickable={(instruction) => !!instruction.snapshot}
+        isRowSelected={(instruction) => instruction.id === selected?.id}
+        items={instructions}
+        onClickRow={(instruction) => {
+          if (instruction.snapshot) {
+            const newSelected =
+              instruction.id === selected?.id ? undefined : instruction;
+            setSelected(newSelected);
+            onClickValidInstruction(newSelected?.id ?? -1);
+          }
+        }}
+        windowSize={16}
+        withFooter
+      />
 
       {errors.length > 0 && (
         <div className="SnesLog_ExecutionErrors">
@@ -171,15 +217,15 @@ export default function SnesLog({
   );
 }
 
-function TdId({ id, length }: { id: number; length: number }) {
-  return <td>{padL(`${id}`, length, " ")}</td>;
+function Cell_Id({ id, length }: { id: number; length: number }) {
+  return <span>{padL(`${id}`, length, " ")}</span>;
 }
 
-function TdPc({ pb, pc }: { pb: number; pc: number }) {
-  return <td>{l((pb << 16) | pc).format_address()}</td>;
+function Cell_Pc({ pb, pc }: { pb: number; pc: number }) {
+  return <span>{l((pb << 16) | pc).format_address()}</span>;
 }
 
-function TdRegisterVar({
+function Cell_RegisterVar({
   didChange = false,
   is8Bit,
   value,
@@ -192,7 +238,7 @@ function TdRegisterVar({
   const word = formatValue(value, IntegerEncoding.Hex, IntegerUnit.Word);
   const tooltip = `8-bit: ${byte.tooltip}\n16-bit: ${word.tooltip}`;
   return (
-    <td className={didChange ? "highlight" : undefined}>
+    <span className={didChange ? "SnesLog_Highlight" : undefined}>
       <Tooltip monospace tooltip={tooltip}>
         {is8Bit ? (
           <>
@@ -203,11 +249,11 @@ function TdRegisterVar({
           <span>{word.formatted}</span>
         )}
       </Tooltip>
-    </td>
+    </span>
   );
 }
 
-function TdRegister8Bit({
+function Cell_Register8Bit({
   didChange,
   value,
 }: {
@@ -216,13 +262,13 @@ function TdRegister8Bit({
 }) {
   const [encoding, unit] = [IntegerEncoding.Hex, IntegerUnit.Byte];
   return (
-    <td className={didChange ? "highlight" : undefined}>
+    <span className={didChange ? "SnesLog_Highlight" : undefined}>
       <Value encoding={encoding} unit={unit} value={value} />
-    </td>
+    </span>
   );
 }
 
-function TdRegister16Bit({
+function Cell_Register16Bit({
   didChange = false,
   value,
 }: {
@@ -231,13 +277,13 @@ function TdRegister16Bit({
 }) {
   const [encoding, unit] = [IntegerEncoding.Hex, IntegerUnit.Word];
   return (
-    <td className={didChange ? "highlight" : undefined}>
+    <span className={didChange ? "SnesLog_Highlight" : undefined}>
       <Value encoding={encoding} unit={unit} value={value} />
-    </td>
+    </span>
   );
 }
 
-function TdFlags({
+function Cell_Flags({
   flags,
   prevFlags = "",
 }: {
@@ -245,38 +291,36 @@ function TdFlags({
   prevFlags?: string;
 }) {
   return (
-    <td>
+    <span>
       {flags.split("").map((flag, i) => {
         const active = flag === flag.toUpperCase();
         const prevFlag = prevFlags[i] ?? flag;
-        const className = flag !== prevFlag ? "highlight" : undefined;
+        const className = flag !== prevFlag ? "SnesLog_Highlight" : undefined;
         return active ? (
           <span className={className}>{flag}</span>
         ) : (
           <dim className={className}>{flag}</dim>
         );
       })}
-    </td>
+    </span>
   );
 }
 
-function TdInstruction({ instruction }: { instruction: Instruction }) {
+function Cell_Instruction({ instruction }: { instruction: Instruction }) {
   const bytes = instruction.bytes.map((byte) => toHex(byte, 2)).join(" ");
   const tooltip = instruction.has_addr
     ? `${bytes} ${instruction.addr.format_address()}`
     : bytes;
   return (
-    <td>
-      <span className="flex">
-        {tooltip ? (
-          <Tooltip monospace tooltip={tooltip}>
-            {instruction.text_with_value}
-          </Tooltip>
-        ) : (
-          instruction.text_with_value
-        )}
-      </span>
-    </td>
+    <span className="flex">
+      {tooltip ? (
+        <Tooltip monospace tooltip={tooltip}>
+          {instruction.text_with_value}
+        </Tooltip>
+      ) : (
+        instruction.text_with_value
+      )}
+    </span>
   );
 }
 

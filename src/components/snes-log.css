@@ -3,79 +3,12 @@
   flex-direction: column;
 }
 
-.SnesLog_Table {
-  font-family: monospace;
-}
-
-.SnesLog_Table > table {
-  position: relative;
-  border-collapse: collapse;
-  white-space: pre;
-  width: 100%;
-}
-
-.SnesLog_Table > table > thead,
-.SnesLog_Table > table > tfoot {
-  font-weight: bold;
-}
-
-.SnesLog_Table > table > thead > tr {
-  border-bottom: 1px solid var(--color-neutral-2);
-}
-
-.SnesLog_Table > table > tfoot > tr {
-  border-top: 1px solid var(--color-neutral-2);
-}
-
-.SnesLog_Table > table > thead > tr > td {
-  padding-bottom: 0.4em;
-}
-
-.SnesLog_Table > table > tfoot > tr > td {
-  padding-top: 0.4em;
-}
-
-.SnesLog_Table > table > tbody:before,
-.SnesLog_Table > table > tbody:after {
-  content: "";
-  display: block;
-  height: 0.4em;
-}
-
-.SnesLog_Table > table > tbody > tr {
-  cursor: pointer;
-}
-
-.SnesLog_Table > table > tbody > tr.error {
-  cursor: default;
-}
-
-.SnesLog_Table > table > tbody > tr.selected {
-  background-color: var(--color-highlight-1);
-}
-
-.SnesLog_Table > table > tbody > tr:hover:not(.selected) {
-  background-color: var(--color-highlight-2);
-}
-
-.SnesLog_Table > table > tbody > tr .highlight {
+.SnesLog_Highlight {
   color: var(--color-primary-1);
   font-weight: bold;
 }
 
-.SnesLog_Table > table .right {
-  text-align: right;
-}
-
-.SnesLog_Table > table .space-left {
-  padding-left: 0.5em;
-}
-
-.SnesLog_Table > table .space-right {
-  padding-right: 0.5em;
-}
-
-.SnesLog_Table > table .error {
+.SnesLog_Error {
   font-weight: bold;
   color: var(--color-error-1);
 }
