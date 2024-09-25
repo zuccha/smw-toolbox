@@ -316,4 +316,5 @@ function Cell_Instruction({ instruction }: { instruction: Instruction }) {
   );
 }
 
-const c = (value: number, prev: number | undefined) => !!prev && value !== prev;
+const c = (value: number, prev: number | undefined) =>
+  prev !== undefined && value !== prev;
