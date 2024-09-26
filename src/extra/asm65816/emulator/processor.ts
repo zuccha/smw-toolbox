@@ -139,7 +139,7 @@ export default class Processor {
 
   private _flag_n: 0 | 1 = 0;
 
-  public get flag_n(): number {
+  public get flag_n(): 0 | 1 {
     return this._flag_n;
   }
 
@@ -151,7 +151,7 @@ export default class Processor {
 
   private _flag_v: 0 | 1 = 0;
 
-  public get flag_v(): number {
+  public get flag_v(): 0 | 1 {
     return this._flag_v;
   }
 
@@ -163,7 +163,7 @@ export default class Processor {
 
   private _flag_m: 0 | 1 = 1;
 
-  public get flag_m(): number {
+  public get flag_m(): 0 | 1 {
     return this._flag_m;
   }
 
@@ -176,13 +176,12 @@ export default class Processor {
 
   private _flag_x: 0 | 1 = 1;
 
-  public get flag_x(): number {
+  public get flag_x(): 0 | 1 {
     return this._flag_x;
   }
 
   public set flag_x(active: boolean | number) {
-    if (this._flag_e) return;
-    if (active) {
+    if (active || this.flag_e) {
       this._flag_x = 1;
       this._x.page = 0;
       this._y.page = 0;
@@ -195,7 +194,7 @@ export default class Processor {
 
   private _flag_d: 0 | 1 = 0;
 
-  public get flag_d(): number {
+  public get flag_d(): 0 | 1 {
     return this._flag_d;
   }
 
@@ -207,7 +206,7 @@ export default class Processor {
 
   private _flag_i: 0 | 1 = 0;
 
-  public get flag_i(): number {
+  public get flag_i(): 0 | 1 {
     return this._flag_i;
   }
 
@@ -219,7 +218,7 @@ export default class Processor {
 
   private _flag_z: 0 | 1 = 0;
 
-  public get flag_z(): number {
+  public get flag_z(): 0 | 1 {
     return this._flag_z;
   }
 
@@ -231,7 +230,7 @@ export default class Processor {
 
   private _flag_c: 0 | 1 = 0;
 
-  public get flag_c(): number {
+  public get flag_c(): 0 | 1 {
     return this._flag_c;
   }
 
@@ -243,15 +242,17 @@ export default class Processor {
 
   private _flag_e: 0 | 1 = 0;
 
-  public get flag_e(): number {
+  public get flag_e(): 0 | 1 {
     return this._flag_e;
   }
   public set flag_e(active: boolean | number) {
-    this._flag_e = active ? 1 : 0;
     if (active) {
+      this._flag_e = 1;
       this.flag_m = 1;
       this.flag_x = 1;
       this._sp.page = 0x01;
+    } else {
+      this._flag_e = 0;
     }
   }
 
@@ -259,7 +260,7 @@ export default class Processor {
 
   private _flag_b: 0 | 1 = 0;
 
-  public get flag_b(): number {
+  public get flag_b(): 0 | 1 {
     return this._flag_b;
   }
 
@@ -271,22 +272,22 @@ export default class Processor {
 
   public get flags() {
     return this._flag_e
-      ? this._flag_c |
-          (this._flag_z << 1) |
-          (this._flag_i << 2) |
-          (this._flag_d << 3) |
-          (this._flag_b << 4) |
+      ? this.flag_c |
+          (this.flag_z << 1) |
+          (this.flag_i << 2) |
+          (this.flag_d << 3) |
+          (this.flag_b << 4) |
           // Unused flag
-          (this._flag_v << 6) |
-          (this._flag_n << 7)
-      : this._flag_c |
-          (this._flag_z << 1) |
-          (this._flag_i << 2) |
-          (this._flag_d << 3) |
-          (this._flag_x << 4) |
-          (this._flag_m << 5) |
-          (this._flag_v << 6) |
-          (this._flag_n << 7);
+          (this.flag_v << 6) |
+          (this.flag_n << 7)
+      : this.flag_c |
+          (this.flag_z << 1) |
+          (this.flag_i << 2) |
+          (this.flag_d << 3) |
+          (this.flag_x << 4) |
+          (this.flag_m << 5) |
+          (this.flag_v << 6) |
+          (this.flag_n << 7);
   }
 
   public set flags(flags: number) {
@@ -341,46 +342,46 @@ export default class Processor {
 
   public snapshot(): ProcessorSnapshot {
     return {
-      a: this._a.word,
-      x: this._x.word,
-      y: this._y.word,
-      db: this._db.byte,
-      dp: this._dp.word,
-      sp: this._sp.word,
-      pb: this._pb.byte,
-      pc: this._pc.word,
+      a: this.a.word,
+      x: this.x.word,
+      y: this.y.word,
+      db: this.db.byte,
+      dp: this.dp.word,
+      sp: this.sp.word,
+      pb: this.pb.byte,
+      pc: this.pc.word,
 
-      flag_n: this._flag_n,
-      flag_v: this._flag_v,
-      flag_m: this._flag_m,
-      flag_x: this._flag_x,
-      flag_d: this._flag_d,
-      flag_i: this._flag_i,
-      flag_z: this._flag_z,
-      flag_c: this._flag_c,
-      flag_e: this._flag_e,
-      flag_b: this._flag_b,
+      flag_n: this.flag_n,
+      flag_v: this.flag_v,
+      flag_m: this.flag_m,
+      flag_x: this.flag_x,
+      flag_d: this.flag_d,
+      flag_i: this.flag_i,
+      flag_z: this.flag_z,
+      flag_c: this.flag_c,
+      flag_e: this.flag_e,
+      flag_b: this.flag_b,
 
-      flags: this._flag_e
+      flags: this.flag_e
         ? [
-            this._flag_n ? "N" : "n",
-            this._flag_v ? "V" : "v",
+            this.flag_n ? "N" : "n",
+            this.flag_v ? "V" : "v",
             "-",
-            this._flag_b ? "B" : "b",
-            this._flag_d ? "D" : "d",
-            this._flag_i ? "I" : "i",
-            this._flag_z ? "Z" : "z",
-            this._flag_c ? "C" : "c",
+            this.flag_b ? "B" : "b",
+            this.flag_d ? "D" : "d",
+            this.flag_i ? "I" : "i",
+            this.flag_z ? "Z" : "z",
+            this.flag_c ? "C" : "c",
           ].join("")
         : [
-            this._flag_n ? "N" : "n",
-            this._flag_v ? "V" : "v",
-            this._flag_m ? "M" : "m",
-            this._flag_x ? "X" : "x",
-            this._flag_d ? "D" : "d",
-            this._flag_i ? "I" : "i",
-            this._flag_z ? "Z" : "z",
-            this._flag_c ? "C" : "c",
+            this.flag_n ? "N" : "n",
+            this.flag_v ? "V" : "v",
+            this.flag_m ? "M" : "m",
+            this.flag_x ? "X" : "x",
+            this.flag_d ? "D" : "d",
+            this.flag_i ? "I" : "i",
+            this.flag_z ? "Z" : "z",
+            this.flag_c ? "C" : "c",
           ].join(""),
     };
   }
