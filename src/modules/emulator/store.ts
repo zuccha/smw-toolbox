@@ -1,6 +1,7 @@
+import { z } from "zod";
 import Emulator from "../../extra/asm65816/emulator/emulator";
 import createUseSharedState from "../../hooks/use-shared-state";
-import {
+import useStore, {
   useStoreBoolean,
   useStoreNumber,
   useStoreString,
@@ -39,8 +40,35 @@ BRA $00       ; Offset
 BRL $0000     ; Offset Long
 MVN $00,$00   ; Block Move`;
 
+const EmulatorInitialStateSchema = z.object({
+  a: z.number(),
+  x: z.number(),
+  y: z.number(),
+  sp: z.number(),
+  dp: z.number(),
+  db: z.number(),
+  flags: z.number(),
+});
+
+const defaultInitialState = {
+  a: 0,
+  x: 0,
+  y: 0,
+  sp: 0x01fc,
+  dp: 0,
+  db: 0,
+  flags: 0,
+};
+
 export const useEmulatorCode = () =>
   useStoreString(`${emulatorId}.code`, defaultCode);
+
+export const useEmulatorInitialState = () =>
+  useStore(
+    `${emulatorId}.initialState`,
+    defaultInitialState,
+    EmulatorInitialStateSchema.parse,
+  );
 
 export const useEmulatorMaxInstructions = () =>
   useStoreNumber(`${emulatorId}.maxInstructions`, 100);
@@ -52,6 +80,9 @@ export const useEmulatorOpcode = createUseSharedState("");
 
 export const useEmulatorMemoryBaseAddress = () =>
   useStoreNumber(`${emulatorId}.memory.baseAddress`, 0x7e0000);
+
+export const useEmulatorTabInitialStateIsVisible = () =>
+  useStoreBoolean(`${emulatorId}.tab.initialState.isVisible`, true);
 
 export const useEmulatorTabLogIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.log.isVisible`, true);

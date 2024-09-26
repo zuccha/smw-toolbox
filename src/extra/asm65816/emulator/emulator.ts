@@ -8,8 +8,24 @@ import { ProcessorSnapshot } from "./processor-snapshot";
 import { b, l, ReadOnlyValue, w } from "./value";
 
 export default class Emulator {
+  public initial_a = 0;
+  public initial_x = 0;
+  public initial_y = 0;
+  public initial_sp = 0x01fc;
+  public initial_dp = 0;
+  public initial_db = 0;
+  public initial_flags = 0b00110000;
+
+  private _soft_initial_a = 0;
+  private _soft_initial_x = 0;
+  private _soft_initial_y = 0;
+  private _soft_initial_sp = 0x01fc;
+  private _soft_initial_dp = 0;
+  private _soft_initial_db = 0;
+  private _soft_initial_flags = 0b00110000;
+
   private _bytes: number[] = [];
-  private _processor: Processor = new Processor(0, 0, 0);
+  private _processor: Processor = new Processor();
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
@@ -17,8 +33,6 @@ export default class Emulator {
   private _max_instructions = 100;
 
   private _memory_mapping = MemoryMapping.LoROM;
-
-  private _initial_sp = 0x1fc;
 
   public get instructions(): readonly Instruction[] {
     return this._instructions;
@@ -65,7 +79,7 @@ export default class Emulator {
   };
 
   public run() {
-    this._reset_processor();
+    this._reset_processor(true);
     this._reset_memory();
     this._instructions = [this._initial_instruction()];
     this._errors = [];
@@ -96,7 +110,7 @@ export default class Emulator {
   }
 
   public run_until(id: number) {
-    this._reset_processor();
+    this._reset_processor(false);
     this._reset_memory();
     try {
       for (const instruction of this._instructions) {
@@ -108,10 +122,28 @@ export default class Emulator {
     }
   }
 
-  private _reset_processor() {
-    const pb = this._memory_mapping.rom_initial_address.bank;
-    const pc = this._memory_mapping.rom_initial_address.word;
-    this._processor.reset(pb, pc, this._initial_sp);
+  private _reset_processor(hard: boolean) {
+    if (hard) {
+      this._soft_initial_a = this.initial_a;
+      this._soft_initial_x = this.initial_x;
+      this._soft_initial_y = this.initial_y;
+      this._soft_initial_db = this.initial_db;
+      this._soft_initial_dp = this.initial_dp;
+      this._soft_initial_sp = this.initial_sp;
+      this._soft_initial_flags = this.initial_flags;
+    }
+
+    this._processor.reset({
+      a: this._soft_initial_a,
+      x: this._soft_initial_x,
+      y: this._soft_initial_y,
+      db: this._soft_initial_db,
+      dp: this._soft_initial_dp,
+      sp: this._soft_initial_sp,
+      flags: this._soft_initial_flags,
+      pb: this._memory_mapping.rom_initial_address.bank,
+      pc: this._memory_mapping.rom_initial_address.word,
+    });
   }
 
   private _reset_memory(): void {

@@ -8,6 +8,7 @@ import {
   useEmulatorSelectedInstructionId,
   useEmulatorMaxInstructions,
   useEmulatorSnapshot,
+  useEmulatorInitialState,
 } from "./store";
 
 const assembler = new Assembler();
@@ -20,6 +21,7 @@ export default function useEmulator() {
   const [selectedInstructionId, setSelectedInstructionId] =
     useEmulatorSelectedInstructionId();
   const [maxInstructions] = useEmulatorMaxInstructions();
+  const [initialState] = useEmulatorInitialState();
 
   const [notifyEmulator, renderCount] = useSignal("emulator");
 
@@ -28,6 +30,13 @@ export default function useEmulator() {
     assembler.assemble();
     emulator.set_bytes(assembler.bytes);
     emulator.set_max_instructions(maxInstructions);
+    emulator.initial_a = initialState.a;
+    emulator.initial_x = initialState.x;
+    emulator.initial_y = initialState.y;
+    emulator.initial_sp = initialState.sp;
+    emulator.initial_dp = initialState.dp;
+    emulator.initial_db = initialState.db;
+    emulator.initial_flags = initialState.flags;
     if (assembler.errors.length === 0) {
       emulator.run();
       notifyEmulator();
@@ -41,7 +50,13 @@ export default function useEmulator() {
         ),
       );
     }
-  }, [code, maxInstructions, notifyEmulator, setCompilationErrors]);
+  }, [
+    code,
+    initialState,
+    maxInstructions,
+    notifyEmulator,
+    setCompilationErrors,
+  ]);
 
   const runUntil = useCallback(
     (id: number) => {
@@ -57,11 +72,6 @@ export default function useEmulator() {
     [renderCount],
   );
 
-  const setMaxInstructions = useCallback(
-    (maxInstructions: number) => emulator.set_max_instructions(maxInstructions),
-    [renderCount],
-  );
-
   return {
     compilationErrors,
     cycles: emulator.cycles,
@@ -74,7 +84,6 @@ export default function useEmulator() {
     run,
     runUntil,
     selectedInstructionId,
-    setMaxInstructions,
     snapshot,
     stackPointer: emulator.sp,
   };

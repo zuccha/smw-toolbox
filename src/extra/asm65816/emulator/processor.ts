@@ -10,23 +10,13 @@ import {
   flag_b_mask,
 } from "./constants";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { byte_mask, ReadOnlyValue, Value, word_mask } from "./value";
+import { b, ReadOnlyValue, Value, w, word_mask } from "./value";
 
 //------------------------------------------------------------------------------
 // Processor
 //------------------------------------------------------------------------------
 
 export default class Processor {
-  public constructor(
-    initial_pb: number,
-    initial_pc: number,
-    initial_sp: number,
-  ) {
-    this._pb = new Value(initial_pb, byte_mask);
-    this._pc = new Value(initial_pc, word_mask);
-    this._sp = new Value(initial_sp, word_mask);
-  }
-
   //----------------------------------------------------------------------------
   // Registers
   //----------------------------------------------------------------------------
@@ -315,25 +305,35 @@ export default class Processor {
   // Reset
   //----------------------------------------------------------------------------
 
-  public reset(pb: number, pc: number, sp: number) {
-    this._a.long = 0;
-    this._x.long = 0;
-    this._y.long = 0;
-    this._db.long = 0;
-    this._dp.long = 0;
-    this._sp.long = sp;
-    this._pb.long = pb;
-    this._pc.long = pc;
-    this._flag_n = 0;
-    this._flag_v = 0;
-    this._flag_m = 1;
-    this._flag_x = 1;
-    this._flag_d = 0;
-    this._flag_i = 0;
-    this._flag_z = 0;
-    this._flag_c = 0;
+  public reset(args: {
+    a: number;
+    x: number;
+    y: number;
+    sp: number;
+    dp: number;
+    db: number;
+    pb: number;
+    pc: number;
+    flags: number;
+  }) {
+    this._flag_n = ((args.flags >> 7) & 1) as 0 | 1;
+    this._flag_v = ((args.flags >> 6) & 1) as 0 | 1;
+    this._flag_m = ((args.flags >> 5) & 1) as 0 | 1;
+    this._flag_x = ((args.flags >> 4) & 1) as 0 | 1;
+    this._flag_d = ((args.flags >> 3) & 1) as 0 | 1;
+    this._flag_i = ((args.flags >> 2) & 1) as 0 | 1;
+    this._flag_z = ((args.flags >> 1) & 1) as 0 | 1;
+    this._flag_c = ((args.flags >> 0) & 1) as 0 | 1;
     this._flag_e = 0;
     this._flag_b = 0;
+    this._a.long = args.a & word_mask;
+    this.x = w(args.x);
+    this.y = w(args.y);
+    this.sp = w(args.sp);
+    this.dp = w(args.dp);
+    this.db = b(args.db);
+    this._pb.long = args.pb;
+    this._pc.long = args.pc;
   }
 
   //----------------------------------------------------------------------------
@@ -342,7 +342,7 @@ export default class Processor {
 
   public snapshot(): ProcessorSnapshot {
     return {
-      a: this.a.word,
+      a: this._a.word,
       x: this.x.word,
       y: this.y.word,
       db: this.db.byte,
