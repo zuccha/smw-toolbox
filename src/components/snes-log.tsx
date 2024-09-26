@@ -194,7 +194,7 @@ export default function SnesLog({
             onClickValidInstruction(newSelectedInstructionId);
           }
         }}
-        windowSize={16}
+        maxVisibleItems={16}
         withFooter
       />
 

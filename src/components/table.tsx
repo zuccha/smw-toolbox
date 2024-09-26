@@ -1,5 +1,5 @@
-import { ReactNode, useLayoutEffect, useMemo } from "preact/compat";
-import useItemsWindow from "../hooks/use-items-window";
+import { ReactNode, useMemo } from "preact/compat";
+import useFrame from "../hooks/use-frame";
 import { classNames } from "../utils";
 import "./table.css";
 
@@ -22,8 +22,8 @@ export type TableProps<T> = {
   isRowClickable?: (item: T) => boolean;
   isRowSelected?: (item: T) => boolean;
   items: readonly T[];
+  maxVisibleItems?: number;
   onClickRow?: (item: T) => void;
-  windowSize?: number;
   withFooter?: boolean;
 };
 
@@ -32,16 +32,12 @@ export default function Table<T>({
   isRowClickable = () => false,
   isRowSelected = () => false,
   items,
+  maxVisibleItems,
   onClickRow = () => {},
-  windowSize,
   withFooter = false,
 }: TableProps<T>) {
-  const itemsWindow = useItemsWindow(items, windowSize ?? items.length);
-
-  useLayoutEffect(
-    () => itemsWindow.resetScroll(),
-    [items, itemsWindow.resetScroll],
-  );
+  maxVisibleItems = maxVisibleItems ?? items.length;
+  const frame = useFrame(items, Math.min(maxVisibleItems, items.length));
 
   const columnClassNames = useMemo(
     () =>
@@ -54,8 +50,8 @@ export default function Table<T>({
     [columns],
   );
 
-  const scrollRatio = itemsWindow.items.length / items.length;
-  const scrollBegin = itemsWindow.scrollIndex / items.length;
+  const handleHeight = `${(100 * frame.items.length) / items.length}%`;
+  const handlePosition = `${(100 * frame.index) / items.length}%`;
 
   return (
     <div className="Table">
@@ -67,8 +63,8 @@ export default function Table<T>({
             ))}
           </tr>
         </thead>
-        <tbody onWheel={itemsWindow.handleScroll}>
-          {itemsWindow.items.map((item, rowIndex) => {
+        <tbody ref={frame.elementRef} onWheel={frame.mouseScroll.handleScroll}>
+          {frame.items.map((item, rowIndex) => {
             const className = classNames([
               ["selected", isRowSelected(item)],
               ["clickable", isRowClickable(item)],
@@ -77,8 +73,8 @@ export default function Table<T>({
               <tr className={className} onClick={() => onClickRow(item)}>
                 {columns.map((column, columnIndex) => {
                   const context = {
-                    prev: itemsWindow.items[rowIndex - 1],
-                    next: itemsWindow.items[rowIndex + 1],
+                    prev: frame.items[rowIndex - 1],
+                    next: frame.items[rowIndex + 1],
                   };
                   const colSpan = column?.colSpan?.(item, context) ?? 1;
                   return colSpan > 0 ? (
@@ -105,16 +101,17 @@ export default function Table<T>({
         </tfoot>
       </table>
 
-      {itemsWindow.items.length < items.length && (
+      {frame.items.length < items.length && (
         <div className="Table_Scrollbar">
           <div className="Table_Scrollbar_Spacer top">&nbsp;</div>
           <div className="Table_Scrollbar_Track">
             <div
               className="Table_Scrollbar_Handle"
-              style={{
-                height: `${100 * scrollRatio}%`,
-                top: `${100 * scrollBegin}%`,
-              }}
+              onDrag={(e) => e.currentTarget}
+              style={{ height: handleHeight, top: handlePosition }}
+              onMouseDown={frame.mouseDrag.handleMouseDown}
+              onMouseMove={frame.mouseDrag.handleMouseMove}
+              onMouseUp={frame.mouseDrag.handleMouseUp}
             />
           </div>
           {withFooter && (
