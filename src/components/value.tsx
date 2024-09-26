@@ -9,6 +9,7 @@ import { toBin, toDec, toHex } from "../utils";
 import Tooltip from "./tooltip";
 
 type ValueProps = {
+  dim?: boolean;
   encoding: IntegerEncoding;
   unit: IntegerUnit;
   value: number;
@@ -32,7 +33,7 @@ export const formatValue = (
   return { tooltip, formatted: hex };
 };
 
-export default function Value({ encoding, unit, value }: ValueProps) {
+export default function Value({ dim, encoding, unit, value }: ValueProps) {
   const { formatted, tooltip } = useMemo(
     () => formatValue(value, encoding, unit),
     [encoding, unit, value],
@@ -40,7 +41,7 @@ export default function Value({ encoding, unit, value }: ValueProps) {
 
   return (
     <Tooltip monospace tooltip={tooltip}>
-      {formatted}
+      {dim ? <dim>{formatted}</dim> : formatted}
     </Tooltip>
   );
 }

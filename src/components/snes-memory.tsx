@@ -97,13 +97,12 @@ export default function SnesMemory({
                   }
                 >
                   {byte === undefined ? (
-                    <dim>
-                      <Value
-                        encoding={IntegerEncoding.Hex}
-                        unit={IntegerUnit.Byte}
-                        value={0}
-                      />
-                    </dim>
+                    <Value
+                      dim
+                      encoding={IntegerEncoding.Hex}
+                      unit={IntegerUnit.Byte}
+                      value={0}
+                    />
                   ) : (
                     <Value
                       encoding={IntegerEncoding.Hex}

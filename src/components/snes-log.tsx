@@ -285,7 +285,7 @@ function Cell_Flags({
   return (
     <span>
       {flags.split("").map((flag, i) => {
-        const active = flag === flag.toUpperCase();
+        const active = flag === flag.toUpperCase() && flag !== "-";
         const prevFlag = prevFlags[i] ?? flag;
         const className = flag !== prevFlag ? "SnesLog_Highlight" : undefined;
         return active ? (
