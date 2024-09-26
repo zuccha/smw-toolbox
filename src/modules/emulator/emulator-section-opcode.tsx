@@ -26,7 +26,7 @@ const flags = ["n", "v", "m", "x", "d", "i", "z", "c"];
 
 const columns: TableColumn<InstructionImpl>[] = [
   { header: "Hex", value: (impl) => toHex(impl.opcode, 2) },
-  { header: "Mode", value: (impl) => impl.mode.text },
+  { header: "Mode", value: (impl) => impl.mode.text || "<implied>" },
   {
     header: "Example",
     value: (impl) =>

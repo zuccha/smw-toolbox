@@ -25,7 +25,7 @@ export default class InstructionMode {
     format: () => "A",
     has_address: false,
     base_length: 1,
-    text: "",
+    text: "A",
   });
 
   public static Immediate = new InstructionMode({
