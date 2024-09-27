@@ -6,7 +6,7 @@ import useEmulator from "./use-emulator";
 
 export default function EmulatorSectionLog() {
   const emulator = useEmulator();
-  const [isTabSnesVisible, setIsTabSnesVisible] = useEmulatorTabLogIsVisible();
+  const [isTabLogVisible, setIsTabLogVisible] = useEmulatorTabLogIsVisible();
 
   const errors =
     emulator.compilationErrors.length > 0
@@ -22,9 +22,9 @@ export default function EmulatorSectionLog() {
 
   return (
     <SectionCollapsible
-      isVisible={isTabSnesVisible}
+      isVisible={isTabLogVisible}
       label="Log"
-      onChange={setIsTabSnesVisible}
+      onChange={setIsTabLogVisible}
     >
       <SnesLog
         cycles={emulator.cycles}

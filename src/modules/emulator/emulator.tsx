@@ -4,6 +4,7 @@ import EmulatorSectionLog from "./emulator-section-log";
 import EmulatorSectionMain from "./emulator-section-main";
 import EmulatorSectionMemory from "./emulator-section-memory";
 import EmulatorSectionOpcode from "./emulator-section-opcode";
+import EmulatorSectionTutorial from "./emulator-section-tutorial";
 
 export default function Emulator() {
   return (
@@ -19,6 +20,7 @@ export default function Emulator() {
       <div class="App_ModuleBlock">
         <EmulatorSectionLog />
         <EmulatorSectionMemory />
+        <EmulatorSectionTutorial />
       </div>
     </div>
   );

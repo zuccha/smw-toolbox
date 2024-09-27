@@ -92,3 +92,6 @@ export const useEmulatorTabMemoryIsVisible = () =>
 
 export const useEmulatorTabOpcodeIsVisible = () =>
   useStoreBoolean(`${emulatorId}.tab.opcode.isVisible`, true);
+
+export const useEmulatorTabTutorialIsVisible = () =>
+  useStoreBoolean(`${emulatorId}.tab.tutorial.isVisible`, false);
