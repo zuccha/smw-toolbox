@@ -1,5 +1,5 @@
 import { describe, test } from "vitest";
-import { testInstruction } from "./_test";
+import { testIsolatedInstruction } from "./_test";
 
 describe("A 8-bit", () => {
   test.each`
@@ -20,7 +20,7 @@ describe("A 8-bit", () => {
     ${"ADC #$01"} | ${{ flag_z: 1 }}            | ${{ a: 0x0001, flag_z: 0 }}
     ${"ADC #$01"} | ${{ a: 0x90ff }}            | ${{ a: 0x9000, flag_z: 1, flag_c: 1 }}
   `("$instruction [$input]", ({ instruction, input, output }) => {
-    testInstruction(instruction, input, output);
+    testIsolatedInstruction(instruction, input, output);
   });
 });
 
@@ -40,7 +40,7 @@ describe("A 8-bit (decimal)", () => {
     ${"ADC #$01"} | ${{ flag_v: 1 }}            | ${{ a: 0x0001, flag_v: 0 }}
     ${"ADC #$01"} | ${{ flag_z: 1 }}            | ${{ a: 0x0001, flag_z: 0 }}
   `("$instruction [$input]", ({ instruction, input, output }) => {
-    testInstruction(
+    testIsolatedInstruction(
       instruction,
       { ...input, flag_d: 1 },
       { ...output, flag_d: 1 },
@@ -66,7 +66,7 @@ describe("A 16-bit", () => {
     ${"ADC #$0001"} | ${{ flag_v: 1 }}            | ${{ a: 0x0001, flag_v: 0 }}
     ${"ADC #$0001"} | ${{ flag_z: 1 }}            | ${{ a: 0x0001, flag_z: 0 }}
   `("$instruction [$input]", ({ instruction, input, output }) => {
-    testInstruction(
+    testIsolatedInstruction(
       instruction,
       { ...input, flag_m: 0 },
       { ...output, flag_m: 0 },
@@ -93,7 +93,7 @@ describe("A 16-bit (decimal)", () => {
     ${"ADC #$0001"} | ${{ flag_v: 1 }}            | ${{ a: 0x0001, flag_v: 0 }}
     ${"ADC #$0001"} | ${{ flag_z: 1 }}            | ${{ a: 0x0001, flag_z: 0 }}
   `("$instruction [$input]", ({ instruction, input, output }) => {
-    testInstruction(
+    testIsolatedInstruction(
       instruction,
       { ...input, flag_m: 0, flag_d: 1 },
       { ...output, flag_m: 0, flag_d: 1 },
