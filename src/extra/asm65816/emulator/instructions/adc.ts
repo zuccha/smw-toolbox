@@ -26,7 +26,7 @@ export function add_decimal(
     carry = Math.floor(nibble / 10);
     result |= nibble % 10 << (i * 4);
   }
-  return result;
+  return result + (carry << (nibbles * 4));
 }
 
 export abstract class ADC extends Instruction {

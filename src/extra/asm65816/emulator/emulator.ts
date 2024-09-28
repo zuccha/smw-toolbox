@@ -1,3 +1,13 @@
+import {
+  flag_c_mask,
+  flag_d_mask,
+  flag_i_mask,
+  flag_m_mask,
+  flag_n_mask,
+  flag_v_mask,
+  flag_x_mask,
+  flag_z_mask,
+} from "./constants";
 import { Instruction } from "./instruction";
 import { _Init } from "./instructions/_init";
 import Memory from "./memory";
@@ -8,27 +18,12 @@ import { ProcessorSnapshot } from "./processor-snapshot";
 import { b, l, ReadOnlyValue, w } from "./value";
 
 export default class Emulator {
-  public initial_a = 0;
-  public initial_x = 0;
-  public initial_y = 0;
-  public initial_sp = 0x01fc;
-  public initial_dp = 0;
-  public initial_db = 0;
-  public initial_flags = 0b00110000;
-
-  private _soft_initial_a = 0;
-  private _soft_initial_x = 0;
-  private _soft_initial_y = 0;
-  private _soft_initial_sp = 0x01fc;
-  private _soft_initial_dp = 0;
-  private _soft_initial_db = 0;
-  private _soft_initial_flags = 0b00110000;
-
   private _bytes: number[] = [];
   private _processor: Processor = new Processor();
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
+  private _initial_snapshot: ProcessorSnapshot | undefined;
 
   private _max_instructions = 100;
 
@@ -52,6 +47,10 @@ export default class Emulator {
 
   public get snapshot(): ProcessorSnapshot {
     return this._processor.snapshot();
+  }
+
+  public get initial_snapshot(): ProcessorSnapshot | undefined {
+    return this._initial_snapshot;
   }
 
   public get initial_ram_address(): number {
@@ -81,6 +80,7 @@ export default class Emulator {
   public run() {
     this._reset_processor(true);
     this._reset_memory();
+    this._initial_snapshot = this._processor.snapshot();
     this._instructions = [this._initial_instruction()];
     this._errors = [];
 
@@ -181,5 +181,53 @@ export default class Emulator {
     if (opcode === undefined) return undefined;
     const impl = opcode_to_instruction[opcode];
     return new impl(id, this._arg(addr), this._processor, this._memory);
+  }
+
+  public initial_a = 0;
+  public initial_x = 0;
+  public initial_y = 0;
+  public initial_sp = 0x01fc;
+  public initial_dp = 0;
+  public initial_db = 0;
+  public initial_flags = 0b00110000;
+
+  private _soft_initial_a = 0;
+  private _soft_initial_x = 0;
+  private _soft_initial_y = 0;
+  private _soft_initial_sp = 0x01fc;
+  private _soft_initial_dp = 0;
+  private _soft_initial_db = 0;
+  private _soft_initial_flags = 0b00110000;
+
+  public set initial_flag_n(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_n_mask) | (flag << 7);
+  }
+
+  public set initial_flag_v(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_v_mask) | (flag << 6);
+  }
+
+  public set initial_flag_m(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_m_mask) | (flag << 5);
+  }
+
+  public set initial_flag_x(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_x_mask) | (flag << 4);
+  }
+
+  public set initial_flag_d(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_d_mask) | (flag << 3);
+  }
+
+  public set initial_flag_i(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_i_mask) | (flag << 2);
+  }
+
+  public set initial_flag_z(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_z_mask) | (flag << 1);
+  }
+
+  public set initial_flag_c(flag: 0 | 1) {
+    this.initial_flags = (this.initial_flags & ~flag_c_mask) | flag;
   }
 }
