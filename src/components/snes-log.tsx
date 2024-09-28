@@ -158,12 +158,12 @@ export default function SnesLog({
           },
           {
             header: "Flags",
-            footer: <Cell_Flags flags={snapshot.flags} />,
+            footer: <Cell_Flags flags={formatFlags(snapshot)} />,
             value: (instruction, { prev }) =>
               instruction.snapshot && (
                 <Cell_Flags
-                  flags={instruction.snapshot.flags}
-                  prevFlags={prev?.snapshot?.flags}
+                  flags={formatFlags(instruction.snapshot)}
+                  prevFlags={prev?.snapshot && formatFlags(prev.snapshot)}
                 />
               ),
             colSpan: (instruction) => (instruction.snapshot ? 1 : 0),
@@ -315,6 +315,30 @@ function Cell_Instruction({ instruction }: { instruction: Instruction }) {
     </span>
   );
 }
+
+const formatFlags = (snapshot: ProcessorSnapshot): string => {
+  return snapshot.flag_e
+    ? [
+        snapshot.flag_n ? "N" : "n",
+        snapshot.flag_v ? "V" : "v",
+        "-",
+        snapshot.flag_b ? "B" : "b",
+        snapshot.flag_d ? "D" : "d",
+        snapshot.flag_i ? "I" : "i",
+        snapshot.flag_z ? "Z" : "z",
+        snapshot.flag_c ? "C" : "c",
+      ].join("")
+    : [
+        snapshot.flag_n ? "N" : "n",
+        snapshot.flag_v ? "V" : "v",
+        snapshot.flag_m ? "M" : "m",
+        snapshot.flag_x ? "X" : "x",
+        snapshot.flag_d ? "D" : "d",
+        snapshot.flag_i ? "I" : "i",
+        snapshot.flag_z ? "Z" : "z",
+        snapshot.flag_c ? "C" : "c",
+      ].join("");
+};
 
 const c = (value: number, prev: number | undefined) =>
   prev !== undefined && value !== prev;

@@ -25,6 +25,4 @@ export type ProcessorSnapshot = {
   readonly flag_c: 0 | 1;
   readonly flag_e: 0 | 1;
   readonly flag_b: 0 | 1;
-
-  readonly flags: string;
 };
