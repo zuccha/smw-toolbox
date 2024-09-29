@@ -19,6 +19,9 @@ type Mode =
   | "addr"
   | "addr,x"
   | "addr,y"
+  | "(addr)"
+  | "(addr,x)"
+  | "[addr]"
   | "long"
   | "long,x"
   | "sr,s"
@@ -39,6 +42,9 @@ const formatArg: Record<Mode, (arg: number, value: number) => string> = {
   "addr": (arg) => `$${toHex(arg, 4)}`,
   "addr,x": (arg) => `$${toHex(arg, 4)},x`,
   "addr,y": (arg) => `$${toHex(arg, 4)},y`,
+  "(addr)": (arg) => `($${toHex(arg, 4)})`,
+  "(addr,x)": (arg) => `($${toHex(arg, 4)},x)`,
+  "[addr]": (arg) => `[$${toHex(arg, 4)}]`,
   "long": (arg) => `$${toHex(arg, 6)}`,
   "long,x": (arg) => `$${toHex(arg, 6)},x`,
   "sr,s": (arg) => `$${toHex(arg, 2)},s`,
@@ -114,6 +120,28 @@ const generateMemory: Record<
     new Map([
       [(p.db << 16) + arg + p.y, value & byte_mask],
       [(p.db << 16) + arg + p.y + 1, (value >> 8) & byte_mask],
+    ]),
+  "(addr)": (arg, value, p) =>
+    new Map([
+      [(p.db << 16) + arg, 0x10],
+      [(p.db << 16) + arg + 1, 0xab],
+      [(p.db << 16) + 0xab10, value & byte_mask],
+      [(p.db << 16) + 0xab11, (value >> 8) & byte_mask],
+    ]),
+  "(addr,x)": (arg, value, p) =>
+    new Map([
+      [(p.db << 16) + arg + p.x, 0x10],
+      [(p.db << 16) + arg + p.x + 1, 0xab],
+      [(p.db << 16) + 0xab10, value & byte_mask],
+      [(p.db << 16) + 0xab11, (value >> 8) & byte_mask],
+    ]),
+  "[addr]": (arg, value, p) =>
+    new Map([
+      [(p.db << 16) + arg, 0x10],
+      [(p.db << 16) + arg + 1, 0xab],
+      [(p.db << 16) + arg + 2, 0x7f],
+      [0x7fab10, value & byte_mask],
+      [0x7fab11, (value >> 8) & byte_mask],
     ]),
   "long": (arg, value) =>
     new Map([
