@@ -23,7 +23,7 @@ describe.each(modes)("$mode", ({ mode, arg }) => {
   describe("A 8-bit", () => {
     test.each`
       value   | initialProcessor            | expectedProcessor
-      ${0x00} | ${{}}                       | ${{ flag_z: 1 }}
+      ${0x00} | ${{ a: 0x0000 }}            | ${{ a: 0x0000, flag_z: 1 }}
       ${0x00} | ${{ a: 0x00ff }}            | ${{ a: 0x0000, flag_z: 1 }}
       ${0x00} | ${{ a: 0xffff }}            | ${{ a: 0xff00, flag_z: 1 }}
       ${0xf0} | ${{ a: 0xffff }}            | ${{ a: 0xfff0, flag_n: 1 }}
@@ -45,7 +45,7 @@ describe.each(modes)("$mode", ({ mode, arg }) => {
   describe("A 16-bit", () => {
     test.each`
       value     | initialProcessor            | expectedProcessor
-      ${0x0000} | ${{}}                       | ${{ flag_z: 1 }}
+      ${0x0000} | ${{ a: 0x0000 }}            | ${{ a: 0x0000, flag_z: 1 }}
       ${0x0000} | ${{ a: 0xffff }}            | ${{ a: 0x0000, flag_z: 1 }}
       ${0x10f0} | ${{ a: 0xfff0 }}            | ${{ a: 0x10f0 }}
       ${0xffff} | ${{ a: 0x004a }}            | ${{ a: 0x004a }}
