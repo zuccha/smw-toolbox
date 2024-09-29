@@ -7,7 +7,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { ReadOnlyValue } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class CPX extends Instruction {
   public static mnemonic = "CPX";
@@ -15,11 +15,11 @@ export abstract class CPX extends Instruction {
 
   protected cpx(value: ReadOnlyValue): void {
     if (this.p.flag_x) {
-      this.p.flag_n = this.p.x.byte < value.byte;
+      this.p.flag_n = b(this.p.x.byte - value.byte).byte & flag_n_mask;
       this.p.flag_z = this.p.x.byte === value.byte;
       this.p.flag_c = this.p.x.byte >= value.byte;
     } else {
-      this.p.flag_n = this.p.x.word < value.word;
+      this.p.flag_n = w(this.p.x.word - value.word).page & flag_n_mask;
       this.p.flag_z = this.p.x.word === value.word;
       this.p.flag_c = this.p.x.word >= value.word;
     }

@@ -7,7 +7,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { ReadOnlyValue } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class CPY extends Instruction {
   public static mnemonic = "CPY";
@@ -15,11 +15,11 @@ export abstract class CPY extends Instruction {
 
   protected cpy(value: ReadOnlyValue): void {
     if (this.p.flag_x) {
-      this.p.flag_n = this.p.y.byte < value.byte;
+      this.p.flag_n = b(this.p.y.byte - value.byte).byte & flag_n_mask;
       this.p.flag_z = this.p.y.byte === value.byte;
       this.p.flag_c = this.p.y.byte >= value.byte;
     } else {
-      this.p.flag_n = this.p.y.word < value.word;
+      this.p.flag_n = w(this.p.y.word - value.word).page & flag_n_mask;
       this.p.flag_z = this.p.y.word === value.word;
       this.p.flag_c = this.p.y.word >= value.word;
     }

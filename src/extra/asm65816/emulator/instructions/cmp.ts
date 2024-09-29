@@ -9,7 +9,7 @@ import {
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
-import { ReadOnlyValue } from "../value";
+import { b, ReadOnlyValue, w } from "../value";
 
 export abstract class CMP extends Instruction {
   public static mnemonic = "CMP";
@@ -17,11 +17,11 @@ export abstract class CMP extends Instruction {
 
   protected cmp(value: ReadOnlyValue): void {
     if (this.p.flag_m) {
-      this.p.flag_n = this.p.a.byte < value.byte;
+      this.p.flag_n = b(this.p.a.byte - value.byte).byte & flag_n_mask;
       this.p.flag_z = this.p.a.byte === value.byte;
       this.p.flag_c = this.p.a.byte >= value.byte;
     } else {
-      this.p.flag_n = this.p.a.word < value.word;
+      this.p.flag_n = w(this.p.a.word - value.word).page & flag_n_mask;
       this.p.flag_z = this.p.a.word === value.word;
       this.p.flag_c = this.p.a.word >= value.word;
     }
