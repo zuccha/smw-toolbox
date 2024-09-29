@@ -6,6 +6,7 @@ import { ProcessorSnapshot } from "../emulator/processor-snapshot";
 import { byte_mask } from "../emulator/value";
 
 type Mode =
+  | "immediate"
   | "A"
   | "#const"
   | "dp"
@@ -25,6 +26,7 @@ type Mode =
   | "offset";
 
 const formatArg: Record<Mode, (arg: number, value: number) => string> = {
+  "immediate": () => "",
   "A": () => "A",
   "#const": (_arg, value) => `#$${toHex(value, value > 255 ? 4 : 2)}`,
   "dp": (arg) => `$${toHex(arg, 2)}`,
@@ -48,6 +50,7 @@ const generateMemory: Record<
   Mode,
   (arg: number, value: number, p: ProcessorSnapshot) => Map<number, number>
 > = {
+  "immediate": () => new Map(),
   "A": () => new Map(),
   "#const": () => new Map(),
   "dp": (arg, value, p) =>
