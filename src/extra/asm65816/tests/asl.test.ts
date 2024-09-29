@@ -21,7 +21,7 @@ describe("'A'", () => {
       ${{ a: 0x0001, flag_n: 1 }} | ${{ a: 0x0002, flag_n: 0 }}
       ${{ a: 0x0001, flag_c: 1 }} | ${{ a: 0x0002, flag_c: 0 }}
     `(`ASL A [$initialProcessor]`, (params) => {
-      run({ opcode: "ASL", arg: 0, mode: "A", ...params });
+      run({ opcode: "ASL", mode: "A", ...params });
     });
   });
 
@@ -41,7 +41,7 @@ describe("'A'", () => {
       ${{ a: 0x0100, flag_c: 1 }} | ${{ a: 0x0200, flag_c: 0 }}
     `(`ASL A [$initialProcessor]`, (params) => {
       const initialProcessor = { ...params.initialProcessor, flag_m: 0 };
-      run({ opcode: "ASL", arg: 0, mode: "A", ...params, initialProcessor });
+      run({ opcode: "ASL", mode: "A", ...params, initialProcessor });
     });
   });
 });

@@ -19,7 +19,7 @@ describe("'#const'", () => {
       ${0x01} | ${{ a: 0x0001 }} | ${{ flag_z: 0 }}
       ${0xff} | ${{ a: 0xffff }} | ${{ flag_z: 0 }}
     `(`BIT A [$initialProcessor]`, (params) => {
-      run({ opcode: "BIT", arg: 0, mode: "#const", ...params });
+      run({ opcode: "BIT", mode: "#const", ...params });
     });
   });
 
@@ -34,13 +34,7 @@ describe("'#const'", () => {
       ${0xffff} | ${{ a: 0xffff }} | ${{ flag_z: 0 }}
     `(`BIT A [$initialProcessor]`, (params) => {
       const initialProcessor = { ...params.initialProcessor, flag_m: 0 };
-      run({
-        opcode: "BIT",
-        arg: 0,
-        mode: "#const",
-        ...params,
-        initialProcessor,
-      });
+      run({ opcode: "BIT", mode: "#const", ...params, initialProcessor });
     });
   });
 });

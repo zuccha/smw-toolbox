@@ -6,7 +6,7 @@ import { ProcessorSnapshot } from "../emulator/processor-snapshot";
 import { byte_mask } from "../emulator/value";
 
 type Mode =
-  | "immediate"
+  | "implied"
   | "A"
   | "#const"
   | "dp"
@@ -26,7 +26,7 @@ type Mode =
   | "offset";
 
 const formatArg: Record<Mode, (arg: number, value: number) => string> = {
-  "immediate": () => "",
+  "implied": () => "",
   "A": () => "A",
   "#const": (_arg, value) => `#$${toHex(value, value > 255 ? 4 : 2)}`,
   "dp": (arg) => `$${toHex(arg, 2)}`,
@@ -50,7 +50,7 @@ const generateMemory: Record<
   Mode,
   (arg: number, value: number, p: ProcessorSnapshot) => Map<number, number>
 > = {
-  "immediate": () => new Map(),
+  "implied": () => new Map(),
   "A": () => new Map(),
   "#const": () => new Map(),
   "dp": (arg, value, p) =>
@@ -154,11 +154,13 @@ export function run(args: {
   maxInstructions?: number;
   considerPc?: boolean;
 }) {
+  const arg = args.arg ?? 0;
+  const value = args.value ?? 0;
   const mode = args.mode as Mode;
   const memory = generateMemory[mode];
 
   const assembler = new Assembler();
-  const formattedArg = formatArg[mode](args.arg, args.value);
+  const formattedArg = formatArg[mode](arg, value);
   assembler.code = `${args.opcode} ${formattedArg}`;
   assembler.assemble();
 
@@ -201,7 +203,7 @@ export function run(args: {
       ? new Map([...initialMemory, ...(args.expectedMemory ?? new Map())])
       : new Map([
           ...initialMemory,
-          ...memory(args.arg, args.expectedValue, initialProcessor),
+          ...memory(arg, args.expectedValue, initialProcessor),
           ...(args.expectedMemory ?? new Map()),
         ]);
 

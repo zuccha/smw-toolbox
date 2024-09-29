@@ -1,12 +1,12 @@
 import { describe, test } from "vitest";
 import { run } from "./_run";
 
-describe("'immediate'", () => {
+describe("'implied'", () => {
   test.each`
     initialProcessor | expectedProcessor
     ${{ flag_c: 1 }} | ${{ flag_c: 1 }}
     ${{ flag_c: 0 }} | ${{ flag_c: 1 }}
   `(`SEC [$initialProcessor]`, (params) => {
-    run({ opcode: "SEC", arg: 0, value: 0, mode: "immediate", ...params });
+    run({ opcode: "SEC", mode: "implied", ...params });
   });
 });
