@@ -1,13 +1,3 @@
-import {
-  flag_c_mask,
-  flag_d_mask,
-  flag_i_mask,
-  flag_m_mask,
-  flag_n_mask,
-  flag_v_mask,
-  flag_x_mask,
-  flag_z_mask,
-} from "./constants";
 import { Instruction } from "./instruction";
 import { _Init } from "./instructions/_init";
 import Memory from "./memory";
@@ -23,10 +13,7 @@ export default class Emulator {
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
   private _errors: string[] = [];
-  private _initial_snapshot: ProcessorSnapshot | undefined;
-
   private _max_instructions = 100;
-
   private _memory_mapping = MemoryMapping.LoROM;
 
   public get instructions(): readonly Instruction[] {
@@ -49,8 +36,8 @@ export default class Emulator {
     return this._processor.snapshot();
   }
 
-  public get initial_snapshot(): ProcessorSnapshot | undefined {
-    return this._initial_snapshot;
+  public get memory(): Map<number, number> {
+    return this._memory.as_map();
   }
 
   public get initial_ram_address(): number {
@@ -78,9 +65,8 @@ export default class Emulator {
   };
 
   public run() {
-    this._reset_processor(true);
-    this._reset_memory();
-    this._initial_snapshot = this._processor.snapshot();
+    this.reset_processor(true);
+    this.reset_memory(true);
     this._instructions = [this._initial_instruction()];
     this._errors = [];
 
@@ -110,8 +96,8 @@ export default class Emulator {
   }
 
   public run_until(id: number) {
-    this._reset_processor(false);
-    this._reset_memory();
+    this.reset_processor(false);
+    this.reset_memory(false);
     try {
       for (const instruction of this._instructions) {
         instruction.execute();
@@ -122,7 +108,7 @@ export default class Emulator {
     }
   }
 
-  private _reset_processor(hard: boolean) {
+  public reset_processor(hard: boolean) {
     if (hard) {
       this._soft_initial_a = this.initial_a;
       this._soft_initial_x = this.initial_x;
@@ -146,7 +132,7 @@ export default class Emulator {
     });
   }
 
-  private _reset_memory(): void {
+  public reset_memory(hard: boolean): void {
     const pb = this._processor.pb.byte << 16;
     const pc = this._processor.pc.word;
     this._memory.reset(this._memory_mapping);
@@ -154,6 +140,9 @@ export default class Emulator {
       const addr = l(pb + w(pc + i).word);
       this._memory.save_byte(addr, b(this._bytes[i]!), true);
     }
+    if (hard) this._soft_initial_memory = this.initial_memory;
+    for (const [addr, value] of this._soft_initial_memory)
+      this._memory.save_byte(l(addr), b(value));
   }
 
   private _opcode(addr: ReadOnlyValue): Opcode | undefined {
@@ -190,6 +179,7 @@ export default class Emulator {
   public initial_dp = 0;
   public initial_db = 0;
   public initial_flags = 0b00110000;
+  public initial_memory = new Map<number, number>();
 
   private _soft_initial_a = 0;
   private _soft_initial_x = 0;
@@ -198,36 +188,5 @@ export default class Emulator {
   private _soft_initial_dp = 0;
   private _soft_initial_db = 0;
   private _soft_initial_flags = 0b00110000;
-
-  public set initial_flag_n(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_n_mask) | (flag << 7);
-  }
-
-  public set initial_flag_v(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_v_mask) | (flag << 6);
-  }
-
-  public set initial_flag_m(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_m_mask) | (flag << 5);
-  }
-
-  public set initial_flag_x(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_x_mask) | (flag << 4);
-  }
-
-  public set initial_flag_d(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_d_mask) | (flag << 3);
-  }
-
-  public set initial_flag_i(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_i_mask) | (flag << 2);
-  }
-
-  public set initial_flag_z(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_z_mask) | (flag << 1);
-  }
-
-  public set initial_flag_c(flag: 0 | 1) {
-    this.initial_flags = (this.initial_flags & ~flag_c_mask) | flag;
-  }
+  private _soft_initial_memory = new Map<number, number>();
 }

@@ -14,6 +14,10 @@ export default class Memory {
     this._mapping = mapping;
   }
 
+  public as_map(): Map<number, number> {
+    return new Map(this._memory);
+  }
+
   public reset(mapping: MemoryMapping): void {
     this._memory = new Map();
     this._mapping = mapping;

@@ -113,7 +113,7 @@ export namespace AND {
 
   export class Absolute_Y extends AND_Addr {
     public static opcode = 0x39;
-    public static mode = InstructionMode.Absolute_X;
+    public static mode = InstructionMode.Absolute_Y;
     public static base_cycles = 5;
     public static cycles_modifier = minus_m | plus_1_if_index_y_crosses_page;
   }
@@ -127,7 +127,7 @@ export namespace AND {
 
   export class AbsoluteLong_X extends AND_Addr {
     public static opcode = 0x3f;
-    public static mode = InstructionMode.AbsoluteLong;
+    public static mode = InstructionMode.AbsoluteLong_X;
     public static base_cycles = 6;
     public static cycles_modifier = minus_m;
   }

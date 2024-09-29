@@ -16,12 +16,12 @@ export abstract class BIT extends Instruction {
   protected bit(value: ReadOnlyValue): void {
     if (this.p.flag_m) {
       const result = b(this.p.a.byte & value.byte);
-      this.p.flag_n = value.byte & flag_z_mask;
+      this.p.flag_n = value.byte & flag_n_mask;
       this.p.flag_v = value.byte & flag_v_mask;
       this.p.flag_z = result.byte === 0;
     } else {
       const result = w(this.p.a.word & value.word);
-      this.p.flag_n = value.page & flag_z_mask;
+      this.p.flag_n = value.page & flag_n_mask;
       this.p.flag_v = value.page & flag_v_mask;
       this.p.flag_z = result.word === 0;
     }

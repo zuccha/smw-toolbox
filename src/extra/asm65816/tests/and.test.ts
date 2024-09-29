@@ -1,46 +1,63 @@
 import { describe, test } from "vitest";
-import { testIsolatedInstruction } from "./_test";
+import { run } from "./_run";
 
-describe("A 8-bit", () => {
-  test.each`
-    instruction   | input                       | output
-    ${"AND #$00"} | ${{}}                       | ${{ flag_z: 1 }}
-    ${"AND #$00"} | ${{ a: 0x00ff }}            | ${{ a: 0x0000, flag_z: 1 }}
-    ${"AND #$00"} | ${{ a: 0xffff }}            | ${{ a: 0xff00, flag_z: 1 }}
-    ${"AND #$F0"} | ${{ a: 0xffff }}            | ${{ a: 0xfff0, flag_n: 1 }}
-    ${"AND #$FF"} | ${{ a: 0x004a }}            | ${{ a: 0x004a }}
-    ${"AND #$40"} | ${{ a: 0x00ff }}            | ${{ a: 0x0040 }}
-    ${"AND #$80"} | ${{ a: 0x00ff }}            | ${{ a: 0x0080, flag_n: 1 }}
-    ${"AND #$C0"} | ${{ a: 0x00ff }}            | ${{ a: 0x00c0, flag_n: 1 }}
-    ${"AND #$40"} | ${{ a: 0x4000 }}            | ${{ a: 0x4000, flag_z: 1 }}
-    ${"AND #$80"} | ${{ a: 0x8000 }}            | ${{ a: 0x8000, flag_z: 1 }}
-    ${"AND #$C0"} | ${{ a: 0xc000 }}            | ${{ a: 0xc000, flag_z: 1 }}
-    ${"AND #$01"} | ${{ a: 0x0001, flag_n: 1 }} | ${{ a: 0x0001, flag_n: 0 }}
-    ${"AND #$01"} | ${{ a: 0x0001, flag_v: 1 }} | ${{ a: 0x0001 }}
-    ${"AND #$01"} | ${{ a: 0x0001, flag_z: 1 }} | ${{ a: 0x0001, flag_z: 0 }}
-  `("$instruction [$input]", ({ instruction, input, output }) => {
-    testIsolatedInstruction(instruction, input, output);
+const modes = [
+  { mode: "#const", arg: 0x00 },
+  { mode: "dp", arg: 0x00 },
+  { mode: "dp,x", arg: 0x00 },
+  { mode: "(dp)", arg: 0x00 },
+  { mode: "(dp,x)", arg: 0x00 },
+  { mode: "(dp),y", arg: 0x00 },
+  { mode: "[dp]", arg: 0x00 },
+  { mode: "[dp],y", arg: 0x00 },
+  { mode: "addr", arg: 0x0000 },
+  { mode: "addr,x", arg: 0x0000 },
+  { mode: "addr,y", arg: 0x0000 },
+  { mode: "long", arg: 0x000000 },
+  { mode: "long,x", arg: 0x000000 },
+  { mode: "sr,s", arg: 0x00 },
+  { mode: "(sr,s),y", arg: 0x00 },
+];
+
+describe.each(modes)("$mode", ({ mode, arg }) => {
+  describe("A 8-bit", () => {
+    test.each`
+      value   | initialProcessor            | expectedProcessor
+      ${0x00} | ${{}}                       | ${{ flag_z: 1 }}
+      ${0x00} | ${{ a: 0x00ff }}            | ${{ a: 0x0000, flag_z: 1 }}
+      ${0x00} | ${{ a: 0xffff }}            | ${{ a: 0xff00, flag_z: 1 }}
+      ${0xf0} | ${{ a: 0xffff }}            | ${{ a: 0xfff0, flag_n: 1 }}
+      ${0xff} | ${{ a: 0x004a }}            | ${{ a: 0x004a }}
+      ${0x40} | ${{ a: 0x00ff }}            | ${{ a: 0x0040 }}
+      ${0x80} | ${{ a: 0x00ff }}            | ${{ a: 0x0080, flag_n: 1 }}
+      ${0xc0} | ${{ a: 0x00ff }}            | ${{ a: 0x00c0, flag_n: 1 }}
+      ${0x40} | ${{ a: 0x4000 }}            | ${{ a: 0x4000, flag_z: 1 }}
+      ${0x80} | ${{ a: 0x8000 }}            | ${{ a: 0x8000, flag_z: 1 }}
+      ${0xc0} | ${{ a: 0xc000 }}            | ${{ a: 0xc000, flag_z: 1 }}
+      ${0x01} | ${{ a: 0x0001, flag_n: 1 }} | ${{ a: 0x0001, flag_n: 0 }}
+      ${0x01} | ${{ a: 0x0001, flag_v: 1 }} | ${{ a: 0x0001 }}
+      ${0x01} | ${{ a: 0x0001, flag_z: 1 }} | ${{ a: 0x0001, flag_z: 0 }}
+    `(`AND ${mode} [$initialProcessor]`, (params) => {
+      run({ opcode: "AND", arg, mode, ...params });
+    });
   });
-});
 
-describe("A 16-bit", () => {
-  test.each`
-    instruction     | input                       | output
-    ${"AND #$0000"} | ${{}}                       | ${{ flag_z: 1 }}
-    ${"AND #$0000"} | ${{ a: 0xffff }}            | ${{ a: 0x0000, flag_z: 1 }}
-    ${"AND #$10F0"} | ${{ a: 0xfff0 }}            | ${{ a: 0x10f0 }}
-    ${"AND #$FFFF"} | ${{ a: 0x004a }}            | ${{ a: 0x004a }}
-    ${"AND #$4000"} | ${{ a: 0xffff }}            | ${{ a: 0x4000 }}
-    ${"AND #$8000"} | ${{ a: 0xffff }}            | ${{ a: 0x8000, flag_n: 1 }}
-    ${"AND #$C000"} | ${{ a: 0xffff }}            | ${{ a: 0xc000, flag_n: 1 }}
-    ${"AND #$0001"} | ${{ a: 0x0001, flag_n: 1 }} | ${{ a: 0x0001, flag_n: 0 }}
-    ${"AND #$0001"} | ${{ a: 0x0001, flag_v: 1 }} | ${{ a: 0x0001 }}
-    ${"AND #$0001"} | ${{ a: 0x0001, flag_z: 1 }} | ${{ a: 0x0001, flag_z: 0 }}
-  `("$instruction [$input]", ({ instruction, input, output }) => {
-    testIsolatedInstruction(
-      instruction,
-      { ...input, flag_m: 0 },
-      { ...output, flag_m: 0 },
-    );
+  describe("A 16-bit", () => {
+    test.each`
+      value     | initialProcessor            | expectedProcessor
+      ${0x0000} | ${{}}                       | ${{ flag_z: 1 }}
+      ${0x0000} | ${{ a: 0xffff }}            | ${{ a: 0x0000, flag_z: 1 }}
+      ${0x10f0} | ${{ a: 0xfff0 }}            | ${{ a: 0x10f0 }}
+      ${0xffff} | ${{ a: 0x004a }}            | ${{ a: 0x004a }}
+      ${0x4000} | ${{ a: 0xffff }}            | ${{ a: 0x4000 }}
+      ${0x8000} | ${{ a: 0xffff }}            | ${{ a: 0x8000, flag_n: 1 }}
+      ${0xc000} | ${{ a: 0xffff }}            | ${{ a: 0xc000, flag_n: 1 }}
+      ${0x0001} | ${{ a: 0x0001, flag_n: 1 }} | ${{ a: 0x0001, flag_n: 0 }}
+      ${0x0001} | ${{ a: 0x0001, flag_v: 1 }} | ${{ a: 0x0001 }}
+      ${0x0001} | ${{ a: 0x0001, flag_z: 1 }} | ${{ a: 0x0001, flag_z: 0 }}
+    `(`AND ${mode} [$initialProcessor]`, (params) => {
+      const initialProcessor = { ...params.initialProcessor, flag_m: 0 };
+      run({ opcode: "AND", arg, mode, ...params, initialProcessor });
+    });
   });
 });
