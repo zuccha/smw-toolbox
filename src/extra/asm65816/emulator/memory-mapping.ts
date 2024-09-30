@@ -59,4 +59,14 @@ export default class MemoryMapping {
     const message = `Writing to invalid address ${addr.format_address()}: unsupported area.`;
     throw new Error(message);
   }
+
+  public map_safe(addr: ReadOnlyValue): number {
+    for (const area of this._ram)
+      if (area.contains(addr)) return area.map(addr).long;
+
+    for (const area of this._rom)
+      if (area.contains(addr)) return area.map(addr).long;
+
+    return addr.long;
+  }
 }

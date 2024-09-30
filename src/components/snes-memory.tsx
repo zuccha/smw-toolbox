@@ -1,4 +1,6 @@
 import { useCallback, useLayoutEffect, useState } from "preact/hooks";
+import MemoryMapping from "../extra/asm65816/emulator/memory-mapping";
+import { l } from "../extra/asm65816/emulator/value";
 import { IntegerEncoding, IntegerUnit } from "../models/integer";
 import { classNames, range, toHex } from "../utils";
 import Button from "./button";
@@ -12,6 +14,7 @@ type SnesMemoryProps = {
   columnCount?: number;
   initialRamAddress: number;
   initialRomAddress: number;
+  memoryMapping: MemoryMapping;
   stackAddress: number;
   memory: (number | undefined)[];
   onChangeAddress: (address: number) => void;
@@ -27,11 +30,16 @@ export default function SnesMemory({
   columnCount = 16,
   initialRamAddress,
   initialRomAddress,
+  memoryMapping,
   stackAddress,
   memory,
   onChangeAddress,
 }: SnesMemoryProps) {
   const [selection, setSelection] = useState<Selection | undefined>();
+
+  initialRamAddress = memoryMapping.map_safe(l(initialRamAddress));
+  initialRomAddress = memoryMapping.map_safe(l(initialRomAddress));
+  stackAddress = memoryMapping.map_safe(l(stackAddress));
 
   useLayoutEffect(() => setSelection(undefined), [memory]);
 
@@ -55,7 +63,7 @@ export default function SnesMemory({
     onChangeAddress(stackAddress & offset);
   }, [baseAddress, stackAddress]);
 
-  const baseAddressOffset = baseAddress & offset;
+  const baseAddressOffset = memoryMapping.map_safe(l(baseAddress)) & offset;
   const isRamSelected = baseAddressOffset === (initialRamAddress & offset);
   const isRomSelected = baseAddressOffset === (initialRomAddress & offset);
   const isStackSelected = baseAddressOffset === (stackAddress & offset);
@@ -85,7 +93,7 @@ export default function SnesMemory({
               const address = (baseAddress + index) & 0xffffff;
               const className = classNames([
                 ["selected", isSelected],
-                ["stack", address === stackAddress],
+                ["stack", memoryMapping.map_safe(l(address)) === stackAddress],
               ]);
               return (
                 <div

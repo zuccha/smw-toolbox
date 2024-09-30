@@ -80,6 +80,7 @@ export default function useEmulator() {
     initialRomAddress: emulator.initial_rom_address,
     instructions: emulator.instructions,
     length: emulator.length,
+    memoryMapping: emulator.memory_mapping,
     readByte,
     run,
     runUntil,

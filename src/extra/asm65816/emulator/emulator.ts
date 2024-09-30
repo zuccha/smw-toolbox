@@ -52,6 +52,10 @@ export default class Emulator {
     return this._processor.sp.word;
   }
 
+  public get memory_mapping() {
+    return this._memory_mapping;
+  }
+
   public read_byte(addr: number): number | undefined {
     return this._memory.load_byte_raw(l(addr));
   }
