@@ -11,6 +11,7 @@ type Mode =
   | "#const"
   | "dp"
   | "dp,x"
+  | "dp,y"
   | "(dp)"
   | "(dp,x)"
   | "(dp),y"
@@ -34,6 +35,7 @@ const formatArg: Record<Mode, (arg: number, value: number) => string> = {
   "#const": (_arg, value) => `#$${toHex(value, value > 255 ? 4 : 2)}`,
   "dp": (arg) => `$${toHex(arg, 2)}`,
   "dp,x": (arg) => `$${toHex(arg, 2)},x`,
+  "dp,y": (arg) => `$${toHex(arg, 2)},y`,
   "(dp)": (arg) => `($${toHex(arg, 2)})`,
   "(dp,x)": (arg) => `($${toHex(arg, 2)},x)`,
   "(dp),y": (arg) => `($${toHex(arg, 2)}),y`,
@@ -68,6 +70,11 @@ const generateMemory: Record<
     new Map([
       [0x7e0000 + p.dp + arg + p.x, value & byte_mask],
       [0x7e0000 + p.dp + arg + p.x + 1, (value >> 8) & byte_mask],
+    ]),
+  "dp,y": (arg, value, p) =>
+    new Map([
+      [0x7e0000 + p.dp + arg + p.y, value & byte_mask],
+      [0x7e0000 + p.dp + arg + p.y + 1, (value >> 8) & byte_mask],
     ]),
   "(dp)": (arg, value, p) =>
     new Map([
