@@ -34,6 +34,14 @@ export default class Processor {
     else this._a.word = value.word;
   }
 
+  public get c(): ReadOnlyValue {
+    return this._a.as_word();
+  }
+
+  public set c(value: ReadOnlyValue) {
+    this._a.word = value.word;
+  }
+
   // X Index -------------------------------------------------------------------
 
   private _x = new Value(0);

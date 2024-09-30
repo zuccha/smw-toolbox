@@ -27,6 +27,7 @@ type Mode =
   | "long,x"
   | "sr,s"
   | "(sr,s),y"
+  | "srcBank,destBank"
   | "offset";
 
 const formatArg: Record<Mode, (arg: number, value: number) => string> = {
@@ -51,6 +52,8 @@ const formatArg: Record<Mode, (arg: number, value: number) => string> = {
   "long,x": (arg) => `$${toHex(arg, 6)},x`,
   "sr,s": (arg) => `$${toHex(arg, 2)},s`,
   "(sr,s),y": (arg) => `($${toHex(arg, 2)},s),y`,
+  "srcBank,destBank": (arg) =>
+    `$${toHex(arg & 0xff, 2)},$${toHex((arg >> 8) & 0xff, 2)}`,
   "offset": (arg) => `$${toHex(arg, arg > 255 ? 4 : 2)}`,
 };
 
@@ -172,6 +175,7 @@ const generateMemory: Record<
       [(p.db << 16) + 0xab10 + p.y, value & byte_mask],
       [(p.db << 16) + 0xab11 + p.y, (value >> 8) & byte_mask],
     ]),
+  "srcBank,destBank": () => new Map(),
   "offset": () => new Map(),
 };
 

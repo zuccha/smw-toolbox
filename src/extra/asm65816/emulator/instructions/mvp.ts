@@ -21,13 +21,13 @@ export class MVP extends Instruction {
     const destBank = this._arg.page;
     this.p.db = b(destBank);
     this._iterations = 0;
-    while (this.p.a.word !== 0xffff) {
+    while (this.p.c.word !== 0xffff) {
       this._iterations++;
       const value = this.m.load_byte(l((srcBank << 16) + this.p.x.word));
       this.m.save_byte(l((destBank << 16) + this.p.y.word), value);
       this.p.x = w(this.p.x.word - 1);
       this.p.y = w(this.p.y.word - 1);
-      this.p.a = w(this.p.a.word - 1);
+      this.p.c = w(this.p.c.word - 1);
     }
   }
 }
