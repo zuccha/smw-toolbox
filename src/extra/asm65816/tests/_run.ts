@@ -186,6 +186,7 @@ export function run(args: {
   mode: string;
   initialProcessor: Partial<ProcessorSnapshot>;
   initialMemory?: Map<number, number>;
+  initialFlags?: number;
   expectedValue?: number;
   expectedProcessor: Partial<ProcessorSnapshot>;
   expectedMemory?: Map<number, number>;
@@ -214,14 +215,16 @@ export function run(args: {
   emulator.initial_dp = args.initialProcessor.dp ?? 0x1020;
   emulator.initial_db = args.initialProcessor.db ?? 0x7e;
   emulator.initial_flags =
-    ((args.initialProcessor.flag_n ?? 0) << 7) |
-    ((args.initialProcessor.flag_v ?? 0) << 6) |
-    ((args.initialProcessor.flag_m ?? 1) << 5) |
-    ((args.initialProcessor.flag_x ?? 1) << 4) |
-    ((args.initialProcessor.flag_d ?? 0) << 3) |
-    ((args.initialProcessor.flag_i ?? 0) << 2) |
-    ((args.initialProcessor.flag_z ?? 0) << 1) |
-    ((args.initialProcessor.flag_c ?? 0) << 0);
+    args.initialFlags !== undefined
+      ? args.initialFlags
+      : ((args.initialProcessor.flag_n ?? 0) << 7) |
+        ((args.initialProcessor.flag_v ?? 0) << 6) |
+        ((args.initialProcessor.flag_m ?? 1) << 5) |
+        ((args.initialProcessor.flag_x ?? 1) << 4) |
+        ((args.initialProcessor.flag_d ?? 0) << 3) |
+        ((args.initialProcessor.flag_i ?? 0) << 2) |
+        ((args.initialProcessor.flag_z ?? 0) << 1) |
+        ((args.initialProcessor.flag_c ?? 0) << 0);
   emulator.reset_processor(true);
   const initialProcessor = args.considerPc
     ? emulator.snapshot
