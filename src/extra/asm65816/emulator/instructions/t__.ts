@@ -30,7 +30,7 @@ export class TAX extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.x = this.transfer(this.p.a, this.p.flag_x);
+    this.p.x = this.transfer(this.p.c, this.p.flag_x);
   }
 }
 
@@ -40,7 +40,7 @@ export class TAY extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.y = this.transfer(this.p.a, this.p.flag_x);
+    this.p.y = this.transfer(this.p.c, this.p.flag_x);
   }
 }
 
@@ -50,7 +50,7 @@ export class TCD extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.dp = this.transfer_word(this.p.a);
+    this.p.dp = this.transfer_word(this.p.c);
   }
 }
 
@@ -60,7 +60,7 @@ export class TCS extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.sp = this.transfer(this.p.a, this.p.flag_e);
+    this.p.sp = this.transfer(this.p.c, this.p.flag_e);
   }
 }
 
@@ -70,7 +70,7 @@ export class TDC extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.a = this.transfer_word(this.p.dp);
+    this.p.c = this.transfer_word(this.p.dp);
   }
 }
 
@@ -80,7 +80,7 @@ export class TSC extends T__ {
   public static base_cycles = 2;
 
   public execute_effect(): void {
-    this.p.a = this.transfer_word(this.p.sp);
+    this.p.c = this.transfer_word(this.p.sp);
   }
 }
 
