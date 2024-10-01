@@ -24,7 +24,7 @@ export abstract class ROR extends Instruction {
       const result = w((value.word >> 1) | (this.p.flag_c << 15));
       this.p.flag_n = 0;
       this.p.flag_z = result.word === 0;
-      this.p.flag_c = value.page & flag_c_mask;
+      this.p.flag_c = value.byte & flag_c_mask;
       return result;
     }
   }
