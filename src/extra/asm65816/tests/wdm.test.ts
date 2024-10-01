@@ -1,13 +1,13 @@
 import { describe, test } from "vitest";
 import { run } from "./_run";
 
-describe("'implied'", () => {
-  test(`NOP`, () => {
+describe("'#const'", () => {
+  test(`WDM`, () => {
     run({
-      opcode: "NOP",
+      opcode: "WDM",
       arg: 0,
       value: 0,
-      mode: "implied",
+      mode: "#const",
       initialProcessor: {},
       expectedProcessor: {},
     });
