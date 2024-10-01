@@ -121,6 +121,7 @@ export default class Emulator {
       this._soft_initial_dp = this.initial_dp;
       this._soft_initial_sp = this.initial_sp;
       this._soft_initial_flags = this.initial_flags;
+      this._soft_initial_flag_e = this.initial_flag_e;
     }
 
     this._processor.reset({
@@ -131,6 +132,7 @@ export default class Emulator {
       dp: this._soft_initial_dp,
       sp: this._soft_initial_sp,
       flags: this._soft_initial_flags,
+      flag_e: this._soft_initial_flag_e,
       pb: this._memory_mapping.rom_initial_address.bank,
       pc: this._memory_mapping.rom_initial_address.word,
     });
@@ -183,6 +185,7 @@ export default class Emulator {
   public initial_dp = 0;
   public initial_db = 0;
   public initial_flags = 0b00110000;
+  public initial_flag_e: 0 | 1 = 0;
   public initial_memory = new Map<number, number>();
 
   private _soft_initial_a = 0;
@@ -192,5 +195,6 @@ export default class Emulator {
   private _soft_initial_dp = 0;
   private _soft_initial_db = 0;
   private _soft_initial_flags = 0b00110000;
+  private _soft_initial_flag_e: 0 | 1 = 0;
   private _soft_initial_memory = new Map<number, number>();
 }

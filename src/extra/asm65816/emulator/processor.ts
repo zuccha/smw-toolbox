@@ -166,8 +166,11 @@ export default class Processor {
   }
 
   public set flag_m(active: boolean | number) {
-    if (this._flag_e) return;
-    this._flag_m = active ? 1 : 0;
+    if (active || this.flag_e) {
+      this._flag_m = 1;
+    } else {
+      this._flag_m = 0;
+    }
   }
 
   // Index Size ----------------------------------------------------------------
@@ -323,17 +326,18 @@ export default class Processor {
     pb: number;
     pc: number;
     flags: number;
+    flag_e: 0 | 1;
   }) {
-    this._flag_n = ((args.flags >> 7) & 1) as 0 | 1;
-    this._flag_v = ((args.flags >> 6) & 1) as 0 | 1;
-    this._flag_m = ((args.flags >> 5) & 1) as 0 | 1;
-    this._flag_x = ((args.flags >> 4) & 1) as 0 | 1;
-    this._flag_d = ((args.flags >> 3) & 1) as 0 | 1;
-    this._flag_i = ((args.flags >> 2) & 1) as 0 | 1;
-    this._flag_z = ((args.flags >> 1) & 1) as 0 | 1;
-    this._flag_c = ((args.flags >> 0) & 1) as 0 | 1;
-    this._flag_e = 0;
-    this._flag_b = 0;
+    this.flag_e = args.flag_e;
+    this.flag_n = ((args.flags >> 7) & 1) as 0 | 1;
+    this.flag_v = ((args.flags >> 6) & 1) as 0 | 1;
+    this.flag_m = ((args.flags >> 5) & 1) as 0 | 1;
+    this.flag_x = ((args.flags >> 4) & 1) as 0 | 1;
+    this.flag_d = ((args.flags >> 3) & 1) as 0 | 1;
+    this.flag_i = ((args.flags >> 2) & 1) as 0 | 1;
+    this.flag_z = ((args.flags >> 1) & 1) as 0 | 1;
+    this.flag_c = ((args.flags >> 0) & 1) as 0 | 1;
+    this.flag_b = 0;
     this._a.long = args.a & word_mask;
     this.x = w(args.x);
     this.y = w(args.y);

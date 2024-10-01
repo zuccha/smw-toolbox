@@ -225,6 +225,7 @@ export function run(args: {
         ((args.initialProcessor.flag_i ?? 0) << 2) |
         ((args.initialProcessor.flag_z ?? 0) << 1) |
         ((args.initialProcessor.flag_c ?? 0) << 0);
+  emulator.initial_flag_e = args.initialProcessor.flag_e ?? 0;
   emulator.reset_processor(true);
   const initialProcessor = args.considerPc
     ? emulator.snapshot
