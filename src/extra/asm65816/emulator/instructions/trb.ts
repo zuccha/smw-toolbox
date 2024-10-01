@@ -15,7 +15,7 @@ export abstract class TRB extends Instruction {
       this.p.flag_z = (value.byte & this.p.a.byte) === 0;
       this.m.save_byte(addr, b(result));
     } else {
-      const value = this.m.load_byte(addr);
+      const value = this.m.load_word(addr);
       const result = value.word & ~this.p.a.word;
       this.p.flag_z = (value.word & this.p.a.word) === 0;
       this.m.save_word(addr, w(result));
