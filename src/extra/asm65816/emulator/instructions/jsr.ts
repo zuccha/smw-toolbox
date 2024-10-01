@@ -10,7 +10,7 @@ export abstract class JSR extends Instruction {
     this.p.sp = w(this.p.sp.word - 2);
     this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
     this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
-    this.p.pc = this._arg;
+    this.p.pc = this.addr;
   }
 }
 
@@ -23,8 +23,9 @@ export abstract class JSL extends Instruction {
     this.m.save_byte(w(this.p.sp.word + 3), b(this.p.pb.byte));
     this.m.save_byte(w(this.p.sp.word + 2), b(this.p.pc.page));
     this.m.save_byte(w(this.p.sp.word + 1), b(this.p.pc.byte));
-    this.p.pb = b(this._arg.bank);
-    this.p.pc = this._arg;
+    const addr = this.addr;
+    this.p.pb = b(addr.bank);
+    this.p.pc = addr;
   }
 }
 
