@@ -11,9 +11,9 @@ export class XBA extends Instruction {
   public static affected_flags = flag_n_mask | flag_z_mask;
 
   public execute_effect(): void {
-    const byte = this.p.a.byte;
-    const page = this.p.a.page;
-    this.p.a = w((byte << 8) | page);
+    const byte = this.p.c.byte;
+    const page = this.p.c.page;
+    this.p.c = w((byte << 8) | page);
     this.p.flag_n = page & flag_n_mask;
     this.p.flag_z = page === 0;
   }
