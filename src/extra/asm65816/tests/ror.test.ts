@@ -14,8 +14,8 @@ describe("'A'", () => {
       initialProcessor            | expectedProcessor
       ${{ a: 0x0000 }}            | ${{ flag_z: 1 }}
       ${{ a: 0x0002 }}            | ${{ a: 0x0001 }}
-      ${{ a: 0x0080, flag: 1 }}   | ${{ a: 0x0040, flag_n: 0 }}
-      ${{ a: 0x0081, flag: 1 }}   | ${{ a: 0x0040, flag_c: 1 }}
+      ${{ a: 0x0080, flag_n: 1 }} | ${{ a: 0x0040, flag_n: 0 }}
+      ${{ a: 0x0081, flag_c: 0 }} | ${{ a: 0x0040, flag_c: 1 }}
       ${{ a: 0x0101 }}            | ${{ a: 0x0100, flag_c: 1, flag_z: 1 }}
       ${{ a: 0x0004, flag_z: 1 }} | ${{ a: 0x0002, flag_z: 0 }}
       ${{ a: 0x0004, flag_n: 1 }} | ${{ a: 0x0002, flag_n: 0 }}
@@ -32,8 +32,8 @@ describe("'A'", () => {
       ${{ a: 0x0004 }}            | ${{ a: 0x0002 }}
       ${{ a: 0x0080 }}            | ${{ a: 0x0040 }}
       ${{ a: 0x0100 }}            | ${{ a: 0x0080 }}
-      ${{ a: 0x8000, flag: 1 }}   | ${{ a: 0x4000, flag_n: 0 }}
-      ${{ a: 0x8111, flag: 1 }}   | ${{ a: 0x4088, flag_c: 1 }}
+      ${{ a: 0x8000, flag_n: 1 }} | ${{ a: 0x4000, flag_n: 0 }}
+      ${{ a: 0x8111, flag_c: 0 }} | ${{ a: 0x4088, flag_c: 1 }}
       ${{ a: 0x0001 }}            | ${{ a: 0x0000, flag_c: 1, flag_z: 1 }}
       ${{ a: 0x0400, flag_z: 1 }} | ${{ a: 0x0200, flag_z: 0 }}
       ${{ a: 0x0400, flag_n: 1 }} | ${{ a: 0x0200, flag_n: 0 }}
