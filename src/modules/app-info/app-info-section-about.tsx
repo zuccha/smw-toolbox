@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from "lucide-preact";
+import ExternalLink from "../../components/external-link";
 import SectionCollapsible from "../../components/section-collapsible";
 import { useAppInfoTabAboutIsVisible } from "./store";
 import changelog from "./changelog";
@@ -21,29 +21,26 @@ export default function AppInfoSectionAbout() {
       <div>{`Version ${release.version} — ${release.date}`}</div>
       <div>©2024 zuccha</div>
       <div>
-        <a href="https://github.com/zuccha/smw-toolbox" target="_blank">
-          Source code <ExternalLinkIcon size="0.8em" />
-        </a>
+        <ExternalLink
+          href="https://github.com/zuccha/smw-toolbox"
+          label="Source code"
+        />
       </div>
       <br />
       <div>
         <b>Contributing</b>
       </div>
       <div>
-        <a
+        <ExternalLink
           href="https://github.com/zuccha/smw-toolbox/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title="
-          target="_blank"
-        >
-          Report a bug <ExternalLinkIcon size="0.8em" />
-        </a>
+          label="Report a bug"
+        />
       </div>
       <div>
-        <a
+        <ExternalLink
           href="https://github.com/zuccha/smw-toolbox/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title="
-          target="_blank"
-        >
-          Suggest a feature <ExternalLinkIcon size="0.8em" />
-        </a>
+          label="Suggest a feature"
+        />
       </div>
     </SectionCollapsible>
   );

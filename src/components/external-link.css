@@ -1,0 +1,11 @@
+.ExternalLink,
+.ExternalLink:visited {
+  color: var(--color-primary-2);
+  outline-color: var(--color-primary-1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ExternalLink:hover {
+  text-decoration: underline;
+}

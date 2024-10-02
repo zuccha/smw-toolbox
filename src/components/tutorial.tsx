@@ -63,8 +63,14 @@ function TutorialActions({ actions }: TutorialActionsProps) {
       <tbody>
         {actions.map((action, i) => (
           <tr key={i}>
-            <td class="Tutorial_Action_Name">{action.name}</td>
-            <td class="Tutorial_Action_Description">{action.description}</td>
+            <td
+              class="Tutorial_Action_Name"
+              dangerouslySetInnerHTML={{ __html: action.name }}
+            />
+            <td
+              class="Tutorial_Action_Description"
+              dangerouslySetInnerHTML={{ __html: action.description }}
+            />
             {shouldShowKeybindings && (
               <TutorialKeybindings
                 id={action.name}

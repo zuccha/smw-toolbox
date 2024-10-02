@@ -1,25 +1,26 @@
+import ExternalLink from "../../components/external-link";
 import Tutorial, { TutorialAction } from "../../components/tutorial";
 import { useEmulatorTabTutorialIsVisible } from "./store";
 
 const memory: TutorialAction[] = [
   {
-    name: "808000-FFFFFF",
+    name: "<code>808000</code>-<code>FFFFFF</code>",
     description: "ROM",
     keybindings: [],
   },
   {
-    name: "008000-7DFFFF",
-    description: "Mirror of 808000-FDFFFF",
+    name: "<code>008000</code>-<code>7DFFFF</code>",
+    description: "Mirror of <code>808000</code>-<code>FDFFFF</code>",
     keybindings: [],
   },
   {
-    name: "7E0000-7E1FFF 7E2000-7FFFFF",
+    name: "<code>7E0000</code>-<code>7E1FFF</code> <code>7E2000</code>-<code>7FFFFF</code>",
     description: "WRAM",
     keybindings: [],
   },
   {
-    name: "000000-3F1FFF 7F0000-7F1FFF 800000-BF1FFF",
-    description: "Mirror of 7E0000-7E1FFF",
+    name: "<code>000000</code>-<code>3F1FFF</code> <code>7F0000</code>-<code>7F1FFF</code> <code>800000</code>-<code>BF1FFF</code>",
+    description: "Mirror of <code>7E0000</code>-<code>7E1FFF</code>",
     keybindings: [],
   },
 ];
@@ -49,7 +50,7 @@ const processor: TutorialAction[] = [
   {
     name: "SP",
     description:
-      "Stack Pointer. In memory, the stack pointer is marked with a colored outline.",
+      "Stack Pointer. In the <i>Memory</i> section, the stack pointer is marked with a colored outline.",
     keybindings: [],
   },
   {
@@ -132,6 +133,10 @@ export default function EmulatorSectionTutorial() {
           imitation of an actual SNES, simulating its processor and (partially)
           its memory.
         </div>
+        <div>
+          You can run the emulator by pressing the "Play" button on the right
+          side of the "Emulator" text or via the <kbd>Ctrl-E</kbd> shortcut.
+        </div>
       </Tutorial.Section>
 
       <Tutorial.Section title="The Processor">
@@ -146,10 +151,15 @@ export default function EmulatorSectionTutorial() {
           The last row features the final state of the processor, where C
           represents the total amount of cycles taken by the program and L the
           total amount of bytes (note that L is not necessarily the sum of all
-          instructions' lengths, as some may have been executed several times).
+          instructions' lengths, as some may have been skipped or executed
+          several times).
         </div>
         <div>The processor is made of the following registers:</div>
         <Tutorial.Actions actions={processor} />
+        <div>
+          All registers but the Program Counter indicate the state of the
+          processor <i>after</i> the instruction executed.
+        </div>
         <div>
           Colored values are values that changed compared to the previous
           instruction. You can hover an instruction to display its bytes and the
@@ -183,7 +193,7 @@ export default function EmulatorSectionTutorial() {
         </div>
         <div>
           Dimmed values are values that have not been set by the user (both in
-          RAM and ROM).
+          RAM and ROM). The Stack Pointer address is marked with an outline.
         </div>
       </Tutorial.Section>
 
@@ -208,20 +218,21 @@ export default function EmulatorSectionTutorial() {
           to 16-bit, and 6-8 to 24-bit.
         </div>
         <div>
-          Labels are defined by specifying an alphanumeric sequence prefixed by
-          a period and ending with a column (e.g., <code>.my_label:</code>). To
-          use a label you omit the column (e.g., <code>BEQ .my_label</code>).
-          Labels can be used in branching operations, <code>JMP</code>,{" "}
-          <code>JML</code>, <code>JSR</code>, <code>JSL</code>, <code>PER</code>
-          , and anywhere you could put an absolute address (e.g.,{" "}
-          <code>LDA .my_label,x</code>).
+          Labels represent a specific address in memory and are defined by
+          specifying an alphanumeric sequence prefixed by a period and ending
+          with a column (e.g., <code>.my_label:</code>). To use a label you omit
+          the column (e.g., <code>BEQ .my_label</code>). Labels can be used in
+          branching operations, <code>JMP</code>, <code>JML</code>,{" "}
+          <code>JSR</code>, <code>JSL</code>, <code>PER</code>, and anywhere you
+          could put an absolute address (e.g., <code>LDA .my_label,x</code>).
         </div>
         <div>
           You can define data tables with <code>db</code> for 8-bit numbers,{" "}
           <code>dw</code> for 16-bit numbers, and <code>dl</code> for 24-bit
           numbers. Every table instruction must be followed by one or more
-          comma-separated values of corresponding size. Labels are not allowed
-          in data tables. Examples:
+          comma-separated values of corresponding size. These values will be
+          written directly into ROM in little endian format. Labels are not
+          allowed in data tables. Examples:
           <div>
             <code>
               &nbsp;&nbsp;db $01, $02, $04, $08
@@ -269,13 +280,26 @@ export default function EmulatorSectionTutorial() {
         <div>
           You can search for instructions in the <i>Search Opcodes</i> section,
           by typing the instruction's mnemonic in the input field. The result
-          will show all related instructions, with their hex opcode, argument
+          will show all related instructions with their hex opcode, argument
           mode, example usage, flags affected, cycles used, and bytes required.
         </div>
         <div>
           Cycles and bytes might be affected by the following modifiers:
         </div>
         <Tutorial.Actions actions={modifiers} />
+      </Tutorial.Section>
+
+      <Tutorial.Section title="Unexpected Results">
+        <div>
+          If something is not working as you might expect or the result doesn't
+          match with those of others emulators, then it might be a bug. Feel
+          free to open a{" "}
+          <ExternalLink
+            href="https://github.com/zuccha/smw-toolbox/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title="
+            label="bug report"
+          />{" "}
+          on GitHub.
+        </div>
       </Tutorial.Section>
     </Tutorial>
   );
