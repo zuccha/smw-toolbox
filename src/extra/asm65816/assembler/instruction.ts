@@ -181,7 +181,7 @@ export class Instruction_Label_RelativeLong extends Instruction_Label {
 }
 
 //------------------------------------------------------------------------------
-// Label - Abstract
+// Label - Absolute
 //------------------------------------------------------------------------------
 
 export class Instruction_Label_Absolute extends Instruction_Label {
@@ -197,7 +197,7 @@ export class Instruction_Label_Absolute extends Instruction_Label {
 }
 
 //------------------------------------------------------------------------------
-// Label - Abstract Long
+// Label - Absolute Long
 //------------------------------------------------------------------------------
 
 export class Instruction_Label_AbsoluteLong extends Instruction_Label {

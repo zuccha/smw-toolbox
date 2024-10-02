@@ -116,7 +116,15 @@ Mode_AbsoluteLong_X            { Long X }
 Mode_StackRelative             { Byte S }
 Mode_StackRelative_Indirect_Y  { "(" Byte S ")" Y }
 Mode_BlockMove                 { MoveBanks }
+Mode_Immediate_Label           { "#" LabelUsage }
 Mode_Label                     { LabelUsage }
+Mode_Label_X                   { LabelUsage X }
+Mode_Label_Y                   { LabelUsage Y }
+Mode_Label_Indirect            { "(" LabelUsage ")" }
+Mode_Label_X_Indirect          { "(" LabelUsage X ")" }
+Mode_Label_Indirect_Y          { "(" LabelUsage ")" Y }
+Mode_Label_IndirectLong        { "[" LabelUsage "]" }
+Mode_Label_IndirectLong_Y      { "[" LabelUsage "]" Y }
 
 mode {
   Mode_Accumulator | Mode_Immediate_Byte | Mode_Immediate_Word | Mode_DirectPage
@@ -126,7 +134,9 @@ mode {
 | Mode_Absolute_X | Mode_Absolute_Y | Mode_Absolute_Indirect
 | Mode_Absolute_X_Indirect | Mode_Absolute_IndirectLong | Mode_AbsoluteLong
 | Mode_AbsoluteLong_X | Mode_StackRelative | Mode_StackRelative_Indirect_Y
-| Mode_BlockMove | Mode_Label
+| Mode_BlockMove | Mode_Immediate_Label| Mode_Label | Mode_Label_X
+| Mode_Label_Y | Mode_Label_Indirect | Mode_Label_X_Indirect
+| Mode_Label_Indirect_Y | Mode_Label_IndirectLong | Mode_Label_IndirectLong_Y
 }
 
 @detectDelim
