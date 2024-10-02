@@ -12,33 +12,22 @@ export const emulatorId = "Emulator";
 export const emulator = new Emulator();
 
 const defaultCode = `\
-NOP           ; Implied
-ASL A         ; Accumulator
-ADC #$00      ; Immediate Variable A (byte)
-ADC #$0000    ; Immediate Variable A (word)
-CPX #$00      ; Immediate Variable X (byte)
-CPX #$0000    ; Immediate Variable X (word)
-ADC $00       ; Direct Page
-ADC $00,x     ; Direct Page X
-LDX $00,y     ; Direct Page Y
-ADC ($00)     ; Direct Page Indirect
-ADC ($00,x)   ; Direct Page X Indirect
-ADC ($00),y   ; Direct Page Indirect Y
-ADC [$00]     ; Direct Page Indirect Long
-ADC [$00],y   ; Direct Page Indirect Long Y
-ADC $0000     ; Absolute
-ADC $0000,x   ; Absolute X
-ADC $0000,y   ; Absolute Y
-JMP ($0000)   ; Absolute Indirect
-JMP ($0000,x) ; Absolute X Indirect
-JML [$0000]   ; Absolute Indirect Long
-ADC $000000   ; Absolute Long
-ADC $000000,x ; Absolute Long X
-ADC $00,s     ; Stack Relative
-ADC ($00,s),y ; Stack Relative Indirect Y
-BRA $00       ; Offset
-BRL $0000     ; Offset Long
-MVN $00,$00   ; Block Move`;
+; Copy the ".data" table in RAM.
+LDX #$02
+.store_data:
+  LDA .data,x : STA $10,x
+  DEX : BPL .store_data
+
+; Skip to the end, otherwise ".data"
+; would be execute as instructions.
+BRA .end
+
+; Data table.
+.data:
+  db $0A, $0B, $0C
+
+; End of program.
+.end:`;
 
 const EmulatorInitialStateSchema = z.object({
   a: z.number(),
@@ -57,7 +46,7 @@ const defaultInitialState = {
   sp: 0x01fc,
   dp: 0,
   db: 0,
-  flags: 0,
+  flags: 0b00110000,
 };
 
 export const useEmulatorCode = () =>
