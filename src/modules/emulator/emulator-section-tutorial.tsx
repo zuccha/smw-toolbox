@@ -211,6 +211,10 @@ export default function EmulatorSectionTutorial() {
           Labels are defined by specifying an alphanumeric sequence prefixed by
           a period and ending with a column (e.g., <code>.my_label:</code>). To
           use a label you omit the column (e.g., <code>BEQ .my_label</code>).
+          Labels can be used in branching operations, <code>JMP</code>,{" "}
+          <code>JML</code>, <code>JSR</code>, <code>JSL</code>, <code>PER</code>
+          , and anywhere you could put an absolute address (e.g.,{" "}
+          <code>LDA .my_label,x</code>).
         </div>
         <div>
           You can define data tables with <code>db</code> for 8-bit numbers,{" "}
