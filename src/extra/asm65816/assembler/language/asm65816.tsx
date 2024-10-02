@@ -10,7 +10,7 @@ const parserWithMetadata = parser.configure({
       "Opcode": t.keyword,
       "A ConstByte ConstWord": t.number,
       "Byte Word Long MoveBanks Origin": t.variableName,
-      "DB DW DL ORG": t.keyword,
+      "DB DW DL ORG": t.macroName,
       "LabelDefinition LabelUsage": t.labelName,
       "X Y S ,": t.derefOperator,
       "( ) [ ]": t.paren,
