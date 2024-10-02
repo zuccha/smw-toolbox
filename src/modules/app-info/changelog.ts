@@ -11,6 +11,7 @@ const changelog: ChangelogRelease[] = [
       "<b>Emulator:</b> Support all opcodes during compilation.",
       "<b>Emulator:</b> Support defining labels and using them in instructions during compilation.",
       "<b>Emulator:</b> Support defining data tables during compilation.",
+      "<b>Emulator:</b> Support changing code's program counter.",
       "<b>Emulator:</b> Support multiple instructions on the same line during compilation.",
       "<b>Emulator:</b> Allow to configure the maximum number of instructions to execute.",
       "<b>Emulator:</b> Allow to configure the initial state of the processor.",

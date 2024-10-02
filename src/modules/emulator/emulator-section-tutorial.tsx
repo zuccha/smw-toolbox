@@ -244,8 +244,12 @@ export default function EmulatorSectionTutorial() {
           </div>
         </div>
         <div>
-          Every instruction, data table, or label definition must either start
-          on a new line or be separated by a column (e.g.,{" "}
+          You can change the code's PC with <code>org</code>. For example, all
+          code that follows <code>org $818000</code> will be written in bank 81.
+        </div>
+        <div>
+          Every instruction, data table, change of origin, or label definition
+          must either start on a new line or be separated by a column (e.g.,{" "}
           <code>CLC : ADC #$10).</code>
         </div>
         <div>
