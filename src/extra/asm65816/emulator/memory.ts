@@ -18,6 +18,10 @@ export default class Memory {
     return new Map(this._memory);
   }
 
+  public get mapping(): MemoryMapping {
+    return this._mapping;
+  }
+
   public reset(mapping: MemoryMapping): void {
     this._memory = new Map();
     this._mapping = mapping;

@@ -46,7 +46,7 @@ export abstract class Instruction {
 
   public execute() {
     this._processor.pc = w(this._processor.pc.word + this.length);
-    this._effective_addr = this.addr;
+    this._effective_addr = l(this.m.mapping.map_safe(this.addr));
     this.execute_effect();
     this._snapshot_after = this._processor.snapshot();
   }

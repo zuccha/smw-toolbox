@@ -6,11 +6,11 @@ import { parser } from "./asm65816-parser.js";
 const parserWithMetadata = parser.configure({
   props: [
     styleTags({
-      Comment: t.lineComment,
-      Opcode: t.keyword,
+      "Comment": t.lineComment,
+      "Opcode": t.keyword,
       "A ConstByte ConstWord": t.number,
-      "Byte Word Long MoveBanks": t.variableName,
-      "DB DW DL": t.keyword,
+      "Byte Word Long MoveBanks Origin": t.variableName,
+      "DB DW DL ORG": t.keyword,
       "LabelDefinition LabelUsage": t.labelName,
       "X Y S ,": t.derefOperator,
       "( ) [ ]": t.paren,

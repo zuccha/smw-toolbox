@@ -1,8 +1,10 @@
 import { Text } from "@codemirror/state";
+import { Program } from "../program";
 import AssemblerError from "./assembler-error";
 import { asm65816Language } from "./language/asm65816";
-import Definition_Label from "./definition-label";
 import Definition from "./definition";
+import Definition_Label from "./definition-label";
+import Definition_Origin from "./definition-origin";
 import Definition_Instruction from "./definition-instruction";
 import Instruction, {
   Instruction_Data,
@@ -10,9 +12,11 @@ import Instruction, {
   Instruction_Value,
 } from "./instruction";
 
+type InstructionChunk = { origin: number; instructions: Instruction[] };
+
 export default class Assembler {
   public code = "";
-  public bytes: number[] = [];
+  public program: Program = { chunks: [] };
   public errors: AssemblerError[] = [];
 
   public constructor(code = "") {
@@ -23,8 +27,9 @@ export default class Assembler {
     this.errors = [];
     const definitions = this._parse_code();
 
-    const { instructions, labels } = this._process_definitions(definitions);
-    this.bytes = this._generate_bytes(instructions, labels);
+    const { instructionChunks, labels } =
+      this._generate_chunks_and_labels(definitions);
+    this.program = this._generate_program(instructionChunks, labels);
   }
 
   private _parse_code(): Definition[] {
@@ -162,7 +167,15 @@ export default class Assembler {
         pushInstruction();
         const range = { from: cursor.from, to: cursor.to, line };
         const label = value.substring(0, value.length - 1);
-        definitions.push(new Definition_Label(label, range));
+        definitions.push(new Definition_Label(range, label));
+        return;
+      }
+
+      if (node.name === "OrgDefinition") {
+        pushInstruction();
+        const range = { from: cursor.from, to: cursor.to, line };
+        const address = parse_arg(value.replace(/org/, "").trim());
+        definitions.push(new Definition_Origin(range, address));
         return;
       }
     });
@@ -174,10 +187,11 @@ export default class Assembler {
     return definitions;
   }
 
-  private _process_definitions(definitions: Definition[]) {
-    const instructions: Instruction[] = [];
+  private _generate_chunks_and_labels(definitions: Definition[]) {
+    let pc = 0x808000; // TODO: Extract?
+    let chunk: InstructionChunk = { origin: pc, instructions: [] };
+    const instructionChunks: InstructionChunk[] = [chunk];
     let labels: Map<string, number> = new Map();
-    let pc = 0x008000;
 
     for (const definition of definitions) {
       if (definition instanceof Definition_Instruction) {
@@ -186,7 +200,7 @@ export default class Assembler {
           this.errors.push(new AssemblerError(instruction, definition.range));
           continue;
         }
-        instructions.push(instruction);
+        chunk.instructions.push(instruction);
         pc += instruction.size;
         continue;
       }
@@ -200,39 +214,60 @@ export default class Assembler {
         labels.set(definition.label, pc);
         continue;
       }
+
+      if (definition instanceof Definition_Origin) {
+        if (isNaN(definition.address)) {
+          const message = `Origin: invalid origin address.`;
+          this.errors.push(new AssemblerError(message, definition.range));
+          continue;
+        }
+        chunk = { origin: definition.address, instructions: [] };
+        pc = definition.address;
+        instructionChunks.push(chunk);
+        continue;
+      }
     }
 
-    return { instructions, labels };
+    return { instructionChunks, labels };
   }
 
-  private _generate_bytes(
-    instructions: Instruction[],
+  private _generate_program(
+    instructionChunks: InstructionChunk[],
     labels: Map<string, number>,
-  ): number[] {
-    const bytes: number[] = [];
+  ): Program {
+    return {
+      chunks: instructionChunks.map((instructionChunk) => ({
+        origin: instructionChunk.origin,
+        bytes: instructionChunk.instructions
+          .flatMap((instruction) => {
+            if (
+              instruction instanceof Instruction_Value ||
+              instruction instanceof Instruction_Data
+            ) {
+              return instruction.bytes();
+            }
 
-    for (const instruction of instructions) {
-      if (
-        instruction instanceof Instruction_Value ||
-        instruction instanceof Instruction_Data
-      ) {
-        bytes.push(...instruction.bytes());
-        continue;
-      }
+            if (instruction instanceof Instruction_Label) {
+              const bytes_or_error = instruction.bytes(labels);
+              if (typeof bytes_or_error === "string") {
+                const error = new AssemblerError(
+                  bytes_or_error,
+                  instruction.range,
+                );
+                this.errors.push(error);
+                return undefined;
+              }
+              return bytes_or_error;
+            }
 
-      if (instruction instanceof Instruction_Label) {
-        const bytes_or_error = instruction.bytes(labels);
-        if (typeof bytes_or_error === "string") {
-          const error = new AssemblerError(bytes_or_error, instruction.range);
-          this.errors.push(error);
-        } else {
-          bytes.push(...bytes_or_error);
-        }
-        continue;
-      }
-    }
-
-    return bytes;
+            const message = "Invalid instruction type.";
+            const error = new AssemblerError(message, instruction.range);
+            this.errors.push(error);
+            return undefined;
+          })
+          .filter((instruction) => instruction !== undefined),
+      })),
+    };
   }
 }
 

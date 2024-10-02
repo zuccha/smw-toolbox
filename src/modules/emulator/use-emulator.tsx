@@ -28,7 +28,7 @@ export default function useEmulator() {
   const run = useCallback(() => {
     assembler.code = code.trimEnd();
     assembler.assemble();
-    emulator.set_bytes(assembler.bytes);
+    emulator.set_program(assembler.program);
     emulator.set_max_instructions(maxInstructions);
     emulator.initial_a = initialState.a;
     emulator.initial_x = initialState.x;

@@ -6,9 +6,11 @@ line {
   (definition (":" definition)*) (newline | eof) | newline
 }
 
-definition { LabelDefinition | Instruction }
+definition { OrgDefinition | LabelDefinition | Instruction }
 
 Instruction { (Opcode mode?) | data }
+
+OrgDefinition { ORG Origin }
 
 data { dataByte | dataWord | dataLong }
 
@@ -65,6 +67,10 @@ dataLong { DL Long ("," Long)* }
   DB { "db" }
   DW { "dw" }
   DL { "dl" }
+
+  ORG { "org" }
+
+  Origin { long }
 
   "(" ")" "[" "]" ","
 

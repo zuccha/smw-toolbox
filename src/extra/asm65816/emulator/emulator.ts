@@ -1,3 +1,4 @@
+import { Program } from "../program";
 import { Instruction } from "./instruction";
 import { _Init } from "./instructions/_init";
 import Memory from "./memory";
@@ -5,10 +6,10 @@ import MemoryMapping from "./memory-mapping";
 import { Opcode, opcode_to_instruction } from "./opcode-to-instruction";
 import Processor from "./processor";
 import { ProcessorSnapshot } from "./processor-snapshot";
-import { b, l, ReadOnlyValue, w } from "./value";
+import { b, l, ReadOnlyValue } from "./value";
 
 export default class Emulator {
-  private _bytes: number[] = [];
+  private _program: Program = { chunks: [] };
   private _processor: Processor = new Processor();
   private _memory: Memory = new Memory(MemoryMapping.LoROM);
   private _instructions: Instruction[] = [];
@@ -29,7 +30,7 @@ export default class Emulator {
   }
 
   public get length(): number {
-    return this._bytes.length;
+    return this._program.chunks.reduce((sum, c) => sum + c.bytes.length, 0);
   }
 
   public get snapshot(): ProcessorSnapshot {
@@ -60,8 +61,8 @@ export default class Emulator {
     return this._memory.load_byte_raw(l(addr));
   }
 
-  public set_bytes(bytes: number[]) {
-    this._bytes = bytes.map((byte) => b(byte).byte);
+  public set_program(program: Program) {
+    this._program = program;
   }
 
   public set_max_instructions = (max_instructions: number) => {
@@ -139,12 +140,12 @@ export default class Emulator {
   }
 
   public reset_memory(hard: boolean): void {
-    const pb = this._processor.pb.byte << 16;
-    const pc = this._processor.pc.word;
     this._memory.reset(this._memory_mapping);
-    for (let i = 0; i < this._bytes.length; ++i) {
-      const addr = l(pb + w(pc + i).word);
-      this._memory.save_byte(addr, b(this._bytes[i]!), true);
+    for (const chunk of this._program.chunks) {
+      for (let i = 0; i < chunk.bytes.length; ++i) {
+        const addr = l(chunk.origin + i);
+        this._memory.save_byte(addr, b(chunk.bytes[i]!), true);
+      }
     }
     if (hard) this._soft_initial_memory = this.initial_memory;
     for (const [addr, value] of this._soft_initial_memory)

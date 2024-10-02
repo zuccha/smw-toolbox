@@ -205,7 +205,7 @@ export function run(args: {
   assembler.assemble();
 
   const emulator = new Emulator();
-  emulator.set_bytes(assembler.bytes);
+  emulator.set_program(assembler.program);
   emulator.set_max_instructions(args.maxInstructions ?? 3);
 
   emulator.initial_a = args.initialProcessor.a ?? 0x0000;
