@@ -301,7 +301,7 @@ function Cell_Flags({
 function Cell_Instruction({ instruction }: { instruction: Instruction }) {
   const bytes = instruction.bytes.map((byte) => toHex(byte, 2)).join(" ");
   const tooltip = instruction.has_addr
-    ? `${bytes} ${instruction.addr.format_address()}`
+    ? `${bytes} ${instruction.effective_addr.format_address()}`
     : bytes;
   return (
     <span className="flex">

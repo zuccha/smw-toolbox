@@ -26,6 +26,7 @@ export abstract class Instruction {
   protected _snapshot_before: ProcessorSnapshot;
   protected _snapshot_after: ProcessorSnapshot | undefined;
   protected _memory: Memory;
+  private _effective_addr: ReadOnlyValue = l(0);
 
   public constructor(
     id: number,
@@ -45,6 +46,7 @@ export abstract class Instruction {
 
   public execute() {
     this._processor.pc = w(this._processor.pc.word + this.length);
+    this._effective_addr = this.addr;
     this.execute_effect();
     this._snapshot_after = this._processor.snapshot();
   }
@@ -59,6 +61,10 @@ export abstract class Instruction {
 
   public get addr(): ReadOnlyValue {
     return this.mode.addr(this._mode_context);
+  }
+
+  public get effective_addr(): ReadOnlyValue {
+    return this._effective_addr;
   }
 
   public get text(): string {
