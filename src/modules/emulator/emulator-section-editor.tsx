@@ -12,7 +12,7 @@ import useEmulator from "./use-emulator";
 
 const extensions = [asm65816(), asm65816Linter];
 
-export default function EmulatorSectionMain() {
+export default function EmulatorSectionEditor() {
   const [CopyIcon, copy] = useCopyWithIcon();
 
   const emulator = useEmulator();
@@ -33,7 +33,7 @@ export default function EmulatorSectionMain() {
   );
 
   return (
-    <SectionStatic actions={actions} label="Emulator">
+    <SectionStatic actions={actions} label="Editor">
       <div className="App_SectionCol">
         <CodeEditor extensions={extensions} onChange={setCode} value={code} />
 

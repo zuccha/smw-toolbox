@@ -1,7 +1,7 @@
 import EmulatorHotkeys from "./emulator-hotkeys";
 import EmulatorSectionInitialState from "./emulator-section-initial-state";
 import EmulatorSectionLog from "./emulator-section-log";
-import EmulatorSectionMain from "./emulator-section-main";
+import EmulatorSectionEditor from "./emulator-section-editor";
 import EmulatorSectionMemory from "./emulator-section-memory";
 import EmulatorSectionOpcode from "./emulator-section-opcode";
 import EmulatorSectionTutorial from "./emulator-section-tutorial";
@@ -12,7 +12,7 @@ export default function Emulator() {
       <EmulatorHotkeys />
 
       <div class="App_ModuleBlock">
-        <EmulatorSectionMain />
+        <EmulatorSectionEditor />
         <EmulatorSectionInitialState />
         <EmulatorSectionOpcode />
       </div>
