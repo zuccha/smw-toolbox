@@ -3,7 +3,7 @@ import { ChangelogRelease } from "../../components/changelog";
 const changelog: ChangelogRelease[] = [
   {
     version: "1.2.0",
-    date: "Unreleased",
+    date: "2024-10-03",
     added: [
       "Add <b>Emulator</b> widget to write, assemble, and execute ASM code.",
       "<b>Emulator:</b> Add code editor with syntax highlight.",
