@@ -8,6 +8,8 @@ const changelog: ChangelogRelease[] = [
       "Add <b>Emulator</b> widget to write, assemble, and execute ASM code.",
       "<b>Emulator:</b> Add code editor with syntax highlight.",
       "<b>Emulator:</b> Add button and hotkey (<kbd>Ctrl+E</kbd>) to assemble and execute ASM code.",
+      "<b>Emulator:</b> Add button to clear editor.",
+      "<b>Emulator:</b> Add button to copy code to clipboard.",
       "<b>Emulator:</b> Support all opcodes during compilation.",
       "<b>Emulator:</b> Support defining labels and using them in instructions during compilation.",
       "<b>Emulator:</b> Support defining data tables during compilation.",
