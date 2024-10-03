@@ -8,13 +8,6 @@ export default function EmulatorSectionLog() {
   const emulator = useEmulator();
   const [isTabLogVisible, setIsTabLogVisible] = useEmulatorTabLogIsVisible();
 
-  const errors =
-    emulator.compilationErrors.length > 0
-      ? emulator.compilationErrors
-      : emulator.executionErrors.length > 0
-      ? emulator.executionErrors
-      : [];
-
   const clickValidInstruction = useCallback(
     (id: number) => emulator.runUntil(id),
     [emulator.runUntil],
@@ -28,7 +21,8 @@ export default function EmulatorSectionLog() {
     >
       <SnesLog
         cycles={emulator.cycles}
-        errors={errors}
+        compilationErrors={emulator.compilationErrors}
+        executionErrors={emulator.executionErrors}
         instructions={emulator.instructions}
         length={emulator.length}
         onClickValidInstruction={clickValidInstruction}

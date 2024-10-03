@@ -10,7 +10,8 @@ import "./snes-log.css";
 
 export type SnesLogProps = {
   cycles: number;
-  errors: readonly string[];
+  compilationErrors: readonly string[];
+  executionErrors: readonly string[];
   instructions: readonly Instruction[];
   length: number;
   onClickValidInstruction: (id: number) => void;
@@ -21,28 +22,34 @@ export type SnesLogProps = {
 
 export default function SnesLog({
   cycles,
-  errors,
+  compilationErrors,
+  executionErrors,
   instructions,
   length,
   onClickValidInstruction,
   selectedInstructionId,
   snapshot,
 }: SnesLogProps) {
-  if (instructions.length === 0)
-    return errors.length === 0 ? (
-      <div className="SnesLog">
-        Run the emulator to see the processor's state.
-      </div>
-    ) : (
+  if (compilationErrors.length > 0)
+    return (
       <div>
         <div className="SnesLog_CompilationErrorLabel">
-          {errors.length === 1 ? "Compilation error:" : "Compilation errors:"}
+          {compilationErrors.length === 1
+            ? "Compilation error:"
+            : "Compilation errors:"}
         </div>
         <ul className="SnesLog_CompilationErrors">
-          {errors.map((error) => (
+          {compilationErrors.map((error) => (
             <li>{error}</li>
           ))}
         </ul>
+      </div>
+    );
+
+  if (instructions.length === 0)
+    return (
+      <div className="SnesLog">
+        Run the emulator to see the processor's state.
       </div>
     );
 
@@ -198,9 +205,9 @@ export default function SnesLog({
         withFooter
       />
 
-      {errors.length > 0 && (
+      {executionErrors.length > 0 && (
         <div className="SnesLog_ExecutionErrors">
-          {errors.map((error) => (
+          {executionErrors.map((error) => (
             <div>{error}</div>
           ))}
         </div>
