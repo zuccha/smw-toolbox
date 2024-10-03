@@ -12,22 +12,23 @@ export const emulatorId = "Emulator";
 export const emulator = new Emulator();
 
 const defaultCode = `\
-; Copy the ".data" table in RAM.
-LDX #$02
+; This is an example program that doesn't mean much.
+
+JSL .store_data
+
+org $818000
+
 .store_data:
+  PHK : PLB
+  LDX #$02
+.store_data_loop:
   LDA .data,x : STA $10,x
-  DEX : BPL .store_data
+  DEX : BPL .store_data_loop
+  RTL
 
-; Skip to the end, otherwise ".data"
-; would be execute as instructions.
-BRA .end
-
-; Data table.
 .data:
   db $0A, $0B, $0C
-
-; End of program.
-.end:`;
+`;
 
 const EmulatorInitialStateSchema = z.object({
   a: z.number(),
