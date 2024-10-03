@@ -1,16 +1,9 @@
 import { useCallback } from "preact/hooks";
 import Button from "../../components/button";
 import ColorInput from "../../components/color-input";
-import InputNumber from "../../components/input-number";
-import InputText from "../../components/input-text";
+import InputValue from "../../components/input-value";
 import Setting from "../../components/setting";
 import { Colors } from "../../models/color";
-import {
-  IntegerBoundsUnsigned,
-  IntegerEncoding,
-  IntegerLength,
-  IntegerRadix,
-} from "../../models/integer";
 import {
   useTableEditorSelectedValue,
   useTableEditorColorByValue,
@@ -18,63 +11,28 @@ import {
   useTableEditorUnit,
 } from "./store";
 
-const patterns = {
-  [IntegerEncoding.Bin]: /^[01]*$/,
-  [IntegerEncoding.Dec]: /^[0-9]*$/,
-  [IntegerEncoding.Hex]: /^[0-9a-fA-F]*$/,
-};
-
-const prefixes = {
-  [IntegerEncoding.Bin]: "%",
-  [IntegerEncoding.Hex]: "$",
-};
-
 export default function AppEditorSettingColor() {
   const [encoding] = useTableEditorEncoding();
   const [unit] = useTableEditorUnit();
 
-  const [valueOrNaN, setValueOrNaN] = useTableEditorSelectedValue();
-  const [value, valueString] = Number.isNaN(valueOrNaN)
-    ? [0, ""]
-    : [valueOrNaN, valueOrNaN.toString(IntegerRadix[encoding]).toUpperCase()];
+  const [selectedValue, setSelectedValue] = useTableEditorSelectedValue();
 
-  const [valueColor, setValueColor] = useTableEditorColorByValue(value);
+  const [valueColor, setValueColor] = useTableEditorColorByValue(selectedValue);
 
   const resetValueColor = useCallback(() => {
-    setValueColor(Colors[value % Colors.length]!);
-  }, [setValueColor, value]);
-
-  const handleChangeValueString = useCallback(
-    (nextValueString: string) => {
-      const radix = IntegerRadix[encoding];
-      const nextValue = Number.parseInt(nextValueString, radix);
-      setValueOrNaN(nextValue);
-    },
-    [encoding, setValueOrNaN],
-  );
+    setValueColor(Colors[selectedValue % Colors.length]!);
+  }, [setValueColor, selectedValue]);
 
   return (
     <Setting label="Value Color">
       <div class="App_SectionCluster flex_1 flex-wrap_wrap">
-        {encoding === IntegerEncoding.Dec ? (
-          <InputNumber
-            isInteger
-            max={IntegerBoundsUnsigned[unit].max}
-            min={0}
-            onChange={setValueOrNaN}
-            placeholder="0"
-            value={valueOrNaN}
-          />
-        ) : (
-          <InputText
-            onChange={handleChangeValueString}
-            pattern={patterns[encoding]}
-            placeholder="0"
-            prefix={prefixes[encoding]}
-            size={IntegerLength[unit][encoding]}
-            value={valueString}
-          />
-        )}
+        <InputValue
+          encoding={encoding}
+          onChange={setSelectedValue}
+          placeholder="00"
+          value={selectedValue}
+          unit={unit}
+        />
 
         <ColorInput onChange={setValueColor} value={valueColor} />
 

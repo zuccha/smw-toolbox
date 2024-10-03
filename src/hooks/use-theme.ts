@@ -54,19 +54,24 @@ export function useThemeUpdate(id: string) {
     style.setProperty("--color-background-2", theme.background2);
     style.setProperty("--color-background-3", theme.background3);
     style.setProperty("--color-background-4", theme.background4);
+    style.setProperty("--color-error-1", theme.error1);
     style.setProperty("--color-neutral-1", theme.neutral1);
     style.setProperty("--color-neutral-2", theme.neutral2);
     if (color === ThemeColor.Disco) {
-      const colors = Object.values(theme.color);
-      const primary1Colors: string[] = colors.map(({ primary1 }) => primary1);
-      const primary2Colors: string[] = colors.map(({ primary2 }) => primary2);
-      const primary3Colors: string[] = colors.map(({ primary3 }) => primary3);
+      const colors: Record<string, string>[] = Object.values(theme.color);
+      const primary1Colors = colors.map(({ primary1 }) => primary1);
+      const primary2Colors = colors.map(({ primary2 }) => primary2);
+      const primary3Colors = colors.map(({ primary3 }) => primary3);
+      const highlight1Colors = colors.map(({ highlight1 }) => highlight1);
+      const highlight2Colors = colors.map(({ highlight2 }) => highlight2);
       let colorIndex = 0;
 
       const rotateColors = () => {
         style.setProperty("--color-primary-1", primary1Colors[colorIndex]!);
         style.setProperty("--color-primary-2", primary2Colors[colorIndex]!);
         style.setProperty("--color-primary-3", primary3Colors[colorIndex]!);
+        style.setProperty("--color-highlight-1", highlight1Colors[colorIndex]!);
+        style.setProperty("--color-highlight-2", highlight2Colors[colorIndex]!);
         colorIndex = (colorIndex + 1) % colors.length;
       };
 
@@ -77,6 +82,8 @@ export function useThemeUpdate(id: string) {
       style.setProperty("--color-primary-1", theme.color[color].primary1);
       style.setProperty("--color-primary-2", theme.color[color].primary2);
       style.setProperty("--color-primary-3", theme.color[color].primary3);
+      style.setProperty("--color-highlight-1", theme.color[color].highlight1);
+      style.setProperty("--color-highlight-2", theme.color[color].highlight2);
     }
   }, [color, theme]);
 }

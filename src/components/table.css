@@ -1,0 +1,86 @@
+.Table {
+  display: flex;
+  font-family: monospace;
+}
+
+.Table > table {
+  position: relative;
+  border-collapse: collapse;
+  white-space: pre;
+  width: 100%;
+}
+
+.Table > table > thead,
+.Table > table > tfoot {
+  font-weight: bold;
+}
+
+.Table_Header > td,
+.Table_Scrollbar_Spacer.top {
+  padding: 0;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--color-neutral-2);
+}
+
+.Table_Footer > td,
+.Table_Scrollbar_Spacer.bottom {
+  padding: 0;
+  padding-top: 0.4em;
+  border-top: 1px solid var(--color-neutral-2);
+}
+
+.Table > table > tbody:before,
+.Table > table > tbody:after {
+  content: "";
+  display: block;
+  height: 0.4em;
+}
+
+.Table > table > tbody > tr {
+  cursor: default;
+}
+
+.Table > table > tbody > tr.clickable {
+  cursor: pointer;
+}
+
+.Table > table > tbody > tr.selected {
+  background-color: var(--color-highlight-1);
+}
+
+.Table > table > tbody > tr:hover:not(.selected) {
+  background-color: var(--color-highlight-2);
+}
+
+.Table > table td.right {
+  text-align: right;
+}
+
+.Table table td.space-left {
+  padding-left: 0.5em;
+}
+
+.Table table td.space-right {
+  padding-right: 0.5em;
+}
+
+.Table_Scrollbar {
+  margin-left: 1em;
+  display: flex;
+  flex-direction: column;
+  width: 0.75em;
+}
+
+.Table_Scrollbar_Track {
+  position: relative;
+  border-left: 1px solid var(--color-neutral-2);
+  border-right: 1px solid var(--color-neutral-2);
+  flex: 1;
+}
+
+.Table_Scrollbar_Handle {
+  position: absolute;
+  background-color: var(--color-neutral-2);
+  width: 100%;
+  cursor: pointer;
+}

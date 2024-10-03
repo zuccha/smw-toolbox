@@ -12,7 +12,7 @@ export default function useStore<T>(
   id: string,
   initialValue: T,
   parse: (maybeT: unknown) => T,
-): [T, StateUpdater<T>] {
+): [T, (prev: StateUpdater<T>) => void] {
   const [value, setValue] = useState(() =>
     Storage.load(id, initialValue, parse),
   );
@@ -42,7 +42,7 @@ const parseBoolean = z.boolean().parse;
 export function useStoreBoolean(
   id: string,
   initialValue: boolean,
-): [boolean, StateUpdater<boolean>] {
+): [boolean, (perv: StateUpdater<boolean>) => void] {
   return useStore(id, initialValue, parseBoolean);
 }
 
@@ -50,7 +50,7 @@ const parseNumber = z.number().parse;
 export function useStoreNumber(
   id: string,
   initialValue: number,
-): [number, StateUpdater<number>] {
+): [number, (perv: StateUpdater<number>) => void] {
   return useStore(id, initialValue, parseNumber);
 }
 
@@ -58,6 +58,6 @@ const parseString = z.string().parse;
 export function useStoreString(
   id: string,
   initialValue: string,
-): [string, StateUpdater<string>] {
+): [string, (perv: StateUpdater<string>) => void] {
   return useStore(id, initialValue, parseString);
 }

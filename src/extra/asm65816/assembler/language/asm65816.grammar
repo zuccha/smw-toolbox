@@ -1,0 +1,148 @@
+@top Program { line* }
+
+@skip { Comment | space }
+
+line {
+  (definition (":" definition)*) (newline | eof) | newline
+}
+
+definition { OrgDefinition | LabelDefinition | Instruction }
+
+Instruction { (Opcode mode?) | data }
+
+OrgDefinition { ORG Origin }
+
+data { dataByte | dataWord | dataLong }
+
+dataByte { DB Byte ("," Byte)* }
+dataWord { DW Word ("," Word)* }
+dataLong { DL Long ("," Long)* }
+
+@tokens {
+  space { $[ \t]+ }
+  newline { $[\n\r] }
+
+  Comment { ";" ![\n]* }
+
+  b { $[01] }
+  d { $[0-9] }
+  h { $[0-9A-Fa-f] }
+
+  byteBin { "%" b b b b b b b b }
+  byteDec { d | d d | d d d }
+  byteHex { "$" h h }
+  byte { byteBin | byteHex | byteDec }
+
+  wordBin { "%" b b b b b b b b b b b b b b b b }
+  wordDec { d d d d | d d d d d }
+  wordHex { "$" h h h h }
+  word { wordBin | wordHex | wordDec }
+
+  longBin { "%" b b b b b b b b b b b b b b b b b b b b b b b b }
+  longDec { d d d d d d | d d d d d d d | d d d d d d d d }
+  longHex { "$" h h h h h h }
+  long { longBin | longHex | longDec }
+
+  label { "." $[_A-Za-z] ($[_A-Za-z0-9])* }
+
+  LabelDefinition { label ":" }
+
+  LabelUsage { label }
+
+  Byte { byte }
+  Word { word }
+  Long { long }
+
+  ConstByte { "#" byte }
+  ConstWord { "#" word }
+
+  MoveBanks { Byte "," Byte }
+
+  A { $[aA] }
+
+  X { "," $[xX] }
+  Y { "," $[yY] }
+  S { "," $[sS] }
+
+  DB { "db" }
+  DW { "dw" }
+  DL { "dl" }
+
+  ORG { "org" }
+
+  Origin { long }
+
+  "(" ")" "[" "]" ","
+
+  eof { @eof }
+
+  Opcode {
+    "ADC" | "AND" | "ASL" | "BCC" | "BCS" | "BEQ" | "BIT" | "BMI" | "BNE" | "BPL"
+  | "BRA" | "BRK" | "BRL" | "BVC" | "BVS" | "CLC" | "CLD" | "CLI" | "CLV" | "CMP"
+  | "COP" | "CPX" | "CPY" | "DEC" | "DEX" | "DEY" | "EOR" | "INC" | "INX" | "INY"
+  | "JMP" | "JML" | "JSL" | "JSR" | "LDA" | "LDX" | "LDY" | "LSR" | "MVN" | "MVP"
+  | "NOP" | "ORA" | "PEA" | "PEI" | "PER" | "PHA" | "PHB" | "PHD" | "PHK" | "PHP"
+  | "PHX" | "PHY" | "PLA" | "PLB" | "PLD" | "PLP" | "PLX" | "PLY" | "REP" | "ROL"
+  | "ROR" | "RTI" | "RTL" | "RTS" | "SBC" | "SEC" | "SED" | "SEI" | "SEP" | "STA"
+  | "STP" | "STX" | "STY" | "STZ" | "TAX" | "TAY" | "TCD" | "TCS" | "TDC" | "TRB"
+  | "TSB" | "TSC" | "TSX" | "TXA" | "TXS" | "TXY" | "TYA" | "TYX" | "WAI" | "WDM"
+  | "XBA" | "XCE"
+  | "adc" | "and" | "asl" | "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl"
+  | "bra" | "brk" | "brl" | "bvc" | "bvs" | "clc" | "cld" | "cli" | "clv" | "cmp"
+  | "cop" | "cpx" | "cpy" | "dec" | "dex" | "dey" | "eor" | "inc" | "inx" | "iny"
+  | "jmp" | "jml" | "jsl" | "jsr" | "lda" | "ldx" | "ldy" | "lsr" | "mvn" | "mvp"
+  | "nop" | "ora" | "pea" | "pei" | "per" | "pha" | "phb" | "phd" | "phk" | "php"
+  | "phx" | "phy" | "pla" | "plb" | "pld" | "plp" | "plx" | "ply" | "rep" | "rol"
+  | "ror" | "rti" | "rtl" | "rts" | "sbc" | "sec" | "sed" | "sei" | "sep" | "sta"
+  | "stp" | "stx" | "sty" | "stz" | "tax" | "tay" | "tcd" | "tcs" | "tdc" | "trb"
+  | "tsb" | "tsc" | "tsx" | "txa" | "txs" | "txy" | "tya" | "tyx" | "wai" | "wdm"
+  | "xba" | "xce"
+  }
+}
+
+Mode_Accumulator               { A }
+Mode_Immediate_Byte            { ConstByte }
+Mode_Immediate_Word            { ConstWord }
+Mode_DirectPage                { Byte }
+Mode_DirectPage_X              { Byte X }
+Mode_DirectPage_Y              { Byte Y }
+Mode_DirectPage_Indirect       { "(" Byte ")" }
+Mode_DirectPage_X_Indirect     { "(" Byte X ")" }
+Mode_DirectPage_Indirect_Y     { "(" Byte ")" Y }
+Mode_DirectPage_IndirectLong   { "[" Byte "]" }
+Mode_DirectPage_IndirectLong_Y { "[" Byte "]" Y }
+Mode_Absolute                  { Word }
+Mode_Absolute_X                { Word X }
+Mode_Absolute_Y                { Word Y }
+Mode_Absolute_Indirect         { "(" Word ")" }
+Mode_Absolute_X_Indirect       { "(" Word X ")" }
+Mode_Absolute_IndirectLong     { "[" Word "]" }
+Mode_AbsoluteLong              { Long }
+Mode_AbsoluteLong_X            { Long X }
+Mode_StackRelative             { Byte S }
+Mode_StackRelative_Indirect_Y  { "(" Byte S ")" Y }
+Mode_BlockMove                 { MoveBanks }
+Mode_Immediate_Label           { "#" LabelUsage }
+Mode_Label                     { LabelUsage }
+Mode_Label_X                   { LabelUsage X }
+Mode_Label_Y                   { LabelUsage Y }
+Mode_Label_Indirect            { "(" LabelUsage ")" }
+Mode_Label_X_Indirect          { "(" LabelUsage X ")" }
+Mode_Label_Indirect_Y          { "(" LabelUsage ")" Y }
+Mode_Label_IndirectLong        { "[" LabelUsage "]" }
+Mode_Label_IndirectLong_Y      { "[" LabelUsage "]" Y }
+
+mode {
+  Mode_Accumulator | Mode_Immediate_Byte | Mode_Immediate_Word | Mode_DirectPage
+| Mode_DirectPage_X | Mode_DirectPage_Y | Mode_DirectPage_Indirect
+| Mode_DirectPage_X_Indirect | Mode_DirectPage_Indirect_Y
+| Mode_DirectPage_IndirectLong | Mode_DirectPage_IndirectLong_Y | Mode_Absolute
+| Mode_Absolute_X | Mode_Absolute_Y | Mode_Absolute_Indirect
+| Mode_Absolute_X_Indirect | Mode_Absolute_IndirectLong | Mode_AbsoluteLong
+| Mode_AbsoluteLong_X | Mode_StackRelative | Mode_StackRelative_Indirect_Y
+| Mode_BlockMove | Mode_Immediate_Label| Mode_Label | Mode_Label_X
+| Mode_Label_Y | Mode_Label_Indirect | Mode_Label_X_Indirect
+| Mode_Label_Indirect_Y | Mode_Label_IndirectLong | Mode_Label_IndirectLong_Y
+}
+
+@detectDelim

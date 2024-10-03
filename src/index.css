@@ -6,6 +6,8 @@
   --color-neutral-1: #f4f4f4;
   --color-neutral-2: #a1a1a1;
 
+  --color-error-1: #f56565;
+
   --color-background-1: #3b3b3b;
   --color-background-2: #242424;
   --color-background-3: #141414;
@@ -16,6 +18,8 @@
 
   --input-font-size: 0.8em;
   --input-height: 2.35em;
+
+  --font-family-normal: system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -40,22 +44,14 @@ body {
   min-width: 20em;
 }
 
-a,
-a:visited {
-  color: var(--color-primary-2);
-  outline-color: var(--color-primary-1);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 kbd {
   background-color: var(--color-background-1);
   padding: 0.2em 0.4em;
   border-radius: 0.2em;
+}
+
+dim {
+  opacity: 0.6;
 }
 
 @media (max-width: 40em) {
@@ -67,6 +63,26 @@ kbd {
 
 .align-items_center {
   align-items: center;
+}
+
+.align-items_flex-start {
+  align-items: flex-start;
+}
+
+.align-items_flex-end {
+  align-items: flex-end;
+}
+
+.justify-content_center {
+  justify-content: center;
+}
+
+.justify-content_space-between {
+  justify-content: space-between;
+}
+
+.flex {
+  display: flex;
 }
 
 .flex_1 {

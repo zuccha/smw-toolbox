@@ -15,6 +15,7 @@ import {
 export const IntegerDataChunkPrefix = {
   [IntegerUnit.Byte]: "db",
   [IntegerUnit.Word]: "dw",
+  [IntegerUnit.Long]: "dl",
 } as const;
 
 //==============================================================================

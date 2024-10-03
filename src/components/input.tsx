@@ -2,8 +2,10 @@ import { useCallback, useRef } from "preact/hooks";
 import "./input.css";
 
 export type InputProps = {
+  format?: (value: string) => string;
   max?: number;
   min?: number;
+  monospace?: boolean;
   onChange: (value: string) => string | void;
   pattern?: RegExp;
   placeholder: string;
@@ -14,8 +16,10 @@ export type InputProps = {
 };
 
 export default function Input({
+  format,
   max,
   min,
+  monospace,
   onChange,
   pattern,
   placeholder,
@@ -66,8 +70,9 @@ export default function Input({
       } else if (inputRef.current) {
         restoreValue();
       }
+      if (format) valueRef.current = format(valueRef.current);
     },
-    [onChange, pattern, restoreValue, size],
+    [format, onChange, pattern, restoreValue, size],
   );
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -75,8 +80,10 @@ export default function Input({
     e.stopPropagation();
   }, []);
 
+  const className = monospace ? "Input monospace" : "Input";
+
   return (
-    <div class="Input" onMouseDown={handleMouseDown}>
+    <div class={className} onMouseDown={handleMouseDown}>
       {prefix && <span class="Input_Prefix">{prefix}</span>}
       <input
         max={max}
@@ -86,6 +93,7 @@ export default function Input({
         placeholder={placeholder}
         ref={inputRef}
         size={size}
+        spellcheck={false}
         type={type}
         value={value}
       />

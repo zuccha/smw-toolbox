@@ -1,0 +1,57 @@
+.Tooltip {
+  position: relative;
+}
+
+.Tooltip_Content::before {
+  content: attr(data-tooltip);
+  white-space: pre;
+  z-index: 1;
+  position: absolute;
+  background-color: var(--color-background-1);
+  border: 1px solid var(--color-neutral-2);
+  color: var(--color-neutral-1);
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
+  pointer-events: none;
+  font-family: var(--font-family-normal);
+  font-size: 0.8rem;
+  font-variant: normal;
+  font-weight: normal;
+  opacity: 0;
+}
+
+.Tooltip_Content.monospace::before {
+  font-family: monospace;
+}
+
+.Tooltip_Content.bottom:hover::before,
+.Tooltip_Content.left:hover::before,
+.Tooltip_Content.right:hover::before,
+.Tooltip_Content.top:hover::before {
+  transition: opacity cubic-bezier(1, 0, 1, 0) 0.5s;
+  opacity: 1;
+}
+
+.Tooltip_Content.bottom::before {
+  top: calc(100% + 0.3em);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.Tooltip_Content.left::before {
+  right: calc(100% + 0.3em);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.Tooltip_Content.right::before {
+  left: calc(100% + 0.3em);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.Tooltip_Content.top::before {
+  bottom: calc(100% + 0.3em);
+  left: 50%;
+  transform: translateX(-50%);
+}

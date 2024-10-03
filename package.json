@@ -7,18 +7,26 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts"
+    "changelog": "deno run --allow-read --allow-write ./scripts/generate-changelog.ts",
+    "grammar:asm": "lezer-generator src/extra/asm65816/assembler/language/asm65816.grammar -o src/extra/asm65816/assembler/language/asm65816-parser.js",
+    "test": "vitest"
   },
   "dependencies": {
-    "lucide-preact": "^0.316.0",
-    "preact": "^10.19.3",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/state": "^6.4.1",
+    "@uiw/codemirror-themes": "^4.23.1",
+    "@uiw/react-codemirror": "^4.23.1",
+    "lucide-preact": "^0.439.0",
+    "preact": "^10.23.2",
     "react-device-detect": "^2.2.3",
-    "vite-plugin-singlefile": "^0.13.5",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.7.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "@lezer/generator": "^1.7.1",
+    "@preact/preset-vite": "^2.9.0",
+    "rollup-plugin-analyzer": "^4.0.0",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.3",
+    "vitest": "^2.1.0"
   }
 }

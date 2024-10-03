@@ -1,0 +1,30 @@
+.SnesLog {
+  display: flex;
+  flex-direction: column;
+}
+
+.SnesLog_Highlight {
+  color: var(--color-primary-1);
+  font-weight: bold;
+}
+
+.SnesLog_Error {
+  font-weight: bold;
+  color: var(--color-error-1);
+}
+
+.SnesLog_CompilationErrors,
+.SnesLog_ExecutionErrors {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-error-1);
+}
+
+.SnesLog_CompilationErrors {
+  margin-top: 0;
+}
+
+.SnesLog_ExecutionErrors {
+  margin-top: 1em;
+  font-size: 0.9em;
+}
