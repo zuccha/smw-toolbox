@@ -1,6 +1,16 @@
 # Changelog
 
-## [1.2.0] - Unreleased
+## [1.2.0] - 2025-03-04
+
+### Added
+
+- **Table Editor:** Add `Ctrl+M` hotkey to run emulator, in addition to the existing `Ctrl+E`, to make it usable on Edge.
+
+### Fixed
+
+- **Table Editor:** Add -x modifier to CPX and CPY length description.
+
+## [1.1.0] - 2024-10-03
 
 ### Changed
 

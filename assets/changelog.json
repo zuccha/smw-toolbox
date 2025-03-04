@@ -1,7 +1,17 @@
 [
   {
     "version": "1.2.0",
-    "date": "Unreleased",
+    "date": "2025-03-04",
+    "added": [
+      "<b>Table Editor:</b> Add <kbd>Ctrl+M</kbd> hotkey to run emulator, in addition to the existing <kbd>Ctrl+E</kbd>, to make it usable on Edge."
+    ],
+    "fixed": [
+      "<b>Table Editor:</b> Add -x modifier to CPX and CPY length description."
+    ]
+  },
+  {
+    "version": "1.1.0",
+    "date": "2024-10-03",
     "changed": ["<b>Table Editor:</b> Move actions into section header."],
     "fixed": ["Restore small-caps in non-collapsible section headers."],
     "removed": ["<b>Table Editor:</b> Remove table above table."]
