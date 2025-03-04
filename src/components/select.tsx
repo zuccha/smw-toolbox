@@ -27,7 +27,7 @@ export default function Select<T extends number>({
 
   return (
     <div class="Select">
-      <select onChange={handleChange} placeholder={placeholder} value={value}>
+      <select onChange={handleChange} value={value}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
