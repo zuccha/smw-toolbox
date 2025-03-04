@@ -6,7 +6,10 @@ export default function TableEditorHotkeys() {
   const { run } = useEmulator();
 
   const hotkeys = useMemo((): Hotkey[] => {
-    return [{ key: `e`, ctrl: true, onPress: run }];
+    return [
+      { key: `e`, ctrl: true, onPress: run },
+      { key: `m`, ctrl: true, onPress: run },
+    ];
   }, [run]);
 
   useHotkeys(hotkeys);
