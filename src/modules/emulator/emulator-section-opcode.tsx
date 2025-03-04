@@ -65,6 +65,7 @@ const columns: TableColumn<InstructionImpl>[] = [
     value: (impl) => {
       let length = `${impl.mode.base_length}`;
       if (impl.mode.length_modifier & minus_m) length += "-m";
+      if (impl.mode.length_modifier & minus_x) length += "-x";
       return length;
     },
     align: "right",
