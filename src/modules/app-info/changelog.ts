@@ -2,6 +2,13 @@ import { ChangelogRelease } from "../../components/changelog";
 
 const changelog: ChangelogRelease[] = [
   {
+    version: "1.2.1",
+    date: "2025-03-05",
+    fixed: [
+      "<b>Table Editor:</b> Correctly compute instruction cycles based on direct page low byte and X page boundary cross.",
+    ],
+  },
+  {
     version: "1.2.0",
     date: "2025-03-04",
     added: [

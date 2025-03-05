@@ -15,7 +15,7 @@ import {
   minus_m,
   minus_x,
   plus_1_if_branch_taken,
-  plus_1_if_dp_low_is_zero,
+  plus_1_if_dp_low_is_not_zero,
   plus_1_if_index_x_crosses_page,
   plus_1_if_index_y_crosses_page,
   plus_7_for_each_transfer,
@@ -50,7 +50,7 @@ const columns: TableColumn<InstructionImpl>[] = [
       if (impl.cycles_modifier & minus_2m) cycles += "-2*m";
       if (impl.cycles_modifier & minus_x) cycles += "-x";
       if (impl.cycles_modifier & minus_e) cycles += "-e";
-      if (impl.cycles_modifier & plus_1_if_dp_low_is_zero) cycles += "+d";
+      if (impl.cycles_modifier & plus_1_if_dp_low_is_not_zero) cycles += "+d";
       if (impl.cycles_modifier & plus_1_if_index_x_crosses_page) cycles += "+p";
       if (impl.cycles_modifier & plus_1_if_index_y_crosses_page) cycles += "+p";
       if (impl.cycles_modifier & plus_1_if_branch_taken) cycles += "+b";

@@ -3,7 +3,7 @@ import {
   flag_n_mask,
   flag_z_mask,
   minus_m,
-  plus_1_if_dp_low_is_zero,
+  plus_1_if_dp_low_is_not_zero,
 } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
@@ -52,14 +52,14 @@ export namespace ROR {
     public static opcode = 0x66;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 6;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_X extends ROR_Addr {
     public static opcode = 0x76;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 7;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class Absolute extends ROR_Addr {

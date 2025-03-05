@@ -2,7 +2,7 @@ import {
   flag_n_mask,
   flag_z_mask,
   minus_m,
-  plus_1_if_dp_low_is_zero,
+  plus_1_if_dp_low_is_not_zero,
   plus_1_if_index_x_crosses_page,
   plus_1_if_index_y_crosses_page,
 } from "../constants";
@@ -51,28 +51,28 @@ export namespace AND {
     public static opcode = 0x25;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_X extends AND_Addr {
     public static opcode = 0x35;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_Indirect extends AND_Addr {
     public static opcode = 0x32;
     public static mode = InstructionMode.DirectPage_Indirect;
     public static base_cycles = 6;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_X_Indirect extends AND_Addr {
     public static opcode = 0x21;
     public static mode = InstructionMode.DirectPage_X_Indirect;
     public static base_cycles = 7;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_Indirect_Y extends AND_Addr {
@@ -80,21 +80,21 @@ export namespace AND {
     public static mode = InstructionMode.DirectPage_Indirect_Y;
     public static base_cycles = 6;
     public static cycles_modifier =
-      minus_m | plus_1_if_dp_low_is_zero | plus_1_if_index_y_crosses_page;
+      minus_m | plus_1_if_dp_low_is_not_zero | plus_1_if_index_y_crosses_page;
   }
 
   export class DirectPage_IndirectLong extends AND_Addr {
     public static opcode = 0x27;
     public static mode = InstructionMode.DirectPage_IndirectLong;
     public static base_cycles = 7;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_IndirectLong_Y extends AND_Addr {
     public static opcode = 0x37;
     public static mode = InstructionMode.DirectPage_IndirectLong_Y;
     public static base_cycles = 7;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class Absolute extends AND_Addr {

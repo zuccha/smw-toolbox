@@ -2,7 +2,7 @@ import {
   flag_n_mask,
   flag_z_mask,
   minus_x,
-  plus_1_if_dp_low_is_zero,
+  plus_1_if_dp_low_is_not_zero,
   plus_1_if_index_y_crosses_page,
 } from "../constants";
 import { Instruction } from "../instruction";
@@ -47,14 +47,14 @@ export namespace LDY {
     public static opcode = 0xa4;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_X extends LDY_Addr {
     public static opcode = 0xb4;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_x | plus_1_if_dp_low_is_not_zero;
   }
 
   export class Absolute extends LDY_Addr {

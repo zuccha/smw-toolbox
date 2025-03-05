@@ -1,7 +1,7 @@
 import {
   minus_m,
   minus_x,
-  plus_1_if_dp_low_is_zero,
+  plus_1_if_dp_low_is_not_zero,
   plus_1_if_index_x_crosses_page,
   plus_1_if_index_y_crosses_page,
 } from "./constants";
@@ -92,15 +92,15 @@ export abstract class Instruction {
     let cycles = (<InstructionImpl>this.constructor).base_cycles;
     if (modifier & minus_m) cycles -= this._snapshot_before.flag_m;
     if (modifier & minus_x) cycles -= this._snapshot_before.flag_x;
-    if (modifier & plus_1_if_dp_low_is_zero)
-      cycles -= this._snapshot_before.dp === 0 ? 1 : 0;
+    if (modifier & plus_1_if_dp_low_is_not_zero)
+      cycles += l(this._snapshot_before.dp).byte === 0 ? 0 : 1;
     if (modifier & plus_1_if_index_x_crosses_page) {
       const x = this._snapshot_before.x;
-      cycles -= this._snapshot_before.flag_x || this._cross_boundary(x);
+      cycles += this._snapshot_before.flag_x || this._cross_boundary(x);
     }
     if (modifier & plus_1_if_index_y_crosses_page) {
       const y = this._snapshot_before.y;
-      cycles -= this._snapshot_before.flag_x || this._cross_boundary(y);
+      cycles += this._snapshot_before.flag_x || this._cross_boundary(y);
     }
     return cycles;
   }

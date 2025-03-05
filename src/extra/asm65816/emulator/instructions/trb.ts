@@ -1,4 +1,8 @@
-import { flag_z_mask, minus_2m, plus_1_if_dp_low_is_zero } from "../constants";
+import {
+  flag_z_mask,
+  minus_2m,
+  plus_1_if_dp_low_is_not_zero,
+} from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { b, w } from "../value";
@@ -28,7 +32,7 @@ export namespace TRB {
     public static opcode = 0x14;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 7;
-    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_2m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class Absolute extends TRB {

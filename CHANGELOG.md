@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2025-03-05
+
+### Fixed
+
+- **Table Editor:** Correctly compute instruction cycles based on direct page low byte and X page boundary cross.
+
 ## [1.2.0] - 2025-03-04
 
 ### Added

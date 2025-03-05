@@ -1,4 +1,4 @@
-import { plus_1_if_dp_low_is_zero } from "../constants";
+import { plus_1_if_dp_low_is_not_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { l, w } from "../value";
@@ -8,7 +8,7 @@ export class PEI extends Instruction {
   public static opcode = 0xd4;
   public static mode = InstructionMode.DirectPage_Indirect;
   public static base_cycles = 6;
-  public static cycles_modifier = plus_1_if_dp_low_is_zero;
+  public static cycles_modifier = plus_1_if_dp_low_is_not_zero;
 
   public execute_effect(): void {
     this.p.sp = w(this.p.sp.word - 2);

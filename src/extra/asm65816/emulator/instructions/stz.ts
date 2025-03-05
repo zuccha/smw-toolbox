@@ -1,4 +1,4 @@
-import { minus_m, plus_1_if_dp_low_is_zero } from "../constants";
+import { minus_m, plus_1_if_dp_low_is_not_zero } from "../constants";
 import { Instruction } from "../instruction";
 import InstructionMode from "../instruction-mode";
 import { w } from "../value";
@@ -16,14 +16,14 @@ export namespace STZ {
     public static opcode = 0x64;
     public static mode = InstructionMode.DirectPage;
     public static base_cycles = 4;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class DirectPage_X extends STZ {
     public static opcode = 0x74;
     public static mode = InstructionMode.DirectPage_X;
     public static base_cycles = 5;
-    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_zero;
+    public static cycles_modifier = minus_m | plus_1_if_dp_low_is_not_zero;
   }
 
   export class Absolute extends STZ {
